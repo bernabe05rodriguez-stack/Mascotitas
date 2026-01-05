@@ -442,8 +442,8 @@
                         variants.sort((a, b) => a.price - b.price);
                         const defaultPrice = variants.length > 0 ? variants[0].price : 0;
                         let images = [];
-                        if (item['image Principal'] && item['image Principal'].trim()) images.push(item['image Principal'].trim());
-                        if (item['image Secundaria'] && item['image Secundaria'].trim()) images.push(item['image Secundaria'].trim());
+                        if (item['Image 1'] && item['Image 1'].trim()) images.push(item['Image 1'].trim());
+                        if (item['Image 2'] && item['Image 2'].trim()) images.push(item['Image 2'].trim());
                         if (images.length === 0) images.push('https://placehold.co/300x300?text=Sin+Foto');
 
                         return {
