@@ -444,6 +444,7 @@
                         let images = [];
                         if (item['Image 1'] && item['Image 1'].trim()) images.push(item['Image 1'].trim());
                         if (item['Image 2'] && item['Image 2'].trim()) images.push(item['Image 2'].trim());
+                        if (item['Image 3'] && item['Image 3'].trim()) images.push(item['Image 3'].trim());
                         if (images.length === 0) images.push('https://placehold.co/300x300?text=Sin+Foto');
 
                         return {
