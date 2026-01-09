@@ -6,6 +6,11 @@
     <title>MASCOTITAS | Tu alimento de confianza</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%231B3C59' stroke='%231B3C59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='19' cy='5' r='3'/%3E%3Ccircle cx='5' cy='5' r='3'/%3E%3Cpath d='M12 17.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5Z'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -21,18 +26,18 @@
         .hidden-section { display: none !important; }
     </style>
 </head>
-<body class="bg-[#FDFBF7] text-[#5D4037]">
+<body class="bg-[#FDFBF7] text-[#5D4037] dark:bg-gray-900 dark:text-gray-100">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-[#F5EFE0]">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-[#F5EFE0] dark:bg-gray-800 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-24">
                 <a href="#" class="flex items-center cursor-pointer gap-3 group">
-                    <i data-lucide="paw-print" class="h-10 w-10 md:h-12 md:w-12 text-[#1B3C59] group-hover:rotate-12 transition-transform"></i>
-                    <span class="font-extrabold text-4xl md:text-5xl text-[#1B3C59] tracking-wide">MASC<span class="text-[#8B5E3C]">🐾</span>TITAS</span>
+                    <i data-lucide="paw-print" class="h-10 w-10 md:h-12 md:w-12 text-[#1B3C59] group-hover:rotate-12 transition-transform dark:text-white"></i>
+                    <span class="font-extrabold text-4xl md:text-5xl text-[#1B3C59] tracking-wide dark:text-white">MASC<span class="text-[#8B5E3C] dark:text-[#dca980]">🐾</span>TITAS</span>
                 </a>
                 <div class="flex items-center gap-4">
-                    <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition" onclick="toggleCart()">
-                        <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59]"></i>
+                    <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition dark:hover:bg-gray-700" onclick="toggleCart()">
+                        <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59] dark:text-white"></i>
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#8B5E3C] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
                     </div>
                 </div>
@@ -41,13 +46,13 @@
     </nav>
 
     <div id="shop-view">
-        <div class="bg-[#F5EFE0] relative overflow-hidden">
-            <i data-lucide="paw-print" class="absolute top-10 left-10 h-16 w-16 text-[#1B3C59] opacity-5 -rotate-12"></i>
-            <i data-lucide="paw-print" class="absolute bottom-10 right-20 h-24 w-24 text-[#8B5E3C] opacity-5 rotate-12"></i>
+        <div class="bg-[#F5EFE0] relative overflow-hidden dark:bg-gray-800">
+            <i data-lucide="paw-print" class="absolute top-10 left-10 h-16 w-16 text-[#1B3C59] opacity-5 -rotate-12 dark:text-white"></i>
+            <i data-lucide="paw-print" class="absolute bottom-10 right-20 h-24 w-24 text-[#8B5E3C] opacity-5 rotate-12 dark:text-[#dca980]"></i>
             <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-8 md:mb-0 text-center md:text-left">
-                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 text-[#1B3C59] leading-tight">Tu alimento <br>de confianza</h1>
-                    <p class="text-[#5D4037] text-lg mb-8 font-medium">La mejor nutrición para tus mascotas en Mendoza.</p>
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 text-[#1B3C59] leading-tight dark:text-white">Tu alimento <br>de confianza</h1>
+                    <p class="text-[#5D4037] text-lg mb-8 font-medium dark:text-gray-300">La mejor nutrición para tus mascotas en Mendoza.</p>
                     <a href="#catalogo" class="bg-[#1B3C59] text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-[#2c5275] transition transform hover:scale-105 inline-flex items-center gap-2">
                         Ver Catálogo <i data-lucide="chevron-down" class="h-4 w-4"></i>
                     </a>
@@ -61,23 +66,23 @@
 
         <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-[#1B3C59]">Nuestros Productos</h2>
+                <h2 class="text-3xl font-bold text-[#1B3C59] dark:text-white">Nuestros Productos</h2>
                 <div class="h-1 w-20 bg-[#8B5E3C] mx-auto mt-2 rounded-full"></div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 justify-between mb-10 items-center bg-white p-4 rounded-xl shadow-sm border border-[#F5EFE0]">
+            <div class="flex flex-col md:flex-row gap-4 justify-between mb-10 items-center bg-white p-4 rounded-xl shadow-sm border border-[#F5EFE0] dark:bg-gray-800 dark:border-gray-700">
                 <div id="category-filters" class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
                     </div>
                 <div class="relative w-full md:w-80">
-                    <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1B3C59] bg-gray-50">
+                    <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1B3C59] bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
                     <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
                 </div>
             </div>
 
             <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 <div class="col-span-full text-center py-20">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C59] mx-auto mb-4"></div>
-                    <p class="text-xl font-medium text-[#5D4037]">Cargando catálogo...</p>
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C59] mx-auto mb-4 dark:border-white"></div>
+                    <p class="text-xl font-medium text-[#5D4037] dark:text-gray-300">Cargando catálogo...</p>
                 </div>
             </div>
         </div>
@@ -114,27 +119,28 @@
                     </div>
                 </div>
             </div>
-            <div class="border-t border-white/10 mt-10 pt-6 text-center text-sm text-gray-400">
+            <div class="border-t border-white/10 mt-10 pt-6 text-center text-sm text-gray-400 flex justify-center items-center gap-2">
                 <p>© 2025 Mascotitas Alimentos.</p>
+                <button id="theme-toggle" class="ml-2 text-xl focus:outline-none transition-transform hover:scale-110">☀️</button>
             </div>
         </div>
     </footer>
 
     <div id="cart-overlay" class="fixed inset-0 bg-[#1B3C59] bg-opacity-60 z-50 hidden backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-gray-200">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-[#FDFBF7]">
-            <h2 class="font-bold text-xl text-[#1B3C59] flex items-center gap-2">
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-[#FDFBF7] dark:bg-gray-900 dark:border-gray-700">
+            <h2 class="font-bold text-xl text-[#1B3C59] flex items-center gap-2 dark:text-white">
                 <i data-lucide="shopping-bag" class="text-[#8B5E3C]"></i> Tu Pedido
             </h2>
             <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition"><i data-lucide="x" class="h-6 w-6"></i></button>
         </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white"></div>
-        <div class="p-6 border-t border-gray-100 bg-[#FDFBF7]">
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white dark:bg-gray-800"></div>
+        <div class="p-6 border-t border-gray-100 bg-[#FDFBF7] dark:bg-gray-900 dark:border-gray-700">
             <!-- Discount Block -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Código de descuento</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Código de descuento</label>
                 <div class="flex gap-2">
-                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3C59]">
+                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3C59] dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
                     <button onclick="applyDiscount()" id="btn-apply-discount" class="bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#2c5275] transition">Aplicar</button>
                 </div>
                 <div id="discount-message" class="text-xs mt-1 h-4"></div>
@@ -142,16 +148,16 @@
 
             <div class="flex flex-col gap-2 mb-6">
                  <div id="subtotal-row" class="flex justify-between items-end hidden">
-                    <span class="text-gray-500 font-medium text-sm">Subtotal</span>
-                    <span id="cart-subtotal" class="font-bold text-[#1B3C59]">$0</span>
+                    <span class="text-gray-500 font-medium text-sm dark:text-gray-400">Subtotal</span>
+                    <span id="cart-subtotal" class="font-bold text-[#1B3C59] dark:text-white">$0</span>
                 </div>
                 <div id="discount-row" class="flex justify-between items-end hidden">
-                    <span class="text-green-600 font-medium text-sm">Descuento (10%)</span>
-                    <span id="cart-discount" class="font-bold text-green-600">-$0</span>
+                    <span class="text-green-600 font-medium text-sm dark:text-green-400">Descuento (10%)</span>
+                    <span id="cart-discount" class="font-bold text-green-600 dark:text-green-400">-$0</span>
                 </div>
                 <div class="flex justify-between items-end">
-                    <span class="text-gray-500 font-medium">Total Estimado</span>
-                    <span id="cart-total" class="text-2xl font-extrabold text-[#1B3C59]">$0</span>
+                    <span class="text-gray-500 font-medium dark:text-gray-400">Total Estimado</span>
+                    <span id="cart-total" class="text-2xl font-extrabold text-[#1B3C59] dark:text-white">$0</span>
                 </div>
             </div>
 
@@ -165,42 +171,42 @@
     <div id="product-modal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeProductModal()"></div>
         <div class="relative z-10 flex items-center justify-center min-h-screen px-4 py-4 sm:p-6 pointer-events-none">
-            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all scale-100 pointer-events-auto flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh] relative">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all scale-100 pointer-events-auto flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh] relative dark:bg-gray-800">
 
-                <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-white/80 hover:bg-white text-gray-500 hover:text-red-500 p-2 rounded-full transition shadow-sm backdrop-blur">
+                <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-white/80 hover:bg-white text-gray-500 hover:text-red-500 p-2 rounded-full transition shadow-sm backdrop-blur dark:bg-gray-700/80 dark:hover:bg-gray-600 dark:text-gray-300">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
-                <div class="w-full md:w-1/2 bg-gray-50 relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto">
+                <div class="w-full md:w-1/2 bg-gray-50 relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto dark:bg-gray-700">
                     <img id="modal-img" src="" class="max-w-full max-h-full object-contain drop-shadow-lg transition-all duration-300">
 
-                    <button id="modal-prev-btn" onclick="changeModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110">
+                    <button id="modal-prev-btn" onclick="changeModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110 dark:bg-gray-600/80 dark:hover:bg-gray-500 dark:text-white">
                         <i data-lucide="chevron-left" class="w-6 h-6"></i>
                     </button>
-                    <button id="modal-next-btn" onclick="changeModalImage(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110">
+                    <button id="modal-next-btn" onclick="changeModalImage(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110 dark:bg-gray-600/80 dark:hover:bg-gray-500 dark:text-white">
                         <i data-lucide="chevron-right" class="w-6 h-6"></i>
                     </button>
                 </div>
 
-                <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto bg-white">
+                <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto bg-white dark:bg-gray-800">
                     <div class="mb-2">
-                        <span id="modal-category" class="text-xs uppercase font-bold text-[#8B5E3C] tracking-wider bg-[#F5EFE0] px-2 py-1 rounded-md">Category</span>
+                        <span id="modal-category" class="text-xs uppercase font-bold text-[#8B5E3C] tracking-wider bg-[#F5EFE0] px-2 py-1 rounded-md dark:bg-gray-700 dark:text-[#dca980]">Category</span>
                     </div>
 
-                    <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59] mb-4 leading-tight">Product Name</h2>
+                    <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59] mb-4 leading-tight dark:text-white">Product Name</h2>
 
-                    <p id="modal-desc" class="text-gray-600 mb-6 text-sm leading-relaxed hidden">Description.</p>
+                    <p id="modal-desc" class="text-gray-600 mb-6 text-sm leading-relaxed hidden dark:text-gray-300">Description.</p>
 
                     <div class="mb-6">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Seleccionar Peso:</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2 dark:text-gray-200">Seleccionar Peso:</label>
                         <div id="modal-variants" class="flex flex-wrap gap-2"></div>
                     </div>
 
-                    <div class="mt-auto border-t border-gray-100 pt-6">
+                    <div class="mt-auto border-t border-gray-100 pt-6 dark:border-gray-700">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="flex flex-col text-center sm:text-left">
                                 <span class="text-xs text-gray-400 font-medium">Precio Final</span>
-                                <span id="modal-price" class="text-3xl font-extrabold text-[#1B3C59]">$0</span>
+                                <span id="modal-price" class="text-3xl font-extrabold text-[#1B3C59] dark:text-white">$0</span>
                             </div>
 
                             <div id="modal-controls" class="flex items-center">
@@ -392,7 +398,7 @@
                 const btn = document.createElement('button');
                 btn.className = isSelected
                     ? 'bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-bold transition border border-gray-200';
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-bold transition border border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:border-gray-600';
                 btn.textContent = v.weight;
                 btn.onclick = () => selectVariant(p.id, idx);
                 variantContainer.appendChild(btn);
@@ -408,10 +414,10 @@
                     </button>`;
             } else {
                 controlsContainer.innerHTML = `
-                    <div class="flex items-center bg-gray-100 rounded-xl overflow-hidden shadow-inner border border-gray-200">
-                         <button onclick="updateQuantity('${p.id}', -1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl">-</button>
-                         <span class="w-12 text-center font-bold text-[#1B3C59] text-lg">${qty}</span>
-                         <button onclick="updateQuantity('${p.id}', 1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl">+</button>
+                    <div class="flex items-center bg-gray-100 rounded-xl overflow-hidden shadow-inner border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                         <button onclick="updateQuantity('${p.id}', -1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl dark:text-white dark:hover:bg-gray-600">-</button>
+                         <span class="w-12 text-center font-bold text-[#1B3C59] text-lg dark:text-white">${qty}</span>
+                         <button onclick="updateQuantity('${p.id}', 1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl dark:text-white dark:hover:bg-gray-600">+</button>
                     </div>`;
             }
             lucide.createIcons();
@@ -498,25 +504,25 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 opacity-50"><i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-[#8B5E3C]"></i><p class="text-xl font-medium text-[#5D4037]">No hay productos que coincidan.</p></div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20 opacity-50"><i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-[#8B5E3C] dark:text-[#dca980]"></i><p class="text-xl font-medium text-[#5D4037] dark:text-gray-300">No hay productos que coincidan.</p></div>`;
                 lucide.createIcons();
                 return;
             }
 
             filtered.forEach(p => {
                 const outOfStock = p.stock <= 0;
-                let stockText = '', stockClass = 'bg-white/90 text-[#1B3C59] border-gray-100';
+                let stockText = '', stockClass = 'bg-white/90 text-[#1B3C59] border-gray-100 dark:bg-gray-800/90 dark:text-white dark:border-gray-700';
 
-                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-gray-100 text-gray-500 border-gray-200'; }
-                else if (p.stock === 1) { stockText = 'Última 1 Unidad'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100'; }
-                else if (p.stock === 2) { stockText = 'Últimas 2 Unidades'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100'; }
-                else { stockText = 'Stock disponible'; stockClass = 'bg-green-50 text-green-700 border-green-100'; }
+                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600'; }
+                else if (p.stock === 1) { stockText = 'Última 1 Unidad'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800'; }
+                else if (p.stock === 2) { stockText = 'Últimas 2 Unidades'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800'; }
+                else { stockText = 'Stock disponible'; stockClass = 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'; }
 
                 const card = document.createElement('div');
                 let variantsHtml = '<div class="flex flex-wrap gap-2 mb-4">';
                 p.variants.forEach((v, idx) => {
                     const isSelected = (selectedVariants[p.id] === idx);
-                    const activeClass = isSelected ? 'bg-[#1B3C59] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
+                    const activeClass = isSelected ? 'bg-[#1B3C59] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600';
                     variantsHtml += `<button onclick="event.stopPropagation(); selectVariant('${p.id}', ${idx})" class="variant-btn-${p.id} ${activeClass} px-3 py-1 rounded-full text-xs font-bold transition">${v.weight}</button>`;
                 });
                 variantsHtml += '</div>';
@@ -530,10 +536,10 @@
                 let arrowsHtml = '';
                 if (hasMultipleImages) {
                     arrowsHtml = `
-                        <button onclick="event.stopPropagation(); changeImage('${p.id}', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-[#1B3C59] p-1.5 rounded-full shadow-sm transition backdrop-blur-sm z-10 opacity-100">
+                        <button onclick="event.stopPropagation(); changeImage('${p.id}', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-[#1B3C59] p-1.5 rounded-full shadow-sm transition backdrop-blur-sm z-10 opacity-100 dark:bg-gray-800/50 dark:hover:bg-gray-800/80 dark:text-white">
                             <i data-lucide="chevron-left" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); changeImage('${p.id}', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-[#1B3C59] p-1.5 rounded-full shadow-sm transition backdrop-blur-sm z-10 opacity-100">
+                        <button onclick="event.stopPropagation(); changeImage('${p.id}', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 text-[#1B3C59] p-1.5 rounded-full shadow-sm transition backdrop-blur-sm z-10 opacity-100 dark:bg-gray-800/50 dark:hover:bg-gray-800/80 dark:text-white">
                             <i data-lucide="chevron-right" class="w-4 h-4"></i>
                         </button>
                     `;
@@ -542,36 +548,36 @@
                 const qty = getCartQuantity(p.id, currentVariantIdx);
                 let controlsHtml = '';
                 if (qty === 0) {
-                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-gray-200 cursor-not-allowed text-gray-400' : 'bg-[#1B3C59] hover:bg-[#8B5E3C] text-white'}"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
+                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-gray-200 cursor-not-allowed text-gray-400 dark:bg-gray-700 dark:text-gray-500' : 'bg-[#1B3C59] hover:bg-[#8B5E3C] text-white'}"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
                 } else {
                     controlsHtml = `
-                        <div class="flex items-center bg-gray-100 rounded-full overflow-hidden shadow-sm border border-gray-200 h-8 md:h-10" onclick="event.stopPropagation()">
-                             <button onclick="updateQuantity('${p.id}', -1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold">-</button>
-                             <span class="text-xs md:text-sm font-bold text-[#1B3C59] min-w-[1rem] text-center">${qty}</span>
-                             <button onclick="updateQuantity('${p.id}', 1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold">+</button>
+                        <div class="flex items-center bg-gray-100 rounded-full overflow-hidden shadow-sm border border-gray-200 h-8 md:h-10 dark:bg-gray-700 dark:border-gray-600" onclick="event.stopPropagation()">
+                             <button onclick="updateQuantity('${p.id}', -1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold dark:text-white dark:hover:bg-gray-600">-</button>
+                             <span class="text-xs md:text-sm font-bold text-[#1B3C59] min-w-[1rem] text-center dark:text-white">${qty}</span>
+                             <button onclick="updateQuantity('${p.id}', 1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold dark:text-white dark:hover:bg-gray-600">+</button>
                         </div>
                     `;
                 }
 
-                card.className = `bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-[#F5EFE0] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''}`;
+                card.className = `bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-[#F5EFE0] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''} dark:bg-gray-800 dark:border-gray-700`;
                 card.onclick = () => openProductModal(p.id);
                 card.style.cursor = 'pointer';
 
                 card.innerHTML = `
-                    <div class="relative h-36 md:h-56 bg-white overflow-hidden p-2 md:p-4 group/image">
+                    <div class="relative h-36 md:h-56 bg-white overflow-hidden p-2 md:p-4 group/image dark:bg-gray-800">
                         <img id="img-${p.id}" src="${currentImage}" onerror="this.src='https://placehold.co/300x300?text=Sin+Foto'" class="w-full h-full object-contain transition-opacity duration-300">
                         ${arrowsHtml}
                         <div class="absolute top-2 right-2 backdrop-blur px-2 py-0.5 text-[10px] md:text-xs md:px-3 md:py-1 rounded-full font-bold shadow-sm border ${stockClass}">${stockText}</div>
                     </div>
                     <div class="p-3 md:p-5 flex-1 flex flex-col">
-                        <div class="mb-1 md:mb-2"><span class="text-[9px] md:text-[10px] uppercase font-bold text-[#8B5E3C] tracking-wider">${p.category}</span></div>
-                        <h3 class="font-bold text-[#1B3C59] text-sm md:text-lg leading-tight mb-2 md:mb-3 line-clamp-2">${p.name}</h3>
+                        <div class="mb-1 md:mb-2"><span class="text-[9px] md:text-[10px] uppercase font-bold text-[#8B5E3C] tracking-wider dark:text-[#dca980]">${p.category}</span></div>
+                        <h3 class="font-bold text-[#1B3C59] text-sm md:text-lg leading-tight mb-2 md:mb-3 line-clamp-2 dark:text-white">${p.name}</h3>
 
                         <!-- Variant Selector -->
                         ${variantsHtml}
 
-                        <div class="mt-auto flex justify-between items-center pt-3 md:pt-4 border-t border-dashed border-gray-100">
-                            <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl">${formatPrice(currentPrice)}</span>
+                        <div class="mt-auto flex justify-between items-center pt-3 md:pt-4 border-t border-dashed border-gray-100 dark:border-gray-700">
+                            <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl dark:text-white">${formatPrice(currentPrice)}</span>
                             ${controlsHtml}
                         </div>
                     </div>`;
@@ -586,7 +592,7 @@
 
             categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `cat-btn bg-[#F5EFE0] text-[#5D4037] hover:bg-[#e6dac4] px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap`;
+                btn.className = `cat-btn bg-[#F5EFE0] text-[#5D4037] hover:bg-[#e6dac4] px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600`;
                 btn.textContent = cat.name;
                 btn.onclick = () => filterCategory(cat.id);
                 filterContainer.appendChild(btn);
@@ -602,7 +608,7 @@
                 if (isActive) {
                     btn.className = 'cat-btn active bg-[#1B3C59] text-white px-6 py-2 rounded-full text-sm font-semibold shadow-sm transition whitespace-nowrap';
                 } else {
-                    btn.className = 'cat-btn bg-[#F5EFE0] text-[#5D4037] hover:bg-[#e6dac4] px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap';
+                    btn.className = 'cat-btn bg-[#F5EFE0] text-[#5D4037] hover:bg-[#e6dac4] px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600';
                 }
             });
             renderShop();
@@ -636,23 +642,23 @@
             const container = document.getElementById('cart-items');
             container.innerHTML = '';
             let total = 0, count = 0;
-            if(cart.length === 0) container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="h-16 w-16 mx-auto mb-2 text-gray-300"></i><p>Carrito vacío</p></div>`;
+            if(cart.length === 0) container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="h-16 w-16 mx-auto mb-2 text-gray-300 dark:text-gray-500"></i><p class="dark:text-gray-400">Carrito vacío</p></div>`;
 
             cart.forEach((item, index) => {
                 total += item.price * item.quantity;
                 count += item.quantity;
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm';
+                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm dark:bg-gray-700 dark:border-gray-600';
                 div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0">
+                    <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0 dark:bg-gray-600 dark:border-gray-500">
                         <img src="${item.image}" class="w-full h-full object-cover rounded">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-bold text-[#1B3C59] text-sm truncate">${item.name}</div>
-                        <div class="text-xs text-gray-500 font-medium">${item.variantName ? item.variantName : ''}</div>
-                        <div class="text-[#8B5E3C] text-xs font-semibold">${item.quantity} x ${formatPrice(item.price)}</div>
+                        <div class="font-bold text-[#1B3C59] text-sm truncate dark:text-white">${item.name}</div>
+                        <div class="text-xs text-gray-500 font-medium dark:text-gray-300">${item.variantName ? item.variantName : ''}</div>
+                        <div class="text-[#8B5E3C] text-xs font-semibold dark:text-[#dca980]">${item.quantity} x ${formatPrice(item.price)}</div>
                     </div>
-                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition dark:hover:bg-red-900/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 container.appendChild(div);
             });
 
@@ -718,112 +724,29 @@
             window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        function applyDiscount() {
-            const codeInput = document.getElementById('discount-code');
-            const messageEl = document.getElementById('discount-message');
-            const code = codeInput.value.trim().toUpperCase();
+        // --- DARK MODE LOGIC ---
+        const toggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
 
-            if (code === 'MCO10') {
-                discountApplied = true;
-                messageEl.textContent = '¡Descuento aplicado + Envío Gratis!';
-                messageEl.className = 'text-xs mt-1 text-green-600 font-bold';
-                codeInput.disabled = true;
-                document.getElementById('btn-apply-discount').disabled = true;
-                document.getElementById('btn-apply-discount').classList.add('opacity-50', 'cursor-not-allowed');
-                updateCartUI();
+        function updateTheme(isDark) {
+            if (isDark) {
+                html.classList.add('dark');
+                toggleBtn.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
             } else {
-                discountApplied = false;
-                messageEl.textContent = 'Código inválido';
-                messageEl.className = 'text-xs mt-1 text-red-500 font-bold';
-                updateCartUI();
+                html.classList.remove('dark');
+                toggleBtn.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
             }
         }
 
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            container.innerHTML = '';
-            let total = 0, count = 0;
-            if(cart.length === 0) container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="h-16 w-16 mx-auto mb-2 text-gray-300"></i><p>Carrito vacío</p></div>`;
+        const savedTheme = localStorage.getItem('theme') === 'dark';
+        updateTheme(savedTheme);
 
-            cart.forEach((item, index) => {
-                total += item.price * item.quantity;
-                count += item.quantity;
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm';
-                div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0">
-                        <img src="${item.image}" class="w-full h-full object-cover rounded">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-bold text-[#1B3C59] text-sm truncate">${item.name}</div>
-                        <div class="text-xs text-gray-500 font-medium">${item.variantName ? item.variantName : ''}</div>
-                        <div class="text-[#8B5E3C] text-xs font-semibold">${item.quantity} x ${formatPrice(item.price)}</div>
-                    </div>
-                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
-                container.appendChild(div);
-            });
-
-            const subtotalRow = document.getElementById('subtotal-row');
-            const discountRow = document.getElementById('discount-row');
-            const subtotalEl = document.getElementById('cart-subtotal');
-            const discountEl = document.getElementById('cart-discount');
-            const totalEl = document.getElementById('cart-total');
-
-            if (discountApplied && total > 0) {
-                const discountAmount = total * 0.10;
-                const finalTotal = total - discountAmount;
-
-                subtotalRow.classList.remove('hidden');
-                discountRow.classList.remove('hidden');
-
-                subtotalEl.textContent = formatPrice(total);
-                discountEl.textContent = '-' + formatPrice(discountAmount);
-                totalEl.textContent = formatPrice(finalTotal);
-            } else {
-                 if(subtotalRow) subtotalRow.classList.add('hidden');
-                 if(discountRow) discountRow.classList.add('hidden');
-                 totalEl.textContent = formatPrice(total);
-            }
-
-            document.getElementById('cart-count').textContent = count;
-            const badge = document.getElementById('cart-count');
-            count > 0 ? badge.classList.remove('scale-0') : badge.classList.add('scale-0');
-            lucide.createIcons();
-        }
-
-        function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); }
-
-        function toggleCart() {
-            const sb = document.getElementById('cart-sidebar'), ov = document.getElementById('cart-overlay');
-            if(sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); setTimeout(()=>ov.classList.remove('opacity-0'),10); }
-            else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
-        }
-
-        function checkoutWhatsApp() {
-            if(cart.length===0) return;
-            let msg = "Hola *Mascotitas*! 🐾\nQuiero realizar el siguiente pedido:\n\n";
-            let total = 0;
-            cart.forEach(i => {
-                const variantText = i.variantName ? `(${i.variantName}) ` : '';
-                msg += `▪️ ${i.quantity}x ${i.name} ${variantText}($${i.price*i.quantity})\n`;
-                total += i.price*i.quantity;
-            });
-
-            if (discountApplied) {
-                 const discountAmount = total * 0.10;
-                 const finalTotal = total - discountAmount;
-                 msg += `\nSubtotal: ${formatPrice(total)}`;
-                 msg += `\nDescuento (MCO10): -${formatPrice(discountAmount)}`;
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
-                 msg += `\n*TOTAL: ${formatPrice(finalTotal)}*`;
-            } else {
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
-                 msg += `\n*TOTAL: ${formatPrice(total)}*`;
-            }
-
-            msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
-            window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
-        }
+        toggleBtn.addEventListener('click', () => {
+            const isDark = html.classList.contains('dark');
+            updateTheme(!isDark);
+        });
     </script>
 </body>
 </html>
