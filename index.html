@@ -62,6 +62,7 @@
         <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-[#1B3C59]">Nuestros Productos</h2>
+                <p class="text-green-600 font-bold mt-2 text-sm md:text-base animate-pulse">📉 Precios con 7% de descuento por pago en Efectivo o Transferencia</p>
                 <div class="h-1 w-20 bg-[#8B5E3C] mx-auto mt-2 rounded-full"></div>
             </div>
 
@@ -199,8 +200,9 @@
                     <div class="mt-auto border-t border-gray-100 pt-6">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="flex flex-col text-center sm:text-left">
-                                <span class="text-xs text-gray-400 font-medium">Precio Final</span>
+                                <span id="modal-original-price" class="text-sm text-gray-400 line-through">$0</span>
                                 <span id="modal-price" class="text-3xl font-extrabold text-[#1B3C59]">$0</span>
+                                <span class="text-sm font-bold text-green-600">Efectivo / Transf.</span>
                             </div>
 
                             <div id="modal-controls" class="flex items-center">
@@ -381,9 +383,12 @@
             const vIdx = selectedVariants[p.id] || 0;
             const variant = p.variants[vIdx];
             const price = variant ? variant.price : p.price;
+            const originalPrice = variant ? variant.originalPrice : p.originalPrice;
             const qty = getCartQuantity(p.id, vIdx);
 
             document.getElementById('modal-price').textContent = formatPrice(price);
+            const originalPriceEl = document.getElementById('modal-original-price');
+            if (originalPriceEl) originalPriceEl.textContent = formatPrice(originalPrice);
 
             const variantContainer = document.getElementById('modal-variants');
             variantContainer.innerHTML = '';
@@ -436,11 +441,15 @@
                         let variants = [];
                         for(let i=1; i<=4; i++) {
                             const weight = item[`KM ${i}`];
-                            const price = parseFloat(item[`Precio ${i}`]);
-                            if(weight && !isNaN(price)) variants.push({ weight: weight.trim(), price: price });
+                            const originalPrice = parseFloat(item[`Precio ${i}`]);
+                            if(weight && !isNaN(originalPrice)) {
+                                const price = Math.floor(originalPrice * 0.93);
+                                variants.push({ weight: weight.trim(), price: price, originalPrice: originalPrice });
+                            }
                         }
                         variants.sort((a, b) => a.price - b.price);
                         const defaultPrice = variants.length > 0 ? variants[0].price : 0;
+                        const defaultOriginalPrice = variants.length > 0 ? variants[0].originalPrice : 0;
                         let images = [];
                         if (item['Image 1'] && item['Image 1'].trim()) images.push(item['Image 1'].trim());
                         if (item['Image 2'] && item['Image 2'].trim()) images.push(item['Image 2'].trim());
@@ -453,6 +462,7 @@
                             desc: item.desc || '',
                             variants: variants,
                             price: defaultPrice,
+                            originalPrice: defaultOriginalPrice,
                             stock: parseInt(item.stock) || 0,
                             category: item.category ? item.category.toLowerCase().trim() : 'varios',
                             images: images,
@@ -522,7 +532,9 @@
                 variantsHtml += '</div>';
 
                 const currentVariantIdx = selectedVariants[p.id] || 0;
-                const currentPrice = p.variants[currentVariantIdx] ? p.variants[currentVariantIdx].price : p.price;
+                const variant = p.variants[currentVariantIdx];
+                const currentPrice = variant ? variant.price : p.price;
+                const currentOriginalPrice = variant ? variant.originalPrice : p.originalPrice;
                 const currentImageIdx = productImageIndices[p.id] || 0;
                 const currentImage = p.images[currentImageIdx] || p.images[0];
                 const hasMultipleImages = p.images.length > 1;
@@ -571,7 +583,11 @@
                         ${variantsHtml}
 
                         <div class="mt-auto flex justify-between items-center pt-3 md:pt-4 border-t border-dashed border-gray-100">
-                            <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl">${formatPrice(currentPrice)}</span>
+                            <div class="flex flex-col items-start">
+                                <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl">${formatPrice(currentPrice)}</span>
+                                <span class="text-xs text-gray-400 line-through">${formatPrice(currentOriginalPrice)}</span>
+                                <span class="text-[10px] text-green-600 font-bold leading-tight">Efectivo / Transf.</span>
+                            </div>
                             ${controlsHtml}
                         </div>
                     </div>`;
@@ -608,9 +624,6 @@
             renderShop();
         }
 
-        // --- CARRITO ---
-        // addToCart Removed and replaced by updateQuantity in global scope above
-
         function applyDiscount() {
             const codeInput = document.getElementById('discount-code');
             const messageEl = document.getElementById('discount-message');
@@ -684,7 +697,7 @@
             lucide.createIcons();
         }
 
-        function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); renderShop(); } // Added renderShop to update buttons
+        function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); renderShop(); }
 
         function toggleCart() {
             const sb = document.getElementById('cart-sidebar'), ov = document.getElementById('cart-overlay');
@@ -714,113 +727,7 @@
                  msg += `\n*TOTAL: ${formatPrice(total)}*`;
             }
 
-            msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
-            window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function applyDiscount() {
-            const codeInput = document.getElementById('discount-code');
-            const messageEl = document.getElementById('discount-message');
-            const code = codeInput.value.trim().toUpperCase();
-
-            if (code === 'MCO10') {
-                discountApplied = true;
-                messageEl.textContent = '¡Descuento aplicado + Envío Gratis!';
-                messageEl.className = 'text-xs mt-1 text-green-600 font-bold';
-                codeInput.disabled = true;
-                document.getElementById('btn-apply-discount').disabled = true;
-                document.getElementById('btn-apply-discount').classList.add('opacity-50', 'cursor-not-allowed');
-                updateCartUI();
-            } else {
-                discountApplied = false;
-                messageEl.textContent = 'Código inválido';
-                messageEl.className = 'text-xs mt-1 text-red-500 font-bold';
-                updateCartUI();
-            }
-        }
-
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            container.innerHTML = '';
-            let total = 0, count = 0;
-            if(cart.length === 0) container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="h-16 w-16 mx-auto mb-2 text-gray-300"></i><p>Carrito vacío</p></div>`;
-
-            cart.forEach((item, index) => {
-                total += item.price * item.quantity;
-                count += item.quantity;
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm';
-                div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0">
-                        <img src="${item.image}" class="w-full h-full object-cover rounded">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-bold text-[#1B3C59] text-sm truncate">${item.name}</div>
-                        <div class="text-xs text-gray-500 font-medium">${item.variantName ? item.variantName : ''}</div>
-                        <div class="text-[#8B5E3C] text-xs font-semibold">${item.quantity} x ${formatPrice(item.price)}</div>
-                    </div>
-                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
-                container.appendChild(div);
-            });
-
-            const subtotalRow = document.getElementById('subtotal-row');
-            const discountRow = document.getElementById('discount-row');
-            const subtotalEl = document.getElementById('cart-subtotal');
-            const discountEl = document.getElementById('cart-discount');
-            const totalEl = document.getElementById('cart-total');
-
-            if (discountApplied && total > 0) {
-                const discountAmount = total * 0.10;
-                const finalTotal = total - discountAmount;
-
-                subtotalRow.classList.remove('hidden');
-                discountRow.classList.remove('hidden');
-
-                subtotalEl.textContent = formatPrice(total);
-                discountEl.textContent = '-' + formatPrice(discountAmount);
-                totalEl.textContent = formatPrice(finalTotal);
-            } else {
-                 if(subtotalRow) subtotalRow.classList.add('hidden');
-                 if(discountRow) discountRow.classList.add('hidden');
-                 totalEl.textContent = formatPrice(total);
-            }
-
-            document.getElementById('cart-count').textContent = count;
-            const badge = document.getElementById('cart-count');
-            count > 0 ? badge.classList.remove('scale-0') : badge.classList.add('scale-0');
-            lucide.createIcons();
-        }
-
-        function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); }
-
-        function toggleCart() {
-            const sb = document.getElementById('cart-sidebar'), ov = document.getElementById('cart-overlay');
-            if(sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); setTimeout(()=>ov.classList.remove('opacity-0'),10); }
-            else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
-        }
-
-        function checkoutWhatsApp() {
-            if(cart.length===0) return;
-            let msg = "Hola *Mascotitas*! 🐾\nQuiero realizar el siguiente pedido:\n\n";
-            let total = 0;
-            cart.forEach(i => {
-                const variantText = i.variantName ? `(${i.variantName}) ` : '';
-                msg += `▪️ ${i.quantity}x ${i.name} ${variantText}($${i.price*i.quantity})\n`;
-                total += i.price*i.quantity;
-            });
-
-            if (discountApplied) {
-                 const discountAmount = total * 0.10;
-                 const finalTotal = total - discountAmount;
-                 msg += `\nSubtotal: ${formatPrice(total)}`;
-                 msg += `\nDescuento (MCO10): -${formatPrice(discountAmount)}`;
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
-                 msg += `\n*TOTAL: ${formatPrice(finalTotal)}*`;
-            } else {
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
-                 msg += `\n*TOTAL: ${formatPrice(total)}*`;
-            }
-
+            msg += `\n\nPrecios con 7% OFF por pago en Efectivo/Transferencia.`;
             msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
             window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
         }
