@@ -460,7 +460,10 @@
                                 // Detect manual discount column for this variant
                                 const discountKey = Object.keys(item).find(k => {
                                     const norm = k.toLowerCase();
-                                    return norm.includes('precio') && norm.includes(i.toString()) && (norm.includes('desc') || norm.includes('esc'));
+                                    // Flexible matching to support typos like "descuneto" or plural "Precios"
+                                    return norm.includes('precio')
+                                        && norm.includes(i.toString())
+                                        && (norm.includes('desc') || norm.includes('esc') || norm.includes('off'));
                                 });
 
                                 if (discountKey && item[discountKey] && item[discountKey].trim() !== '') {
