@@ -9,9 +9,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
+        html { scroll-behavior: smooth; }
         body { font-family: 'Poppins', sans-serif; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -19,18 +21,47 @@
         .bg-navy { background-color: #1B3C59; }
         .text-brown { color: #5D4037; }
         .hidden-section { display: none !important; }
+
+        .product-card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .product-card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(27, 60, 89, 0.12); }
+
+        .google-user-area { display: flex; align-items: center; gap: 8px; }
+        .google-user-area img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #8B5E3C; cursor: pointer; }
+        .google-user-area span { font-size: 0.85rem; font-weight: 600; color: #1B3C59; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .loading-pulse { animation: loadingPulse 1.5s ease-in-out infinite; }
+        @keyframes loadingPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
+
+        .cart-item-enter { animation: cartItemSlide 0.3s ease-out; }
+        @keyframes cartItemSlide { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        @keyframes bounceDot { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .bounce-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #8B5E3C; animation: bounceDot 1.4s infinite ease-in-out both; }
+        .bounce-dot:nth-child(1) { animation-delay: -0.32s; }
+        .bounce-dot:nth-child(2) { animation-delay: -0.16s; }
     </style>
 </head>
 <body class="bg-[#FDFBF7] text-[#5D4037]">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-[#F5EFE0]">
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-[#F5EFE0]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-24">
                 <a href="#" class="flex items-center cursor-pointer gap-3 group">
                     <i data-lucide="paw-print" class="h-10 w-10 md:h-12 md:w-12 text-[#1B3C59] group-hover:rotate-12 transition-transform"></i>
                     <span class="font-extrabold text-4xl md:text-5xl text-[#1B3C59] tracking-wide">MASC<span class="text-[#8B5E3C]">🐾</span>TITAS</span>
                 </a>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 md:gap-4">
+                    <!-- Google Sign-In Button -->
+                    <button id="google-signin-btn" onclick="handleGoogleSignIn()" class="flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-semibold text-gray-600 hover:shadow-sm">
+                        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        <span class="hidden md:inline">Iniciar sesión</span>
+                    </button>
+                    <!-- Google User Area (hidden by default) -->
+                    <div id="google-user-area" class="google-user-area hidden">
+                        <img id="google-user-avatar" src="" alt="Avatar" onclick="handleGoogleSignOut()" title="Ver perfil / Cerrar sesión">
+                        <span id="google-user-name" class="hidden md:inline"></span>
+                    </div>
+
                     <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition" onclick="toggleCart()">
                         <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59]"></i>
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#8B5E3C] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
@@ -76,8 +107,13 @@
 
             <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                 <div class="col-span-full text-center py-20">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C59] mx-auto mb-4"></div>
-                    <p class="text-xl font-medium text-[#5D4037]">Cargando catálogo...</p>
+                    <svg class="loading-pulse mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="#1B3C59" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-5.5-3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm11 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM12 17.5c-2.33 0-4.32-1.45-5.12-3.5h-.01c-.06.16-.12.33-.17.5C6.22 16.18 8.88 17.5 12 17.5s5.78-1.32 6.3-3c-.05-.17-.11-.34-.17-.5h-.01c-.8 2.05-2.79 3.5-5.12 3.5z"/></svg>
+                    <p class="text-xl font-medium text-[#5D4037]">Cargando catálogo</p>
+                    <div class="flex justify-center gap-1 mt-2">
+                        <span class="bounce-dot"></span>
+                        <span class="bounce-dot"></span>
+                        <span class="bounce-dot"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,7 +151,7 @@
                 </div>
             </div>
             <div class="border-t border-white/10 mt-10 pt-6 text-center text-sm text-gray-400">
-                <p>© 2025 Mascotitas Alimentos.</p>
+                <p>© 2025 - 2026 Mascotitas Alimentos.</p>
             </div>
         </div>
     </footer>
@@ -158,6 +194,9 @@
             <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] flex justify-center items-center gap-2">
                 <i data-lucide="message-circle" class="h-6 w-6"></i> Confirmar por WhatsApp
             </button>
+            <p class="text-xs text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
+                <i data-lucide="map-pin" class="h-3 w-3"></i> Se solicitará tu ubicación para el envío
+            </p>
         </div>
     </div>
 
@@ -228,6 +267,11 @@
         let selectedVariants = {};
         let productImageIndices = {};
         let currentModalProduct = null;
+
+        // --- GOOGLE & GEOLOCALIZACIÓN ---
+        const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE'; // Reemplazar con tu Client ID de Google Cloud Console
+        let googleUser = null; // {name, email, picture}
+        let userLocation = null; // {lat, lng}
 
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -372,6 +416,94 @@
                 setTimeout(() => count.classList.remove('scale-125'), 200);
             };
         });
+
+        // --- GOOGLE SIGN-IN ---
+        function handleGoogleSignIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                Swal.fire({ icon: 'info', title: 'Google no disponible', text: 'Configura tu Google Client ID para habilitar el inicio de sesión.', confirmButtonColor: '#1B3C59' });
+                return;
+            }
+            if (GOOGLE_CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
+                Swal.fire({ icon: 'info', title: 'Configuración pendiente', text: 'El administrador debe configurar el Google Client ID.', confirmButtonColor: '#1B3C59' });
+                return;
+            }
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: 'openid profile email',
+                callback: async (tokenResponse) => {
+                    if (tokenResponse.access_token) {
+                        try {
+                            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                            });
+                            const data = await res.json();
+                            googleUser = { name: data.name || '', email: data.email || '', picture: data.picture || '' };
+                            updateGoogleUI();
+                            Swal.fire({ icon: 'success', title: `¡Hola, ${googleUser.name.split(' ')[0]}!`, text: 'Sesión iniciada correctamente', timer: 2000, showConfirmButton: false });
+                        } catch (err) {
+                            console.error('Error obteniendo datos de Google:', err);
+                        }
+                    }
+                }
+            });
+            client.requestAccessToken();
+        }
+
+        function handleGoogleSignOut() {
+            if (!googleUser) return;
+            Swal.fire({
+                title: googleUser.name,
+                text: googleUser.email,
+                imageUrl: googleUser.picture,
+                imageWidth: 80,
+                imageHeight: 80,
+                imageAlt: 'Avatar',
+                showCancelButton: true,
+                confirmButtonText: 'Cerrar sesión',
+                cancelButtonText: 'Volver',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#1B3C59'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    googleUser = null;
+                    updateGoogleUI();
+                    Swal.fire({ icon: 'info', title: 'Sesión cerrada', timer: 1500, showConfirmButton: false });
+                }
+            });
+        }
+
+        function updateGoogleUI() {
+            const signinBtn = document.getElementById('google-signin-btn');
+            const userArea = document.getElementById('google-user-area');
+            if (googleUser) {
+                signinBtn.classList.add('hidden');
+                userArea.classList.remove('hidden');
+                document.getElementById('google-user-avatar').src = googleUser.picture;
+                document.getElementById('google-user-name').textContent = googleUser.name.split(' ')[0];
+            } else {
+                signinBtn.classList.remove('hidden');
+                userArea.classList.add('hidden');
+            }
+        }
+
+        // --- GEOLOCALIZACIÓN ---
+        function requestUserLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve(null);
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
+                    },
+                    () => {
+                        resolve(null);
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            });
+        }
 
         // --- FUNCIONES UI ---
         function updateModalUI() {
@@ -595,7 +727,7 @@
                     `;
                 }
 
-                card.className = `bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-[#F5EFE0] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''}`;
+                card.className = `bg-white rounded-2xl shadow-sm product-card-hover overflow-hidden border border-[#F5EFE0] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''}`;
                 card.onclick = () => openProductModal(p.id);
                 card.style.cursor = 'pointer';
 
@@ -685,7 +817,7 @@
                 total += item.price * item.quantity;
                 count += item.quantity;
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm';
+                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm cart-item-enter';
                 div.innerHTML = `
                     <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0">
                         <img src="${item.image}" class="w-full h-full object-cover rounded">
@@ -735,8 +867,15 @@
             else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
         }
 
-        function checkoutWhatsApp() {
+        async function checkoutWhatsApp() {
             if(cart.length===0) return;
+
+            // Solicitar ubicación al momento del checkout
+            Swal.fire({ title: 'Preparando pedido...', text: 'Obteniendo tu ubicación para el envío', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            userLocation = await requestUserLocation();
+            Swal.close();
+
             let msg = "Hola *Mascotitas*! 🐾\nQuiero realizar el siguiente pedido:\n\n";
             let total = 0;
             cart.forEach(i => {
@@ -757,7 +896,27 @@
                  msg += `\n*TOTAL: ${formatPrice(total)}*`;
             }
 
-            msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
+            // Datos del cliente
+            msg += `\n\n--- *Datos del cliente* ---`;
+            if (googleUser) {
+                msg += `\n👤 ${googleUser.name}`;
+                msg += `\n📧 ${googleUser.email}`;
+            }
+            if (userLocation) {
+                msg += `\n📍 Mi ubicación: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lng}`;
+            }
+
+            // Mensaje de cierre adaptativo
+            if (googleUser && userLocation) {
+                msg += `\n\nPor favor, indícanos la dirección exacta de entrega para coordinar el envío. ¡Gracias!`;
+            } else if (googleUser) {
+                msg += `\n\nPor favor, indícanos tu dirección de entrega para coordinar el envío. ¡Gracias!`;
+            } else if (userLocation) {
+                msg += `\n\nPor favor, indícanos tu nombre, email y dirección exacta de entrega para coordinar el pago y el envío. ¡Gracias!`;
+            } else {
+                msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
+            }
+
             window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
         }
     </script>
