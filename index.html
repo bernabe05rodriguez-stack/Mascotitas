@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -24,10 +24,6 @@
 
         .product-card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .product-card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(27, 60, 89, 0.12); }
-
-        .google-user-area { display: flex; align-items: center; gap: 8px; }
-        .google-user-area img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #8B5E3C; cursor: pointer; }
-        .google-user-area span { font-size: 0.85rem; font-weight: 600; color: #1B3C59; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .loading-pulse { animation: loadingPulse 1.5s ease-in-out infinite; }
         @keyframes loadingPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
@@ -103,17 +99,6 @@
                     <span class="font-extrabold text-4xl md:text-5xl text-[#1B3C59] tracking-wide">MASC<span class="text-[#8B5E3C]">🐾</span>TITAS</span>
                 </a>
                 <div class="flex items-center gap-2 md:gap-4">
-                    <!-- Google Sign-In Button -->
-                    <button id="google-signin-btn" onclick="handleGoogleSignIn()" class="flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-semibold text-gray-600 hover:shadow-sm">
-                        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                        <span class="hidden md:inline">Iniciar sesión</span>
-                    </button>
-                    <!-- Google User Area (hidden by default) -->
-                    <div id="google-user-area" class="google-user-area hidden">
-                        <img id="google-user-avatar" src="" alt="Avatar" onclick="handleGoogleSignOut()" title="Ver perfil / Cerrar sesión">
-                        <span id="google-user-name" class="hidden md:inline"></span>
-                    </div>
-
                     <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition" onclick="toggleCart()">
                         <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59]"></i>
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#8B5E3C] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
@@ -196,10 +181,6 @@
                     <p class="text-[#dca980] font-bold text-lg">Lunes a Domingo<br>9:00 hs a 20:00 hs</p>
                 </div>
                 <div class="flex flex-col items-center md:items-end">
-                    <p class="text-gray-400 text-sm mb-4">Sobremonte 256, Dorrego, Mendoza</p>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Sobremonte+256,+M5519+Dorrego,+Mendoza" target="_blank" class="flex items-center gap-2 bg-[#1B3C59] hover:bg-[#2c5275] text-white px-4 py-2 rounded-full font-bold transition shadow-lg mb-3 border border-[#8B5E3C]">
-                        <i data-lucide="map-pin" class="h-5 w-5"></i> Ver Ubicación
-                    </a>
                     <a href="https://wa.me/5492615016555" class="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd59] text-white px-4 py-2 rounded-full font-bold transition shadow-lg">
                         <i data-lucide="phone" class="h-5 w-5"></i> 261-5016555
                     </a>
@@ -257,9 +238,6 @@
             <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] flex justify-center items-center gap-2">
                 <i data-lucide="message-circle" class="h-6 w-6"></i> Confirmar por WhatsApp
             </button>
-            <p class="text-xs text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
-                <i data-lucide="map-pin" class="h-3 w-3"></i> Se solicitará tu ubicación para el envío
-            </p>
         </div>
     </div>
 
@@ -355,39 +333,11 @@
         let productImageIndices = {};
         let currentModalProduct = null;
 
-        // --- GOOGLE & GEOLOCALIZACIÓN ---
-        const GOOGLE_CLIENT_ID = '613667488895-n8ribjev75gd4blc8q6lscu25alhop8i.apps.googleusercontent.com';
-        let googleUser = null; // {name, email, picture}
-        let userLocation = null; // {lat, lng}
-
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             loadDataFromSheets();
             document.getElementById('search-input').addEventListener('input', (e) => renderShop(e.target.value));
-
-            // Auto-prompt Google Sign-In (una vez por sesión)
-            setTimeout(() => {
-                if (!googleUser && !sessionStorage.getItem('google_prompt_shown')) {
-                    sessionStorage.setItem('google_prompt_shown', '1');
-                    Swal.fire({
-                        html: `
-                            <div style="text-align:center">
-                                <svg width="40" height="40" viewBox="0 0 24 24" style="margin:0 auto 12px"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                                <h2 style="font-family:Poppins;font-weight:800;color:#1B3C59;font-size:1.3rem;margin-bottom:4px">Bienvenido a Mascotitas</h2>
-                                <p style="color:#5D4037;font-size:0.9rem">Iniciá sesión con Google para agilizar tu compra</p>
-                            </div>`,
-                        showCancelButton: true,
-                        confirmButtonText: 'Iniciar sesión con Google',
-                        cancelButtonText: 'Seguir sin cuenta',
-                        confirmButtonColor: '#1B3C59',
-                        cancelButtonColor: '#9CA3AF',
-                        customClass: { popup: 'rounded-2xl' }
-                    }).then((result) => {
-                        if (result.isConfirmed) handleGoogleSignIn();
-                    });
-                }
-            }, 2500);
 
             // Global Helpers
             window.selectVariant = function(productId, variantIndex) {
@@ -526,94 +476,6 @@
                 setTimeout(() => count.classList.remove('scale-125'), 200);
             };
         });
-
-        // --- GOOGLE SIGN-IN ---
-        function handleGoogleSignIn() {
-            if (typeof google === 'undefined' || !google.accounts) {
-                Swal.fire({ icon: 'info', title: 'Google no disponible', text: 'Configura tu Google Client ID para habilitar el inicio de sesión.', confirmButtonColor: '#1B3C59' });
-                return;
-            }
-            if (GOOGLE_CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
-                Swal.fire({ icon: 'info', title: 'Configuración pendiente', text: 'El administrador debe configurar el Google Client ID.', confirmButtonColor: '#1B3C59' });
-                return;
-            }
-            const client = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CLIENT_ID,
-                scope: 'openid profile email',
-                callback: async (tokenResponse) => {
-                    if (tokenResponse.access_token) {
-                        try {
-                            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-                            });
-                            const data = await res.json();
-                            googleUser = { name: data.name || '', email: data.email || '', picture: data.picture || '' };
-                            updateGoogleUI();
-                            Swal.fire({ icon: 'success', title: `¡Hola, ${googleUser.name.split(' ')[0]}!`, text: 'Sesión iniciada correctamente', timer: 2000, showConfirmButton: false });
-                        } catch (err) {
-                            console.error('Error obteniendo datos de Google:', err);
-                        }
-                    }
-                }
-            });
-            client.requestAccessToken();
-        }
-
-        function handleGoogleSignOut() {
-            if (!googleUser) return;
-            Swal.fire({
-                title: googleUser.name,
-                text: googleUser.email,
-                imageUrl: googleUser.picture,
-                imageWidth: 80,
-                imageHeight: 80,
-                imageAlt: 'Avatar',
-                showCancelButton: true,
-                confirmButtonText: 'Cerrar sesión',
-                cancelButtonText: 'Volver',
-                confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#1B3C59'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    googleUser = null;
-                    updateGoogleUI();
-                    Swal.fire({ icon: 'info', title: 'Sesión cerrada', timer: 1500, showConfirmButton: false });
-                }
-            });
-        }
-
-        function updateGoogleUI() {
-            const signinBtn = document.getElementById('google-signin-btn');
-            const userArea = document.getElementById('google-user-area');
-            if (googleUser) {
-                signinBtn.classList.add('hidden');
-                userArea.classList.remove('hidden');
-                document.getElementById('google-user-avatar').src = googleUser.picture;
-                document.getElementById('google-user-name').textContent = googleUser.name.split(' ')[0];
-            } else {
-                signinBtn.classList.remove('hidden');
-                userArea.classList.add('hidden');
-            }
-        }
-
-        // --- GEOLOCALIZACIÓN ---
-        function requestUserLocation() {
-            return new Promise((resolve) => {
-                if (!navigator.geolocation) {
-                    resolve(null);
-                    return;
-                }
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
-                    },
-                    () => {
-                        resolve(null);
-                    },
-                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-                );
-            });
-        }
 
         // --- FUNCIONES UI ---
         function updateModalUI() {
@@ -977,14 +839,8 @@
             else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
         }
 
-        async function checkoutWhatsApp() {
+        function checkoutWhatsApp() {
             if(cart.length===0) return;
-
-            // Solicitar ubicación al momento del checkout
-            Swal.fire({ title: 'Preparando pedido...', text: 'Obteniendo tu ubicación para el envío', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-            userLocation = await requestUserLocation();
-            Swal.close();
 
             let msg = "Hola *Mascotitas*! 🐾\nQuiero realizar el siguiente pedido:\n\n";
             let total = 0;
@@ -1006,26 +862,7 @@
                  msg += `\n*TOTAL: ${formatPrice(total)}*`;
             }
 
-            // Datos del cliente
-            msg += `\n\n--- *Datos del cliente* ---`;
-            if (googleUser) {
-                msg += `\n👤 ${googleUser.name}`;
-                msg += `\n📧 ${googleUser.email}`;
-            }
-            if (userLocation) {
-                msg += `\n📍 Mi ubicación: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lng}`;
-            }
-
-            // Mensaje de cierre adaptativo
-            if (googleUser && userLocation) {
-                msg += `\n\nPor favor, indícanos la dirección exacta de entrega para coordinar el envío. ¡Gracias!`;
-            } else if (googleUser) {
-                msg += `\n\nPor favor, indícanos tu dirección de entrega para coordinar el envío. ¡Gracias!`;
-            } else if (userLocation) {
-                msg += `\n\nPor favor, indícanos tu nombre, email y dirección exacta de entrega para coordinar el pago y el envío. ¡Gracias!`;
-            } else {
-                msg += `\n\nPor favor, indícanos tu nombre, email y dirección de entrega por este medio para coordinar el pago y el envío. ¡Muchas gracias!`;
-            }
+            msg += `\n\nPor favor, indícanos tu nombre y dirección de entrega para coordinar el pago y el envío. ¡Muchas gracias!`;
 
             window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
         }
