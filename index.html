@@ -41,8 +41,71 @@
         }
 
         /* Botones de categoría: hover suave */
-        .cat-btn { transition: background-color .2s ease, color .2s ease, transform .15s ease; }
+        .cat-btn { transition: background-color .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease; }
         .cat-btn:not(.active):hover { background-color: #F5EFE0; color: #1B3C59; transform: translateY(-1px); }
+        .cat-btn.active { box-shadow: 0 6px 16px rgba(27,60,89,0.25); }
+
+        /* Reveal on scroll */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
+        .reveal.in { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: .08s; }
+        .reveal-delay-2 { transition-delay: .16s; }
+        .reveal-delay-3 { transition-delay: .24s; }
+
+        /* Hero blobs animados (suaves, no satirados) */
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35;
+            pointer-events: none; will-change: transform;
+        }
+        .blob-1 { width: 420px; height: 420px; background: #dca980; top: -120px; left: -120px; animation: blobFloat 14s ease-in-out infinite; }
+        .blob-2 { width: 380px; height: 380px; background: #1B3C59; bottom: -140px; right: -100px; opacity: .18; animation: blobFloat 18s ease-in-out infinite reverse; }
+        @keyframes blobFloat {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.08); }
+        }
+
+        /* Hero image float */
+        .hero-img-wrap { animation: floatY 6s ease-in-out infinite; }
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* CTA shimmer */
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::after {
+            content: ''; position: absolute; top: 0; left: -150%;
+            width: 60%; height: 100%;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
+            transform: skewX(-20deg);
+            transition: left .9s ease;
+        }
+        .btn-shine:hover::after { left: 150%; }
+
+        /* Product image zoom on hover */
+        .product-card-hover img { transition: transform .5s cubic-bezier(.16,1,.3,1); }
+        .product-card-hover:hover img { transform: scale(1.06); }
+
+        /* Card stagger fade */
+        @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        #product-grid > * { animation: cardIn .5s ease both; }
+        #product-grid > *:nth-child(2) { animation-delay: .04s; }
+        #product-grid > *:nth-child(3) { animation-delay: .08s; }
+        #product-grid > *:nth-child(4) { animation-delay: .12s; }
+        #product-grid > *:nth-child(5) { animation-delay: .16s; }
+        #product-grid > *:nth-child(6) { animation-delay: .20s; }
+        #product-grid > *:nth-child(7) { animation-delay: .24s; }
+        #product-grid > *:nth-child(8) { animation-delay: .28s; }
+
+        /* Cart count pop */
+        @keyframes cartPop { 0% { transform: scale(1); } 30% { transform: scale(1.4); } 100% { transform: scale(1); } }
+        .cart-pop { animation: cartPop .45s ease; }
+
+        /* Sticky filter shadow refinement */
+        #category-filters { scroll-behavior: smooth; }
+
+        /* Rounded selection rings */
+        ::selection { background: #1B3C59; color: #fff; }
 
         .loading-pulse { animation: loadingPulse 1.5s ease-in-out infinite; }
         @keyframes loadingPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
@@ -133,17 +196,19 @@
 
     <div id="shop-view">
         <div class="bg-gradient-to-br from-[#F5EFE0] via-[#FDFBF7] to-[#F0E6D3] relative overflow-hidden">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
             <i data-lucide="paw-print" class="absolute top-6 left-6 h-20 w-20 text-[#1B3C59] opacity-[0.04] -rotate-12"></i>
             <i data-lucide="paw-print" class="absolute top-1/2 left-1/3 h-14 w-14 text-[#8B5E3C] opacity-[0.03] rotate-45"></i>
             <i data-lucide="paw-print" class="absolute bottom-8 right-16 h-28 w-28 text-[#8B5E3C] opacity-[0.04] rotate-12"></i>
             <i data-lucide="paw-print" class="absolute bottom-20 left-1/4 h-10 w-10 text-[#1B3C59] opacity-[0.03] -rotate-45"></i>
             <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-10 md:mb-0 text-center md:text-left max-w-xl">
-                    <span class="inline-block bg-[#1B3C59]/10 text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">Mendoza, Argentina</span>
-                    <h1 class="text-4xl md:text-6xl font-extrabold mb-5 text-[#1B3C59] leading-[1.1]">Tu alimento <br>de confianza</h1>
-                    <p class="text-[#5D4037] text-lg md:text-xl mb-8 font-medium leading-relaxed">La mejor nutricion para tus mascotas, con envio a domicilio.</p>
-                    <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                        <a href="#catalogo" class="bg-[#1B3C59] text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:bg-[#2c5275] transition transform hover:scale-105 inline-flex items-center justify-center gap-2">
+                    <span class="reveal inline-block bg-[#1B3C59]/10 text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">Mendoza, Argentina</span>
+                    <h1 class="reveal reveal-delay-1 text-4xl md:text-6xl font-extrabold mb-5 text-[#1B3C59] leading-[1.1]">Tu alimento <br>de confianza</h1>
+                    <p class="reveal reveal-delay-2 text-[#5D4037] text-lg md:text-xl mb-8 font-medium leading-relaxed">La mejor nutricion para tus mascotas, con envio a domicilio.</p>
+                    <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                        <a href="#catalogo" class="btn-shine bg-[#1B3C59] text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:bg-[#2c5275] transition transform hover:scale-105 inline-flex items-center justify-center gap-2">
                             Ver Catalogo <i data-lucide="chevron-down" class="h-4 w-4"></i>
                         </a>
                     </div>
@@ -152,7 +217,7 @@
                         <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="h-4 w-4 text-[#8B5E3C]"></i> Calidad garantizada</span>
                     </div>
                 </div>
-                <div class="relative">
+                <div class="relative hero-img-wrap">
                     <div class="absolute inset-0 bg-[#8B5E3C] rounded-full opacity-10 blur-3xl transform translate-x-4 translate-y-4 scale-110"></div>
                     <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Perros felices" class="relative rounded-3xl shadow-2xl border-4 border-white/80 w-full max-w-md mx-auto md:max-w-lg object-cover h-64 md:h-80">
                 </div>
@@ -161,9 +226,9 @@
 
         <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-[#1B3C59]">Nuestros Productos</h2>
-                <div class="h-1 w-20 bg-[#8B5E3C] mx-auto mt-3 rounded-full"></div>
-                <p class="text-[#5D4037]/60 mt-3 text-sm md:text-base">Encontra el mejor alimento para tu mascota</p>
+                <h2 class="reveal text-3xl md:text-4xl font-extrabold text-[#1B3C59]">Nuestros Productos</h2>
+                <div class="reveal reveal-delay-1 h-1 w-20 bg-[#8B5E3C] mx-auto mt-3 rounded-full"></div>
+                <p class="reveal reveal-delay-2 text-[#5D4037]/60 mt-3 text-sm md:text-base">Encontra el mejor alimento para tu mascota</p>
             </div>
 
             <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 z-40">
@@ -333,6 +398,14 @@
                 showTooltip();
                 setInterval(showTooltip, 30000);
             }, 5000);
+        })();
+
+        // --- Reveal on scroll ---
+        (function() {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.reveal').forEach(el => io.observe(el));
         })();
     </script>
 
@@ -843,9 +916,15 @@
                  totalEl.textContent = formatPrice(total);
             }
 
-            document.getElementById('cart-count').textContent = count;
             const badge = document.getElementById('cart-count');
+            const prev = parseInt(badge.textContent || '0', 10);
+            badge.textContent = count;
             count > 0 ? badge.classList.remove('scale-0') : badge.classList.add('scale-0');
+            if (count > prev) {
+                badge.classList.remove('cart-pop');
+                void badge.offsetWidth;
+                badge.classList.add('cart-pop');
+            }
             lucide.createIcons();
         }
 
