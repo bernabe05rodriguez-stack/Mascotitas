@@ -113,11 +113,15 @@
     <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-[#F5EFE0]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-24">
-                <a href="#" class="flex items-center cursor-pointer gap-3 group">
-                    <i data-lucide="paw-print" class="h-10 w-10 md:h-12 md:w-12 text-[#1B3C59] group-hover:rotate-12 transition-transform"></i>
-                    <span class="font-extrabold text-4xl md:text-5xl text-[#1B3C59] tracking-wide">MASC<span class="text-[#8B5E3C]">🐾</span>TITAS</span>
+                <a href="#" class="flex items-center cursor-pointer gap-2 md:gap-3 group shrink-0">
+                    <i data-lucide="paw-print" class="h-8 w-8 md:h-12 md:w-12 text-[#1B3C59] group-hover:rotate-12 transition-transform"></i>
+                    <span class="font-extrabold text-xl sm:text-2xl md:text-5xl text-[#1B3C59] tracking-wide">MASC<span class="text-[#8B5E3C]">🐾</span>TITAS</span>
                 </a>
-                <div class="flex items-center gap-2 md:gap-4">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <div class="relative w-40 sm:w-56 md:w-72">
+                        <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none bg-gray-50 text-sm">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
+                    </div>
                     <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition" onclick="toggleCart()">
                         <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59]"></i>
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#8B5E3C] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
@@ -162,13 +166,8 @@
                 <p class="text-[#5D4037]/60 mt-3 text-sm md:text-base">Encontra el mejor alimento para tu mascota</p>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 justify-between mb-10 items-center bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 z-40">
-                <div id="category-filters" class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-                    </div>
-                <div class="relative w-full md:w-80">
-                    <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1B3C59] bg-gray-50">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
-                </div>
+            <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 z-40">
+                <div id="category-filters" class="flex gap-2 overflow-x-auto w-full pb-1 scrollbar-hide justify-start md:justify-center"></div>
             </div>
 
             <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
