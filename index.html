@@ -10,12 +10,25 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg: #FBF6EC;
+            --bg-2: #F5EDDB;
+            --ink: #1F2937;
+            --ink-soft: #4B3A2F;
+            --navy: #1B3C59;
+            --brown: #8B5E3C;
+            --accent: #E07A3C;       /* coral cálido — acento único para CTAs */
+            --accent-dark: #C5631F;
+            --gold: #E8B65A;
+            --line: #ECE3CE;
+        }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; }
-        h1, h2, h3 { letter-spacing: -0.02em; }
+        body { font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); }
+        h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.025em; }
+        h1 { letter-spacing: -0.035em; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .text-navy { color: #1B3C59; }
@@ -105,7 +118,50 @@
         #category-filters { scroll-behavior: smooth; }
 
         /* Rounded selection rings */
-        ::selection { background: #1B3C59; color: #fff; }
+        ::selection { background: var(--accent); color: #fff; }
+
+        /* Botón principal cálido */
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 6px 0 var(--accent-dark), 0 14px 28px -10px rgba(224,122,60,.55);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--accent-dark), 0 18px 32px -10px rgba(224,122,60,.6); }
+        .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--accent-dark), 0 6px 14px -8px rgba(224,122,60,.5); }
+
+        /* Trust strip */
+        .trust-pill { transition: transform .25s ease; }
+        .trust-pill:hover { transform: translateY(-3px); }
+
+        /* Stat counter */
+        .stat-num { font-family: 'Fraunces', serif; font-weight: 800; }
+
+        /* Featured badges */
+        .badge {
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px; font-weight: 800; letter-spacing: .04em;
+            text-transform: uppercase;
+            padding: 4px 9px; border-radius: 9999px;
+            color: #fff;
+        }
+        .badge-hot { background: var(--accent); box-shadow: 0 4px 12px -4px rgba(224,122,60,.6); }
+        .badge-new { background: #1B3C59; }
+        .badge-sale { background: #16a34a; }
+
+        /* Pulse on accent */
+        @keyframes softPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(224,122,60,.55); } 50% { box-shadow: 0 0 0 10px rgba(224,122,60,0); } }
+        .pulse-accent { animation: softPulse 2.4s ease-out infinite; }
+
+        /* Wave divider */
+        .wave-divider { display:block; width:100%; height:60px; }
+
+        /* Card hover lift mas dramatico */
+        .product-card-hover:hover { transform: translateY(-6px); }
+
+        /* Marquee suave */
+        .marquee { display: flex; gap: 3rem; animation: marquee 30s linear infinite; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
         .loading-pulse { animation: loadingPulse 1.5s ease-in-out infinite; }
         @keyframes loadingPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
@@ -204,17 +260,35 @@
             <i data-lucide="paw-print" class="absolute bottom-20 left-1/4 h-10 w-10 text-[#1B3C59] opacity-[0.03] -rotate-45"></i>
             <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-10 md:mb-0 text-center md:text-left max-w-xl">
-                    <span class="reveal inline-block bg-[#1B3C59]/10 text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">Mendoza, Argentina</span>
-                    <h1 class="reveal reveal-delay-1 text-4xl md:text-6xl font-extrabold mb-5 text-[#1B3C59] leading-[1.1]">Tu alimento <br>de confianza</h1>
-                    <p class="reveal reveal-delay-2 text-[#5D4037] text-lg md:text-xl mb-8 font-medium leading-relaxed">La mejor nutricion para tus mascotas, con envio a domicilio.</p>
-                    <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                        <a href="#catalogo" class="btn-shine bg-[#1B3C59] text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:bg-[#2c5275] transition transform hover:scale-105 inline-flex items-center justify-center gap-2">
-                            Ver Catalogo <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                    <span class="reveal inline-flex items-center gap-2 bg-white/80 backdrop-blur text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6 border border-[#ECE3CE] shadow-sm">
+                        <span class="h-2 w-2 rounded-full bg-green-500 pulse-accent"></span> Envio en el dia · Mendoza
+                    </span>
+                    <h1 class="reveal reveal-delay-1 text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 text-[#1B3C59] leading-[0.95]">
+                        Tu mascota<br><span class="italic" style="color: var(--accent);">merece lo mejor.</span>
+                    </h1>
+                    <p class="reveal reveal-delay-2 text-[#4B3A2F] text-lg md:text-xl mb-8 font-medium leading-relaxed max-w-md mx-auto md:mx-0">
+                        Alimento premium, atención personal, y entrega rápida. Comprá tranqui — te ayudamos a elegir lo perfecto.
+                    </p>
+                    <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-8">
+                        <a href="#catalogo" class="btn-primary btn-shine px-8 py-4 rounded-full font-bold inline-flex items-center justify-center gap-2 text-base">
+                            Ver Catalogo <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                        </a>
+                        <a href="https://wa.me/5492615016555" target="_blank" class="px-7 py-4 rounded-full font-bold inline-flex items-center justify-center gap-2 text-base bg-white text-[#1B3C59] border border-[#ECE3CE] hover:border-[#1B3C59] transition shadow-sm">
+                            <i data-lucide="message-circle" class="h-5 w-5"></i> Asesoria gratis
                         </a>
                     </div>
-                    <div class="flex items-center justify-center md:justify-start gap-6 mt-8 text-sm text-[#5D4037]/70">
-                        <span class="flex items-center gap-1.5"><i data-lucide="truck" class="h-4 w-4 text-[#8B5E3C]"></i> Envio a domicilio</span>
-                        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="h-4 w-4 text-[#8B5E3C]"></i> Calidad garantizada</span>
+                    <div class="reveal flex items-center justify-center md:justify-start gap-6 text-sm text-[#4B3A2F]/80">
+                        <div class="flex flex-col items-center md:items-start">
+                            <div class="flex items-center gap-1 text-[#E8B65A]">
+                                <i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                            </div>
+                            <span class="text-xs font-semibold mt-0.5">+500 mascotas felices</span>
+                        </div>
+                        <div class="h-8 w-px bg-[#ECE3CE]"></div>
+                        <div class="flex flex-col items-center md:items-start">
+                            <span class="stat-num text-2xl text-[#1B3C59]">9-20hs</span>
+                            <span class="text-xs">Lun a Dom</span>
+                        </div>
                     </div>
                 </div>
                 <div class="relative hero-img-wrap">
@@ -224,11 +298,33 @@
             </div>
         </div>
 
+        <!-- Trust strip -->
+        <div class="bg-white border-y border-[#ECE3CE]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="trust-pill flex items-center gap-3">
+                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="truck" class="h-5 w-5 text-[#E07A3C]"></i></div>
+                    <div><div class="font-bold text-sm text-[#1B3C59]">Envio en el dia</div><div class="text-xs text-[#4B3A2F]/70">En toda Mendoza</div></div>
+                </div>
+                <div class="trust-pill flex items-center gap-3">
+                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="h-5 w-5 text-[#E07A3C]"></i></div>
+                    <div><div class="font-bold text-sm text-[#1B3C59]">Calidad premium</div><div class="text-xs text-[#4B3A2F]/70">Marcas seleccionadas</div></div>
+                </div>
+                <div class="trust-pill flex items-center gap-3">
+                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="message-circle-heart" class="h-5 w-5 text-[#E07A3C]"></i></div>
+                    <div><div class="font-bold text-sm text-[#1B3C59]">Atencion personal</div><div class="text-xs text-[#4B3A2F]/70">Te ayudamos a elegir</div></div>
+                </div>
+                <div class="trust-pill flex items-center gap-3">
+                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="wallet" class="h-5 w-5 text-[#E07A3C]"></i></div>
+                    <div><div class="font-bold text-sm text-[#1B3C59]">Efectivo / Transf.</div><div class="text-xs text-[#4B3A2F]/70">Con descuento</div></div>
+                </div>
+            </div>
+        </div>
+
         <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="text-center mb-10">
-                <h2 class="reveal text-3xl md:text-4xl font-extrabold text-[#1B3C59]">Nuestros Productos</h2>
-                <div class="reveal reveal-delay-1 h-1 w-20 bg-[#8B5E3C] mx-auto mt-3 rounded-full"></div>
-                <p class="reveal reveal-delay-2 text-[#5D4037]/60 mt-3 text-sm md:text-base">Encontra el mejor alimento para tu mascota</p>
+            <div class="text-center mb-12">
+                <span class="reveal inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#E07A3C] mb-3">Catalogo</span>
+                <h2 class="reveal reveal-delay-1 text-4xl md:text-5xl font-extrabold text-[#1B3C59]">Lo que tu mascota <span class="italic" style="color: var(--accent);">va a amar</span></h2>
+                <p class="reveal reveal-delay-2 text-[#4B3A2F]/70 mt-4 text-base md:text-lg max-w-xl mx-auto">Filtra por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
             </div>
 
             <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 z-40">
@@ -779,7 +875,7 @@
                 const qty = getCartQuantity(p.id, currentVariantIdx);
                 let controlsHtml = '';
                 if (qty === 0) {
-                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-gray-200 cursor-not-allowed text-gray-400' : 'bg-[#1B3C59] hover:bg-[#8B5E3C] text-white'}"><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
+                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-9 w-9 md:h-11 md:w-11 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-gray-200 cursor-not-allowed text-gray-400' : 'text-white hover:scale-110'}" ${outOfStock ? '' : 'style="background:var(--accent);box-shadow:0 6px 14px -4px rgba(224,122,60,.55)"'}><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
                 } else {
                     controlsHtml = `
                         <div class="flex items-center bg-gray-100 rounded-full overflow-hidden shadow-sm border border-gray-200 h-8 md:h-10" onclick="event.stopPropagation()">
@@ -799,6 +895,7 @@
                         <img id="img-${p.id}" src="${currentImage}" onerror="this.src='https://placehold.co/300x300?text=Sin+Foto'" class="w-full h-full object-contain transition-opacity duration-300">
                         ${arrowsHtml}
                         <div class="absolute top-2 right-2 backdrop-blur px-2 py-0.5 text-[10px] md:text-xs md:px-3 md:py-1 rounded-full font-bold shadow-sm border ${stockClass}">${stockText}</div>
+                        ${currentOriginalPrice ? '<div class="absolute top-2 left-2 badge badge-hot">Oferta</div>' : ''}
                     </div>
                     <div class="p-3 md:p-5 flex-1 flex flex-col">
                         <div class="mb-1 md:mb-2"><span class="text-[9px] md:text-[10px] uppercase font-bold text-[#8B5E3C] tracking-wider">${p.category}</span></div>
@@ -823,7 +920,7 @@
 
         function renderCategories() {
             const filterContainer = document.getElementById('category-filters');
-            filterContainer.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn active bg-[#1B3C59] text-white px-6 py-2 rounded-full text-sm font-semibold shadow-sm transition whitespace-nowrap">Todos</button>`;
+            filterContainer.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn active text-white px-6 py-2 rounded-full text-sm font-semibold shadow-sm transition whitespace-nowrap" style="background:var(--accent)">Todos</button>`;
 
             categories.forEach(cat => {
                 const btn = document.createElement('button');
@@ -841,8 +938,10 @@
                                (btn.onclick.toString().includes(catId) && catId !== 'all');
 
                 if (isActive) {
-                    btn.className = 'cat-btn active bg-[#1B3C59] text-white px-6 py-2 rounded-full text-sm font-semibold shadow-sm transition whitespace-nowrap';
+                    btn.className = 'cat-btn active text-white px-6 py-2 rounded-full text-sm font-semibold shadow-sm transition whitespace-nowrap';
+                    btn.style.background = 'var(--accent)';
                 } else {
+                    btn.style.background = '';
                     btn.className = 'cat-btn bg-[#F5EFE0] text-[#5D4037] hover:bg-[#e6dac4] px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap';
                 }
             });
