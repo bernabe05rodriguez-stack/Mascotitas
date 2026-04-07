@@ -102,6 +102,7 @@
         /* Card stagger fade */
         @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         #product-grid > * { animation: cardIn .5s ease both; }
+        #product-grid.no-anim > * { animation: none !important; }
         #product-grid > *:nth-child(2) { animation-delay: .04s; }
         #product-grid > *:nth-child(3) { animation-delay: .08s; }
         #product-grid > *:nth-child(4) { animation-delay: .12s; }
@@ -162,6 +163,30 @@
         /* Marquee suave */
         .marquee { display: flex; gap: 3rem; animation: marquee 30s linear infinite; }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        /* Doggo flying to cart */
+        .doggo-fly {
+            position: fixed; z-index: 9999; pointer-events: none;
+            font-size: 44px; line-height: 1;
+            filter: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+            transition: transform 1s cubic-bezier(.5,-0.2,.3,1.2), opacity .35s ease;
+            transform-origin: center;
+        }
+        .doggo-bounce { animation: doggoBounce .35s ease infinite; }
+        @keyframes doggoBounce {
+            0%, 100% { translate: 0 0; rotate: -8deg; }
+            50% { translate: 0 -10px; rotate: 8deg; }
+        }
+        .sniff-line {
+            position: fixed; z-index: 9998; pointer-events: none;
+            color: #E07A3C; font-size: 18px; opacity: 0;
+            animation: sniffPop 1s ease forwards;
+        }
+        @keyframes sniffPop {
+            0% { opacity: 0; transform: translateY(0) scale(.6); }
+            30% { opacity: 1; transform: translateY(-8px) scale(1); }
+            100% { opacity: 0; transform: translateY(-22px) scale(.9); }
+        }
 
         .loading-pulse { animation: loadingPulse 1.5s ease-in-out infinite; }
         @keyframes loadingPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
@@ -653,6 +678,10 @@
                     }
                 }
 
+                if (delta > 0) {
+                    const originBtn = (event && event.currentTarget) ? event.currentTarget : null;
+                    flyDogToCart(originBtn);
+                }
                 updateCartUI();
                 const searchVal = document.getElementById('search-input').value;
                 renderShop(searchVal);
@@ -810,10 +839,56 @@
 
         function formatPrice(price) { return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(price); }
 
+        let _firstRender = true;
+        function flyDogToCart(originEl) {
+            const cart = document.getElementById('nav-cart');
+            if (!cart) return;
+            const cartRect = cart.getBoundingClientRect();
+            let startX, startY;
+            if (originEl) {
+                const r = originEl.getBoundingClientRect();
+                startX = r.left + r.width / 2;
+                startY = r.top + r.height / 2;
+            } else {
+                startX = window.innerWidth / 2;
+                startY = window.innerHeight - 80;
+            }
+            const dog = document.createElement('div');
+            dog.className = 'doggo-fly doggo-bounce';
+            dog.textContent = '🐶';
+            dog.style.left = (startX - 22) + 'px';
+            dog.style.top = (startY - 22) + 'px';
+            document.body.appendChild(dog);
+            // Sniff lines at start
+            for (let i = 0; i < 3; i++) {
+                const s = document.createElement('div');
+                s.className = 'sniff-line';
+                s.textContent = '~';
+                s.style.left = (startX - 6 + (i-1)*8) + 'px';
+                s.style.top = (startY - 30) + 'px';
+                s.style.animationDelay = (i * 0.08) + 's';
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 1100);
+            }
+            const targetX = cartRect.left + cartRect.width / 2;
+            const targetY = cartRect.top + cartRect.height / 2;
+            // Two-stage: jump up, then arrive
+            requestAnimationFrame(() => {
+                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY - 40}px) scale(.55)`;
+            });
+            setTimeout(() => {
+                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(.4)`;
+                dog.style.opacity = '0';
+            }, 800);
+            setTimeout(() => dog.remove(), 1300);
+        }
+
         function renderShop(searchTerm = '') {
             const grid = document.getElementById('product-grid');
             if(!grid) return;
             grid.innerHTML = '';
+            if (_firstRender) { _firstRender = false; grid.classList.remove('no-anim'); }
+            else { grid.classList.add('no-anim'); }
 
             let filtered = products;
             if (currentCategory !== 'all') filtered = filtered.filter(p => p.category === currentCategory);
