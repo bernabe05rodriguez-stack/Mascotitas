@@ -1385,10 +1385,18 @@
                  const finalTotal = total - discountAmount;
                  msg += `\nSubtotal: ${formatPrice(total)}`;
                  msg += `\nDescuento (MCO10): -${formatPrice(discountAmount)}`;
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
+                 if (finalTotal >= 20000) {
+                     msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
+                 } else {
+                     msg += `\nEnvío: a coordinar según zona (se cobra en pedidos menores a $20.000) 🚚`;
+                 }
                  msg += `\n*TOTAL: ${formatPrice(finalTotal)}*`;
             } else {
-                 msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
+                 if (total >= 20000) {
+                     msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
+                 } else {
+                     msg += `\nEnvío: a coordinar según zona (se cobra en pedidos menores a $20.000) 🚚`;
+                 }
                  msg += `\n*TOTAL: ${formatPrice(total)}*`;
             }
 
