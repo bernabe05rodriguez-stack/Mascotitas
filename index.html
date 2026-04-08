@@ -55,12 +55,26 @@
         "@type": "City",
         "name": "Mendoza"
       },
-      "openingHoursSpecification": [{
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-        "opens": "09:00",
-        "closes": "20:00"
-      }],
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Saturday","Sunday"],
+          "opens": "09:00",
+          "closes": "14:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Saturday","Sunday"],
+          "opens": "17:30",
+          "closes": "22:00"
+        }
+      ],
       "sameAs": [
         "https://www.facebook.com/share/17LYrbtKo6/",
         "https://www.instagram.com/mascotitas_alimentos"
@@ -422,7 +436,7 @@
                         </div>
                         <div class="h-8 w-px bg-[#ECE3CE]"></div>
                         <div class="flex flex-col items-center md:items-start">
-                            <span class="stat-num text-2xl text-[#1B3C59]">9-20hs</span>
+                            <span class="stat-num text-2xl text-[#1B3C59]">9-22hs</span>
                             <span class="text-xs">Lun a Dom</span>
                         </div>
                     </div>
@@ -493,7 +507,7 @@
                 <div class="flex flex-col items-center">
                     <div class="bg-[#8B5E3C] p-3 rounded-full mb-4"><i data-lucide="clock" class="h-6 w-6 text-white"></i></div>
                     <h3 class="text-lg font-bold mb-2">Horarios de Atención</h3>
-                    <p class="text-[#dca980] font-bold text-lg">Lunes a Domingo<br>9:00 hs a 20:00 hs</p>
+                    <p class="text-[#dca980] font-bold text-lg">Lun a Vie: 9:00 a 22:00 hs<br>Sáb, Dom y Feriados:<br>9:00 a 14:00 y 17:30 a 22:00 hs</p>
                 </div>
                 <div class="flex flex-col items-center md:items-end">
                     <a href="https://wa.me/5492615016555" class="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd59] text-white px-4 py-2 rounded-full font-bold transition shadow-lg">
