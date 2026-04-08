@@ -996,6 +996,8 @@
             const conStock = products.filter(p => p.stock > 0 && !conDesc.includes(p));
             heroFeaturedList = [...conDesc, ...conStock].slice(0, 6);
             if (heroFeaturedList.length === 0) heroFeaturedList = products.slice(0, 6);
+            // Precargar imágenes para evitar parpadeo al cambiar de slide
+            heroFeaturedList.forEach(p => { const i = new Image(); i.src = p.image; });
             heroFeaturedIdx = 0;
             renderHeroDots();
             showHeroSlide(0);
@@ -1019,23 +1021,30 @@
             heroFeaturedIdx = (i + heroFeaturedList.length) % heroFeaturedList.length;
             const f = heroFeaturedList[heroFeaturedIdx];
             const track = document.getElementById('hero-carousel-track');
+            const imgEl = document.getElementById('hero-featured-img');
+            const applyContent = () => {
+                imgEl.src = f.image;
+                imgEl.alt = f.name;
+                document.getElementById('hero-featured-cat').textContent = f.category || 'Destacado';
+                document.getElementById('hero-featured-name').textContent = f.name;
+                document.getElementById('hero-featured-price').textContent = 'Desde ' + formatPrice(f.price);
+                const orig = document.getElementById('hero-featured-original');
+                if (f.originalPrice && f.originalPrice > f.price) {
+                    orig.textContent = formatPrice(f.originalPrice);
+                    orig.classList.remove('hidden');
+                } else {
+                    orig.classList.add('hidden');
+                }
+                if (track) track.style.opacity = '1';
+            };
             if (track) {
                 track.style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('hero-featured-img').src = f.image;
-                    document.getElementById('hero-featured-img').alt = f.name;
-                    document.getElementById('hero-featured-cat').textContent = f.category || 'Destacado';
-                    document.getElementById('hero-featured-name').textContent = f.name;
-                    document.getElementById('hero-featured-price').textContent = 'Desde ' + formatPrice(f.price);
-                    const orig = document.getElementById('hero-featured-original');
-                    if (f.originalPrice && f.originalPrice > f.price) {
-                        orig.textContent = formatPrice(f.originalPrice);
-                        orig.classList.remove('hidden');
-                    } else {
-                        orig.classList.add('hidden');
-                    }
-                    track.style.opacity = '1';
-                }, 200);
+                // Esperar a que la imagen esté lista (cache hit por preload) antes de mostrar
+                const pre = new Image();
+                pre.onload = pre.onerror = applyContent;
+                pre.src = f.image;
+                // Fallback si tarda demasiado
+                setTimeout(applyContent, 250);
             }
             document.querySelectorAll('#hero-dots button').forEach((b, idx) => {
                 b.className = 'h-2 rounded-full transition-all ' + (idx === heroFeaturedIdx ? 'w-6 bg-[#1B3C59]' : 'w-2 bg-[#1B3C59]/30');
