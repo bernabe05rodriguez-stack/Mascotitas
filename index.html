@@ -397,7 +397,7 @@
             <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-10 md:mb-0 text-center md:text-left max-w-xl">
                     <span class="reveal inline-flex items-center gap-2 bg-white/80 backdrop-blur text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6 border border-[#ECE3CE] shadow-sm">
-                        <span class="h-2 w-2 rounded-full bg-green-500 pulse-accent"></span> Envio en el dia · Mendoza
+                        <span id="status-dot" class="h-2 w-2 rounded-full bg-green-500 pulse-accent"></span> <span id="status-text">Abierto ahora · Mendoza</span>
                     </span>
                     <h1 class="reveal reveal-delay-1 text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 text-[#1B3C59] leading-[0.95]">
                         Tu mascota<br><span class="italic" style="color: var(--accent);">merece lo mejor.</span>
@@ -439,7 +439,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="truck" class="h-5 w-5 text-[#E07A3C]"></i></div>
-                    <div><div class="font-bold text-sm text-[#1B3C59]">Envio en el dia</div><div class="text-xs text-[#4B3A2F]/70">En toda Mendoza</div></div>
+                    <div><div class="font-bold text-sm text-[#1B3C59]">Envio en el dia</div><div class="text-xs text-[#4B3A2F]/70"><span id="trust-horario">Lun-Vie 9-22 · Sáb/Dom 9-14 y 17:30-22</span></div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="h-5 w-5 text-[#E07A3C]"></i></div>
@@ -1274,6 +1274,41 @@
 
             window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
         }
+
+        // Estado abierto/cerrado en badge del hero
+        // Lun-Vie: 09:00-22:00 | Sáb/Dom/Feriados: 09:00-14:00 y 17:30-22:00
+        (function () {
+            const FERIADOS_2026 = [
+                '2026-01-01','2026-02-16','2026-02-17','2026-03-24','2026-04-02','2026-04-03',
+                '2026-05-01','2026-05-25','2026-06-15','2026-06-20','2026-07-09','2026-08-17',
+                '2026-10-12','2026-11-23','2026-12-08','2026-12-25'
+            ];
+            function estaAbierto(now) {
+                const dow = now.getDay(); // 0=Dom, 6=Sáb
+                const ymd = now.toISOString().slice(0,10);
+                const esFeriado = FERIADOS_2026.includes(ymd);
+                const mins = now.getHours() * 60 + now.getMinutes();
+                const finde = (dow === 0 || dow === 6 || esFeriado);
+                if (finde) {
+                    return (mins >= 9*60 && mins < 14*60) || (mins >= 17*60+30 && mins < 22*60);
+                }
+                return mins >= 9*60 && mins < 22*60;
+            }
+            function actualizarEstado() {
+                const dot = document.getElementById('status-dot');
+                const txt = document.getElementById('status-text');
+                if (!dot || !txt) return;
+                if (estaAbierto(new Date())) {
+                    dot.className = 'h-2 w-2 rounded-full bg-green-500 pulse-accent';
+                    txt.textContent = 'Abierto ahora · Mendoza';
+                } else {
+                    dot.className = 'h-2 w-2 rounded-full bg-red-500';
+                    txt.textContent = 'Cerrado · Mendoza';
+                }
+            }
+            actualizarEstado();
+            setInterval(actualizarEstado, 60000);
+        })();
     </script>
 </body>
 </html>
