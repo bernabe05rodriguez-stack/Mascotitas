@@ -438,26 +438,31 @@
                 </div>
                 <div class="relative hero-img-wrap">
                     <div class="absolute inset-0 bg-[#8B5E3C] rounded-full opacity-10 blur-3xl transform translate-x-4 translate-y-4 scale-110"></div>
-                    <div id="hero-featured" class="relative bg-white rounded-3xl shadow-2xl border-4 border-white/80 w-full max-w-md mx-auto md:max-w-lg p-6 md:p-7 cursor-pointer hover:shadow-[0_20px_50px_rgba(27,60,89,0.25)] transition-all duration-300 hover:-translate-y-1">
-                        <div class="absolute -top-3 left-6 bg-[#E07A3C] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md flex items-center gap-1">
-                            <i data-lucide="sparkles" class="h-3 w-3"></i> Destacado
-                        </div>
-                        <div class="flex items-center gap-5">
-                            <div class="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-[#FBF1E1] flex items-center justify-center overflow-hidden">
-                                <img id="hero-featured-img" src="https://placehold.co/300x300?text=..." alt="Producto destacado" class="w-full h-full object-contain p-2">
+                    <div class="relative w-full max-w-md mx-auto md:max-w-lg">
+                        <div id="hero-carousel" class="relative bg-white rounded-3xl shadow-2xl border-4 border-white/80 p-6 md:p-7 cursor-pointer hover:shadow-[0_20px_50px_rgba(27,60,89,0.25)] transition-all duration-300 overflow-hidden">
+                            <div class="absolute -top-3 left-6 bg-[#E07A3C] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md flex items-center gap-1 z-10">
+                                <i data-lucide="sparkles" class="h-3 w-3"></i> Destacados
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <div id="hero-featured-cat" class="text-[10px] font-bold uppercase tracking-widest text-[#E07A3C] mb-1">Cargando…</div>
-                                <h3 id="hero-featured-name" class="font-extrabold text-[#1B3C59] text-lg md:text-xl leading-tight mb-2 line-clamp-2">Producto destacado</h3>
-                                <div class="flex items-baseline gap-2 mb-3">
-                                    <span id="hero-featured-price" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59]">—</span>
-                                    <span id="hero-featured-original" class="text-sm text-gray-400 line-through hidden"></span>
+                            <div id="hero-carousel-track" class="flex items-center gap-5 transition-opacity duration-300">
+                                <div class="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-[#FBF1E1] flex items-center justify-center overflow-hidden">
+                                    <img id="hero-featured-img" src="https://placehold.co/300x300?text=..." alt="Producto destacado" class="w-full h-full object-contain p-2">
                                 </div>
-                                <div class="inline-flex items-center gap-1.5 text-xs font-bold text-[#E07A3C]">
-                                    Ver producto <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                                <div class="flex-1 min-w-0">
+                                    <div id="hero-featured-cat" class="text-[10px] font-bold uppercase tracking-widest text-[#E07A3C] mb-1">Cargando…</div>
+                                    <h3 id="hero-featured-name" class="font-extrabold text-[#1B3C59] text-lg md:text-xl leading-tight mb-2 line-clamp-2">Producto destacado</h3>
+                                    <div class="flex items-baseline gap-2 mb-3">
+                                        <span id="hero-featured-price" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59]">—</span>
+                                        <span id="hero-featured-original" class="text-sm text-gray-400 line-through hidden"></span>
+                                    </div>
+                                    <div class="inline-flex items-center gap-1.5 text-xs font-bold text-[#E07A3C]">
+                                        Ver producto <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <button id="hero-prev" type="button" aria-label="Anterior" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#ECE3CE] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
+                        <button id="hero-next" type="button" aria-label="Siguiente" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#ECE3CE] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
+                        <div id="hero-dots" class="flex justify-center gap-2 mt-4"></div>
                     </div>
                 </div>
             </div>
@@ -980,28 +985,83 @@
 
         function formatPrice(price) { return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(price); }
 
+        let heroFeaturedList = [];
+        let heroFeaturedIdx = 0;
+        let heroAutoplayTimer = null;
+
         function renderHeroFeatured() {
             if (!products || products.length === 0) return;
-            // Elegir el de mayor descuento; si ninguno tiene, el primero con stock
-            let featured = products.find(p => p.originalPrice && p.originalPrice > p.price && p.stock > 0);
-            if (!featured) featured = products.find(p => p.stock > 0) || products[0];
-            const card = document.getElementById('hero-featured');
-            if (!card) return;
-            document.getElementById('hero-featured-img').src = featured.image;
-            document.getElementById('hero-featured-img').alt = featured.name;
-            document.getElementById('hero-featured-cat').textContent = featured.category || 'Destacado';
-            document.getElementById('hero-featured-name').textContent = featured.name;
-            document.getElementById('hero-featured-price').textContent = 'Desde ' + formatPrice(featured.price);
-            const orig = document.getElementById('hero-featured-original');
-            if (featured.originalPrice && featured.originalPrice > featured.price) {
-                orig.textContent = formatPrice(featured.originalPrice);
-                orig.classList.remove('hidden');
-            } else {
-                orig.classList.add('hidden');
+            // Priorizar productos con descuento y stock, completar con otros con stock
+            const conDesc = products.filter(p => p.originalPrice && p.originalPrice > p.price && p.stock > 0);
+            const conStock = products.filter(p => p.stock > 0 && !conDesc.includes(p));
+            heroFeaturedList = [...conDesc, ...conStock].slice(0, 6);
+            if (heroFeaturedList.length === 0) heroFeaturedList = products.slice(0, 6);
+            heroFeaturedIdx = 0;
+            renderHeroDots();
+            showHeroSlide(0);
+            startHeroAutoplay();
+            const track = document.getElementById('hero-carousel');
+            if (track) {
+                track.onclick = () => {
+                    const f = heroFeaturedList[heroFeaturedIdx];
+                    if (f) openProductModal(f.id);
+                };
             }
-            card.onclick = () => openProductModal(featured.id);
+            const prev = document.getElementById('hero-prev');
+            const next = document.getElementById('hero-next');
+            if (prev) prev.onclick = (e) => { e.stopPropagation(); showHeroSlide(heroFeaturedIdx - 1); restartHeroAutoplay(); };
+            if (next) next.onclick = (e) => { e.stopPropagation(); showHeroSlide(heroFeaturedIdx + 1); restartHeroAutoplay(); };
             if (window.lucide) lucide.createIcons();
         }
+
+        function showHeroSlide(i) {
+            if (heroFeaturedList.length === 0) return;
+            heroFeaturedIdx = (i + heroFeaturedList.length) % heroFeaturedList.length;
+            const f = heroFeaturedList[heroFeaturedIdx];
+            const track = document.getElementById('hero-carousel-track');
+            if (track) {
+                track.style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('hero-featured-img').src = f.image;
+                    document.getElementById('hero-featured-img').alt = f.name;
+                    document.getElementById('hero-featured-cat').textContent = f.category || 'Destacado';
+                    document.getElementById('hero-featured-name').textContent = f.name;
+                    document.getElementById('hero-featured-price').textContent = 'Desde ' + formatPrice(f.price);
+                    const orig = document.getElementById('hero-featured-original');
+                    if (f.originalPrice && f.originalPrice > f.price) {
+                        orig.textContent = formatPrice(f.originalPrice);
+                        orig.classList.remove('hidden');
+                    } else {
+                        orig.classList.add('hidden');
+                    }
+                    track.style.opacity = '1';
+                }, 200);
+            }
+            document.querySelectorAll('#hero-dots button').forEach((b, idx) => {
+                b.className = 'h-2 rounded-full transition-all ' + (idx === heroFeaturedIdx ? 'w-6 bg-[#1B3C59]' : 'w-2 bg-[#1B3C59]/30');
+            });
+        }
+
+        function renderHeroDots() {
+            const dots = document.getElementById('hero-dots');
+            if (!dots) return;
+            dots.innerHTML = '';
+            heroFeaturedList.forEach((_, idx) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.setAttribute('aria-label', 'Slide ' + (idx + 1));
+                b.className = 'h-2 rounded-full transition-all ' + (idx === 0 ? 'w-6 bg-[#1B3C59]' : 'w-2 bg-[#1B3C59]/30');
+                b.onclick = (e) => { e.stopPropagation(); showHeroSlide(idx); restartHeroAutoplay(); };
+                dots.appendChild(b);
+            });
+        }
+
+        function startHeroAutoplay() {
+            stopHeroAutoplay();
+            heroAutoplayTimer = setInterval(() => showHeroSlide(heroFeaturedIdx + 1), 4500);
+        }
+        function stopHeroAutoplay() { if (heroAutoplayTimer) clearInterval(heroAutoplayTimer); heroAutoplayTimer = null; }
+        function restartHeroAutoplay() { stopHeroAutoplay(); startHeroAutoplay(); }
 
         let _firstRender = true;
         function flyDogToCart(originEl) {
