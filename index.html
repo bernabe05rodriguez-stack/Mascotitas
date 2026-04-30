@@ -380,19 +380,22 @@
 <body class="bg-[#FDFBF7] text-[#5D4037]">
 
     <nav class="bg-[#FBF6EC]/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-[#ECE3CE]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-24 md:h-28">
-                <a href="#" class="flex items-center cursor-pointer group shrink-0">
-                    <img src="/logo.png" alt="Mascotitas" class="h-14 sm:h-16 md:h-20 w-auto group-hover:scale-[1.04] transition-transform" style="filter: drop-shadow(0 4px 10px rgba(27,60,89,0.18));">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center gap-2 h-24 sm:h-28 md:h-32">
+                <a href="#" class="flex items-center cursor-pointer group shrink-0 min-w-0">
+                    <img src="/logo.png" alt="Mascotitas" class="h-16 sm:h-20 md:h-24 w-auto group-hover:scale-[1.04] transition-transform" style="filter: drop-shadow(0 4px 10px rgba(27,60,89,0.18));">
                 </a>
-                <div class="flex items-center gap-2 md:gap-3">
-                    <div class="relative w-40 sm:w-56 md:w-72">
-                        <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none bg-gray-50 text-sm">
+                <div class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
+                    <div class="relative hidden sm:block w-48 md:w-64 lg:w-80">
+                        <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white/80 text-sm">
                         <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
                     </div>
-                    <div id="nav-cart" class="relative cursor-pointer p-3 hover:bg-[#F5EFE0] rounded-full transition" onclick="toggleCart()">
-                        <i data-lucide="shopping-cart" class="h-6 w-6 text-[#1B3C59]"></i>
-                        <span id="cart-count" class="absolute top-0 right-0 bg-[#8B5E3C] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+                    <button class="sm:hidden cursor-pointer p-2.5 hover:bg-white/60 rounded-full transition" onclick="openMobileSearch()" aria-label="Buscar">
+                        <i data-lucide="search" class="h-5 w-5 text-[#1B3C59]"></i>
+                    </button>
+                    <div id="nav-cart" class="relative cursor-pointer p-2.5 sm:p-3 hover:bg-white/60 rounded-full transition" onclick="toggleCart()">
+                        <i data-lucide="shopping-cart" class="h-5 w-5 sm:h-6 sm:w-6 text-[#1B3C59]"></i>
+                        <span id="cart-count" class="absolute top-0 right-0 bg-[#E07A3C] text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
                     </div>
                 </div>
             </div>
@@ -520,7 +523,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div class="flex flex-col items-center md:items-start">
-                    <img src="/logo.png" alt="Mascotitas" class="h-16 w-auto mb-4">
+                    <img src="/logo.png" alt="Mascotitas" class="h-20 w-auto mb-4">
                     <p class="text-gray-300 mb-6">Tu alimento de confianza.</p>
                 </div>
                 <div class="flex flex-col items-center">
@@ -1392,6 +1395,29 @@
             const sb = document.getElementById('cart-sidebar'), ov = document.getElementById('cart-overlay');
             if(sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); setTimeout(()=>ov.classList.remove('opacity-0'),10); }
             else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
+        }
+
+        function openMobileSearch() {
+            Swal.fire({
+                title: 'Buscar alimento',
+                input: 'text',
+                inputPlaceholder: 'Royal Canin, Pro Plan, gato...',
+                showCancelButton: true,
+                confirmButtonText: 'Buscar',
+                cancelButtonText: 'Cerrar',
+                confirmButtonColor: '#E07A3C',
+                cancelButtonColor: '#9CA3AF',
+                inputValue: document.getElementById('search-input').value || ''
+            }).then(r => {
+                if (r.isConfirmed) {
+                    const input = document.getElementById('search-input');
+                    input.value = r.value || '';
+                    renderShop(r.value || '');
+                    if (r.value) {
+                        document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
         }
 
         function checkoutWhatsApp() {
