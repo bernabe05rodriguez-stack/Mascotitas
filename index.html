@@ -678,6 +678,7 @@
     <script>
         // --- CONFIGURACIÓN ---
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTd2Ked_OEGMeZmPg1zLqpsyJixQv4Oyjzecje-UVXSMjAm7Pb2ZRNzUY3Zu8hsIOl8VBYnup9TS9t/pub?output=csv";
+        const DISCOUNT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTd2Ked_OEGMeZmPg1zLqpsyJixQv4Oyjzecje-UVXSMjAm7Pb2ZRNzUY3Zu8hsIOl8VBYnup9TS9t/pub?output=csv&gid=535828895";
         const WHATSAPP_NUMBER = "5492615016555";
 
         // --- ESTADO ---
@@ -685,7 +686,8 @@
         let categories = [];
         let cart = [];
         let currentCategory = 'all';
-        let discountApplied = false;
+        let discountCodes = {}; // { CODIGO: porcentaje } cargado desde la hoja "Descuento"
+        let appliedDiscount = null; // { code, pct } o null
         let selectedVariants = {};
         let productImageIndices = {};
         let currentModalProduct = null;
@@ -694,6 +696,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             loadDataFromSheets();
+            loadDiscountsFromSheets();
             document.getElementById('search-input').addEventListener('input', (e) => renderShop(e.target.value));
 
             // Global Helpers
@@ -1282,21 +1285,41 @@
             renderShop();
         }
 
+        function loadDiscountsFromSheets() {
+            Papa.parse(DISCOUNT_SHEET_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    discountCodes = {};
+                    results.data.forEach(row => {
+                        const code = (row.Codigo || row.codigo || '').trim().toUpperCase();
+                        const pct = parseFloat(row.Descuento || row.descuento);
+                        if (code && !isNaN(pct) && pct > 0) {
+                            discountCodes[code] = pct;
+                        }
+                    });
+                },
+                error: function(err) { console.error('Error cargando descuentos:', err); }
+            });
+        }
+
         function applyDiscount() {
             const codeInput = document.getElementById('discount-code');
             const messageEl = document.getElementById('discount-message');
             const code = codeInput.value.trim().toUpperCase();
 
-            if (code === 'MCO10') {
-                discountApplied = true;
-                messageEl.textContent = '¡Descuento aplicado + Envío Gratis!';
+            if (discountCodes[code]) {
+                const pct = discountCodes[code];
+                appliedDiscount = { code, pct };
+                messageEl.textContent = `¡Descuento del ${pct}% aplicado!`;
                 messageEl.className = 'text-xs mt-1 text-green-600 font-bold';
                 codeInput.disabled = true;
                 document.getElementById('btn-apply-discount').disabled = true;
                 document.getElementById('btn-apply-discount').classList.add('opacity-50', 'cursor-not-allowed');
                 updateCartUI();
             } else {
-                discountApplied = false;
+                appliedDiscount = null;
                 messageEl.textContent = 'Código inválido';
                 messageEl.className = 'text-xs mt-1 text-red-500 font-bold';
                 updateCartUI();
@@ -1333,12 +1356,15 @@
             const discountEl = document.getElementById('cart-discount');
             const totalEl = document.getElementById('cart-total');
 
-            if (discountApplied && total > 0) {
-                const discountAmount = total * 0.10;
+            if (appliedDiscount && total > 0) {
+                const discountAmount = total * (appliedDiscount.pct / 100);
                 const finalTotal = total - discountAmount;
 
                 subtotalRow.classList.remove('hidden');
                 discountRow.classList.remove('hidden');
+
+                const discountLabel = discountRow.querySelector('span');
+                if (discountLabel) discountLabel.textContent = `Descuento (${appliedDiscount.pct}%)`;
 
                 subtotalEl.textContent = formatPrice(total);
                 discountEl.textContent = '-' + formatPrice(discountAmount);
@@ -1380,11 +1406,11 @@
                 total += i.price*i.quantity;
             });
 
-            if (discountApplied) {
-                 const discountAmount = total * 0.10;
+            if (appliedDiscount) {
+                 const discountAmount = total * (appliedDiscount.pct / 100);
                  const finalTotal = total - discountAmount;
                  msg += `\nSubtotal: ${formatPrice(total)}`;
-                 msg += `\nDescuento (MCO10): -${formatPrice(discountAmount)}`;
+                 msg += `\nDescuento (${appliedDiscount.code} ${appliedDiscount.pct}%): -${formatPrice(discountAmount)}`;
                  if (finalTotal >= 20000) {
                      msg += `\nEnvío Bonificado: ~$4.300~ 🚚`;
                  } else {
