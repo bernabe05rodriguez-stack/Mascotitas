@@ -382,10 +382,10 @@
     <nav class="bg-[#FBF6EC]/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-[#ECE3CE]">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center gap-2 h-24 sm:h-28 md:h-32">
-                <a href="#" class="flex items-center cursor-pointer group shrink-0 min-w-0">
+                <a href="#" id="nav-logo" class="flex items-center cursor-pointer group shrink-0 min-w-0">
                     <img src="/logo.png" alt="Mascotitas" class="h-16 sm:h-20 md:h-24 w-auto group-hover:scale-[1.04] transition-transform" style="filter: drop-shadow(0 4px 10px rgba(27,60,89,0.18));">
                 </a>
-                <div class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
+                <div id="nav-actions" class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
                     <div class="relative hidden sm:block w-48 md:w-64 lg:w-80">
                         <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white/80 text-sm">
                         <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
@@ -398,13 +398,13 @@
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#E07A3C] text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
                     </div>
                 </div>
-            </div>
-            <div id="mobile-search-row" class="sm:hidden hidden pb-3">
-                <div class="relative">
-                    <input type="text" id="search-input-mobile" placeholder="Buscar alimento..." class="w-full pl-9 pr-10 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white text-sm">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none"></i>
-                    <button type="button" onclick="toggleMobileSearch()" aria-label="Cerrar búsqueda" class="absolute right-1 top-1 h-8 w-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition">
-                        <i data-lucide="x" class="h-4 w-4"></i>
+                <div id="mobile-search-inline" class="hidden items-center gap-2 flex-1 w-full">
+                    <div class="relative flex-1">
+                        <input type="text" id="search-input-mobile" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white text-sm">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none"></i>
+                    </div>
+                    <button type="button" onclick="toggleMobileSearch()" aria-label="Cerrar búsqueda" class="shrink-0 p-2.5 hover:bg-white/60 rounded-full transition text-[#1B3C59]">
+                        <i data-lucide="x" class="h-5 w-5"></i>
                     </button>
                 </div>
             </div>
@@ -508,7 +508,7 @@
                 <p class="reveal reveal-delay-2 text-[#4B3A2F]/70 mt-4 text-base md:text-lg max-w-xl mx-auto">Filtra por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
             </div>
 
-            <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 z-40">
+            <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 sm:top-28 md:top-32 z-40">
                 <div id="category-filters" class="flex gap-2 overflow-x-auto w-full pb-1 scrollbar-hide justify-start md:justify-center"></div>
             </div>
 
@@ -1417,13 +1417,23 @@
         }
 
         function toggleMobileSearch() {
-            const row = document.getElementById('mobile-search-row');
+            const logo = document.getElementById('nav-logo');
+            const actions = document.getElementById('nav-actions');
+            const inline = document.getElementById('mobile-search-inline');
             const input = document.getElementById('search-input-mobile');
-            const willOpen = row.classList.contains('hidden');
-            row.classList.toggle('hidden');
-            if (willOpen) {
+            const opening = inline.classList.contains('hidden');
+            if (opening) {
+                logo.classList.add('hidden');
+                actions.classList.add('hidden');
+                inline.classList.remove('hidden');
+                inline.classList.add('flex');
                 input.value = document.getElementById('search-input').value || '';
                 setTimeout(() => input.focus(), 50);
+            } else {
+                inline.classList.add('hidden');
+                inline.classList.remove('flex');
+                logo.classList.remove('hidden');
+                actions.classList.remove('hidden');
             }
         }
 
