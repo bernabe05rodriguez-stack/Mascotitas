@@ -390,13 +390,22 @@
                         <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white/80 text-sm">
                         <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
                     </div>
-                    <button class="sm:hidden cursor-pointer p-2.5 hover:bg-white/60 rounded-full transition" onclick="openMobileSearch()" aria-label="Buscar">
+                    <button id="mobile-search-btn" class="sm:hidden cursor-pointer p-2.5 hover:bg-white/60 rounded-full transition" onclick="toggleMobileSearch()" aria-label="Buscar">
                         <i data-lucide="search" class="h-5 w-5 text-[#1B3C59]"></i>
                     </button>
                     <div id="nav-cart" class="relative cursor-pointer p-2.5 sm:p-3 hover:bg-white/60 rounded-full transition" onclick="toggleCart()">
                         <i data-lucide="shopping-cart" class="h-5 w-5 sm:h-6 sm:w-6 text-[#1B3C59]"></i>
                         <span id="cart-count" class="absolute top-0 right-0 bg-[#E07A3C] text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
                     </div>
+                </div>
+            </div>
+            <div id="mobile-search-row" class="sm:hidden hidden pb-3">
+                <div class="relative">
+                    <input type="text" id="search-input-mobile" placeholder="Buscar alimento..." class="w-full pl-9 pr-10 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white text-sm">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none"></i>
+                    <button type="button" onclick="toggleMobileSearch()" aria-label="Cerrar búsqueda" class="absolute right-1 top-1 h-8 w-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition">
+                        <i data-lucide="x" class="h-4 w-4"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -699,7 +708,17 @@
             lucide.createIcons();
             loadDataFromSheets();
             loadDiscountsFromSheets();
-            document.getElementById('search-input').addEventListener('input', (e) => renderShop(e.target.value));
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const v = e.target.value;
+                const m = document.getElementById('search-input-mobile');
+                if (m) m.value = v;
+                renderShop(v);
+            });
+            document.getElementById('search-input-mobile').addEventListener('input', (e) => {
+                const v = e.target.value;
+                document.getElementById('search-input').value = v;
+                renderShop(v);
+            });
 
             // Global Helpers
             window.selectVariant = function(productId, variantIndex) {
@@ -1397,27 +1416,15 @@
             else { sb.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
         }
 
-        function openMobileSearch() {
-            Swal.fire({
-                title: 'Buscar alimento',
-                input: 'text',
-                inputPlaceholder: 'Royal Canin, Pro Plan, gato...',
-                showCancelButton: true,
-                confirmButtonText: 'Buscar',
-                cancelButtonText: 'Cerrar',
-                confirmButtonColor: '#E07A3C',
-                cancelButtonColor: '#9CA3AF',
-                inputValue: document.getElementById('search-input').value || ''
-            }).then(r => {
-                if (r.isConfirmed) {
-                    const input = document.getElementById('search-input');
-                    input.value = r.value || '';
-                    renderShop(r.value || '');
-                    if (r.value) {
-                        document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-            });
+        function toggleMobileSearch() {
+            const row = document.getElementById('mobile-search-row');
+            const input = document.getElementById('search-input-mobile');
+            const willOpen = row.classList.contains('hidden');
+            row.classList.toggle('hidden');
+            if (willOpen) {
+                input.value = document.getElementById('search-input').value || '';
+                setTimeout(() => input.focus(), 50);
+            }
         }
 
         function checkoutWhatsApp() {
