@@ -401,7 +401,7 @@
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center gap-2 h-24 sm:h-28 md:h-32">
                 <a href="#" id="nav-logo" class="flex items-center cursor-pointer group shrink-0 min-w-0">
-                    <img src="/logo.png" alt="Mascotitas" class="h-16 sm:h-20 md:h-24 w-auto group-hover:scale-[1.04] transition-transform" style="filter: drop-shadow(0 0 14px rgba(242,193,63,0.35)) drop-shadow(0 4px 10px rgba(27,60,89,0.18));">
+                    <img src="/logo.png" alt="Mascotitas" class="h-16 sm:h-20 md:h-24 w-auto group-hover:scale-[1.04] transition-transform" style="filter: drop-shadow(0 2px 4px rgba(27,60,89,0.12));">
                 </a>
                 <div id="nav-actions" class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
                     <div class="relative hidden sm:block w-48 md:w-64 lg:w-80">
@@ -629,7 +629,7 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
-                <div class="w-full md:w-1/2 relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto" style="background: linear-gradient(180deg, #FCF8EE 0%, #FBF6EC 100%);">
+                <div class="w-full md:w-1/2 bg-white relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto">
                     <img id="modal-img" src="" class="max-w-full max-h-full object-contain drop-shadow-lg transition-all duration-300">
 
                     <button id="modal-prev-btn" onclick="changeModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110">
@@ -1269,7 +1269,7 @@
                 card.style.cursor = 'pointer';
 
                 card.innerHTML = `
-                    <div class="relative h-36 md:h-56 overflow-hidden p-3 md:p-5 group/image" style="background: linear-gradient(180deg, #FCF8EE 0%, #FBF6EC 100%);">
+                    <div class="relative h-36 md:h-56 overflow-hidden p-3 md:p-5 group/image bg-white">
                         <img id="img-${p.id}" src="${currentImage}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/300x300?text=Sin+Foto'" class="w-full h-full object-contain transition-opacity duration-300">
                         ${arrowsHtml}
                         <div class="absolute top-2.5 right-2.5 backdrop-blur-md px-2 py-0.5 text-[10px] md:text-[11px] md:px-2.5 md:py-1 rounded-full font-semibold tracking-tight ${stockClass}" style="box-shadow: 0 1px 2px rgba(27,60,89,.06);">${stockText}</div>
@@ -1379,7 +1379,7 @@
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-3 p-3 bg-white rounded-xl mb-2.5 border border-[#F0E8D5] cart-item-enter';
                 div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg p-1 flex-shrink-0" style="background: #FCF8EE; border: 1px solid #F0E8D5;">
+                    <div class="h-12 w-12 rounded-lg p-1 flex-shrink-0 bg-white border border-[#F0E8D5]">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain rounded">
                     </div>
                     <div class="flex-1 min-w-0">
