@@ -119,9 +119,10 @@
             --line: #ECE3CE;
         }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); }
+        body { font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); font-feature-settings: "ss01", "cv11"; }
         h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.025em; }
-        h1 { letter-spacing: -0.035em; }
+        h1 { letter-spacing: -0.038em; }
+        h2 { letter-spacing: -0.03em; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .text-navy { color: #1B3C59; }
@@ -129,27 +130,28 @@
         .text-brown { color: #5D4037; }
         .hidden-section { display: none !important; }
 
-        /* Tarjetas con sombra de 3 capas (warm lift) */
+        /* Tarjetas con sombra refinada (single light source, tinted) */
         .product-card-hover {
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: rgba(27,60,89,0.04) 0 0 0 1px, rgba(27,60,89,0.04) 0 2px 6px, rgba(27,60,89,0.06) 0 4px 10px;
+            transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s cubic-bezier(.2,.8,.2,1), border-color .25s ease;
+            box-shadow: 0 1px 2px rgba(27,60,89,0.04), 0 6px 16px -8px rgba(27,60,89,0.08);
         }
         .product-card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: rgba(27,60,89,0.06) 0 0 0 1px, rgba(27,60,89,0.06) 0 4px 12px, rgba(27,60,89,0.12) 0 12px 28px;
+            border-color: rgba(27,60,89,0.12);
+            box-shadow: 0 2px 4px rgba(27,60,89,0.05), 0 18px 40px -16px rgba(27,60,89,0.22);
         }
 
         /* Foco cálido en buscador */
-        #search-input:focus {
-            border-color: #8B5E3C;
-            box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.15);
+        #search-input:focus, #search-input-mobile:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(224,122,60,0.12);
             background-color: #ffffff;
         }
+        #search-input, #search-input-mobile { transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
 
         /* Botones de categoría: hover suave */
-        .cat-btn { transition: background-color .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease; }
+        .cat-btn { transition: background-color .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease, border-color .2s ease; }
         .cat-btn:not(.active):hover { background-color: #F5EFE0; color: #1B3C59; transform: translateY(-1px); }
-        .cat-btn.active { box-shadow: 0 6px 16px rgba(27,60,89,0.25); }
+        .cat-btn.active { box-shadow: 0 6px 18px -6px rgba(224,122,60,.55), inset 0 1px 0 rgba(255,255,255,.18); }
 
         /* Reveal on scroll */
         .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
@@ -160,11 +162,11 @@
 
         /* Hero blobs animados (suaves, no satirados) */
         .blob {
-            position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35;
+            position: absolute; border-radius: 50%; filter: blur(90px); opacity: .28;
             pointer-events: none; will-change: transform;
         }
-        .blob-1 { width: 420px; height: 420px; background: #dca980; top: -120px; left: -120px; animation: blobFloat 14s ease-in-out infinite; }
-        .blob-2 { width: 380px; height: 380px; background: #1B3C59; bottom: -140px; right: -100px; opacity: .18; animation: blobFloat 18s ease-in-out infinite reverse; }
+        .blob-1 { width: 440px; height: 440px; background: #e2b48a; top: -140px; left: -140px; animation: blobFloat 16s ease-in-out infinite; }
+        .blob-2 { width: 400px; height: 400px; background: #1B3C59; bottom: -160px; right: -120px; opacity: .12; animation: blobFloat 20s ease-in-out infinite reverse; }
         @keyframes blobFloat {
             0%, 100% { transform: translate(0,0) scale(1); }
             50% { transform: translate(30px, -20px) scale(1.08); }
@@ -214,15 +216,30 @@
         /* Rounded selection rings */
         ::selection { background: var(--accent); color: #fff; }
 
-        /* Botón principal cálido */
+        /* Botón principal — lift moderno con shadow tintado */
         .btn-primary {
             background: var(--accent);
             color: #fff;
-            box-shadow: 0 6px 0 var(--accent-dark), 0 14px 28px -10px rgba(224,122,60,.55);
-            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.18),
+                0 1px 2px rgba(197,99,31,.4),
+                0 10px 24px -8px rgba(224,122,60,.55);
+            transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, background .2s ease;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--accent-dark), 0 18px 32px -10px rgba(224,122,60,.6); }
-        .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--accent-dark), 0 6px 14px -8px rgba(224,122,60,.5); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #d8723a;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.22),
+                0 2px 4px rgba(197,99,31,.4),
+                0 18px 36px -10px rgba(224,122,60,.6);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow:
+                inset 0 1px 2px rgba(0,0,0,.08),
+                0 4px 10px -4px rgba(224,122,60,.5);
+        }
 
         /* Trust strip */
         .trust-pill { transition: transform .25s ease; }
@@ -250,8 +267,9 @@
         /* Wave divider */
         .wave-divider { display:block; width:100%; height:60px; }
 
-        /* Card hover lift mas dramatico */
-        .product-card-hover:hover { transform: translateY(-6px); }
+        /* Card hover lift refinado */
+        .product-card-hover:hover { transform: translateY(-4px); }
+        .product-card-hover { will-change: transform; }
 
         /* Marquee suave */
         .marquee { display: flex; gap: 3rem; animation: marquee 30s linear infinite; }
@@ -412,7 +430,7 @@
     </nav>
 
     <div id="shop-view">
-        <div class="bg-gradient-to-br from-[#F5EFE0] via-[#FDFBF7] to-[#F0E6D3] relative overflow-hidden">
+        <div class="relative overflow-hidden" style="background: radial-gradient(120% 80% at 0% 0%, #F5EBD5 0%, #FBF6EC 45%, #FDFBF7 100%);">
             <div class="blob blob-1"></div>
             <div class="blob blob-2"></div>
             <i data-lucide="paw-print" class="absolute top-6 left-6 h-20 w-20 text-[#1B3C59] opacity-[0.04] -rotate-12"></i>
@@ -421,21 +439,21 @@
             <i data-lucide="paw-print" class="absolute bottom-20 left-1/4 h-10 w-10 text-[#1B3C59] opacity-[0.03] -rotate-45"></i>
             <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-10 md:mb-0 text-center md:text-left max-w-xl">
-                    <span class="reveal inline-flex items-center gap-2 bg-white/80 backdrop-blur text-[#1B3C59] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6 border border-[#ECE3CE] shadow-sm">
-                        <span id="status-dot" class="h-2 w-2 rounded-full bg-green-500 pulse-accent"></span> <span id="status-text">Abierto ahora · Mendoza</span>
+                    <span class="reveal inline-flex items-center gap-2 bg-white/70 backdrop-blur-md text-[#1B3C59] text-[11px] font-semibold uppercase tracking-[0.18em] px-3.5 py-1.5 rounded-full mb-6 border border-white/80" style="box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 4px 12px -4px rgba(27,60,89,.08);">
+                        <span id="status-dot" class="h-1.5 w-1.5 rounded-full bg-green-500 pulse-accent"></span> <span id="status-text">Abierto ahora · Mendoza</span>
                     </span>
-                    <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-[#1B3C59] leading-[0.95]">
+                    <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-[#1B3C59] leading-[0.95]" style="text-wrap: balance;">
                         Tu mascota<br><span class="italic" style="color: var(--accent);">merece lo mejor.</span>
                     </h1>
-                    <p class="reveal reveal-delay-2 text-[#4B3A2F] text-lg md:text-xl mb-8 font-medium leading-relaxed max-w-md mx-auto md:mx-0">
-                        Alimento premium, atención personal, y entrega rápida. Comprá tranqui — te ayudamos a elegir lo perfecto.
+                    <p class="reveal reveal-delay-2 text-[#4B3A2F]/85 text-lg md:text-xl mb-8 font-normal leading-relaxed max-w-md mx-auto md:mx-0" style="text-wrap: pretty;">
+                        Alimento premium, atención personal y entrega rápida. Comprá tranqui — te ayudamos a elegir lo perfecto.
                     </p>
                     <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-8">
                         <a href="#catalogo" class="btn-primary btn-shine px-8 py-4 rounded-full font-bold inline-flex items-center justify-center gap-2 text-base">
                             Ver Catalogo <i data-lucide="arrow-right" class="h-5 w-5"></i>
                         </a>
-                        <a href="https://wa.me/5492615016555" target="_blank" class="px-7 py-4 rounded-full font-bold inline-flex items-center justify-center gap-2 text-base bg-white text-[#1B3C59] border border-[#ECE3CE] hover:border-[#1B3C59] transition shadow-sm">
-                            <i data-lucide="message-circle" class="h-5 w-5"></i> Asesoria gratis
+                        <a href="https://wa.me/5492615016555" target="_blank" class="px-7 py-4 rounded-full font-semibold inline-flex items-center justify-center gap-2 text-base bg-white/60 text-[#1B3C59] border border-[#1B3C59]/12 hover:bg-white hover:border-[#1B3C59]/30 transition backdrop-blur-sm" style="box-shadow: 0 1px 0 rgba(255,255,255,.5) inset;">
+                            <i data-lucide="message-circle" class="h-5 w-5"></i> Asesoría gratis
                         </a>
                     </div>
                     <div class="reveal flex items-center justify-center md:justify-start gap-6 text-sm text-[#4B3A2F]/80">
@@ -450,9 +468,9 @@
                 <div class="relative hero-img-wrap">
                     <div class="absolute inset-0 bg-[#8B5E3C] rounded-full opacity-10 blur-3xl transform translate-x-4 translate-y-4 scale-110"></div>
                     <div class="relative w-full max-w-md mx-auto md:max-w-lg">
-                        <div id="hero-carousel" class="relative bg-white rounded-3xl shadow-2xl border-4 border-white/80 p-6 md:p-7 pt-8 cursor-pointer hover:shadow-[0_20px_50px_rgba(27,60,89,0.25)] transition-all duration-300">
-                            <div class="absolute -top-3 left-6 bg-[#F2C13F] text-[#1B3C59] text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md flex items-center gap-1 z-10">
-                                <i data-lucide="sparkles" class="h-3 w-3"></i> Destacados
+                        <div id="hero-carousel" class="relative bg-white rounded-3xl p-6 md:p-7 pt-8 cursor-pointer transition-all duration-300" style="box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 2px 6px rgba(27,60,89,.05), 0 30px 60px -30px rgba(27,60,89,.25);">
+                            <div class="absolute -top-3 left-6 text-[#1B3C59] text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1.5 rounded-full flex items-center gap-1.5 z-10" style="background: #FBF1E1; border: 1px solid rgba(224,122,60,.2); box-shadow: 0 2px 8px -2px rgba(27,60,89,.12);">
+                                <i data-lucide="sparkles" class="h-3 w-3 text-[#E07A3C]"></i> Destacados
                             </div>
                             <div id="hero-carousel-track" class="flex items-center gap-5 transition-opacity duration-300">
                                 <div class="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-[#FBF1E1] flex items-center justify-center overflow-hidden">
@@ -481,34 +499,34 @@
 
         <!-- Trust strip -->
         <div class="bg-white border-y border-[#ECE3CE]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
                 <div class="trust-pill flex items-center gap-3">
-                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="truck" class="h-5 w-5 text-[#E07A3C]"></i></div>
-                    <div class="min-w-0"><div class="font-bold text-sm text-[#1B3C59]">Envio en el dia</div><div class="text-[11px] sm:text-xs text-[#4B3A2F]/70 leading-snug"><span id="trust-horario">Lun-Vie 9-22 · Sáb/Dom 9-14 y 17:30-22</span></div></div>
+                    <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="truck" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
+                    <div class="min-w-0"><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Envío en el día</div><div class="text-[11px] sm:text-xs text-[#4B3A2F]/65 leading-snug"><span id="trust-horario">Lun-Vie 9-22 · Sáb/Dom 9-14 y 17:30-22</span></div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
-                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="h-5 w-5 text-[#E07A3C]"></i></div>
-                    <div><div class="font-bold text-sm text-[#1B3C59]">Calidad premium</div><div class="text-xs text-[#4B3A2F]/70">Marcas seleccionadas</div></div>
+                    <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="shield-check" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Calidad premium</div><div class="text-xs text-[#4B3A2F]/65">Marcas seleccionadas</div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
-                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="message-circle-heart" class="h-5 w-5 text-[#E07A3C]"></i></div>
-                    <div><div class="font-bold text-sm text-[#1B3C59]">Atencion personal</div><div class="text-xs text-[#4B3A2F]/70">Te ayudamos a elegir</div></div>
+                    <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="message-circle-heart" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Atención personal</div><div class="text-xs text-[#4B3A2F]/65">Te ayudamos a elegir</div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
-                    <div class="h-11 w-11 rounded-full bg-[#FBF1E1] flex items-center justify-center shrink-0"><i data-lucide="wallet" class="h-5 w-5 text-[#E07A3C]"></i></div>
-                    <div><div class="font-bold text-sm text-[#1B3C59]">Efectivo / Transf.</div><div class="text-xs text-[#4B3A2F]/70">Con descuento</div></div>
+                    <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="wallet" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Efectivo / Transf.</div><div class="text-xs text-[#4B3A2F]/65">Con descuento</div></div>
                 </div>
             </div>
         </div>
 
-        <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div class="text-center mb-12">
-                <span class="reveal inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#E07A3C] mb-3">Catalogo</span>
-                <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1B3C59] leading-tight">Lo que tu mascota<br class="sm:hidden"> <span class="italic" style="color: var(--accent);">va a amar</span></h2>
-                <p class="reveal reveal-delay-2 text-[#4B3A2F]/70 mt-4 text-base md:text-lg max-w-xl mx-auto">Filtra por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
+                <span class="reveal inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#E07A3C] mb-4"><span class="h-px w-6" style="background:#E07A3C"></span> Catálogo <span class="h-px w-6" style="background:#E07A3C"></span></span>
+                <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1B3C59] leading-[1.05]">Lo que tu mascota<br class="sm:hidden"> <span class="italic" style="color: var(--accent);">va a amar</span></h2>
+                <p class="reveal reveal-delay-2 text-[#4B3A2F]/65 mt-4 text-base md:text-lg max-w-xl mx-auto leading-relaxed" style="text-wrap: balance;">Filtrá por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
             </div>
 
-            <div class="flex justify-center mb-10 items-center bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-[#F5EFE0] sticky top-24 sm:top-28 md:top-32 z-40">
+            <div class="flex justify-center mb-10 items-center bg-white/80 backdrop-blur-xl p-2.5 rounded-full border border-[#ECE3CE] sticky top-24 sm:top-28 md:top-32 z-40" style="box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 24px -16px rgba(27,60,89,.18);">
                 <div id="category-filters" class="flex gap-2 overflow-x-auto w-full pb-1 scrollbar-hide justify-start md:justify-center"></div>
             </div>
 
@@ -526,19 +544,19 @@
         </div>
     </div>
 
-    <footer id="main-footer" class="bg-gradient-to-b from-[#1B3C59] to-[#142d45] text-white py-14 mt-10 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#8B5E3C] via-[#dca980] to-[#8B5E3C]"></div>
-        <i data-lucide="paw-print" class="absolute bottom-4 right-8 h-32 w-32 text-white opacity-[0.03] rotate-12"></i>
+    <footer id="main-footer" class="text-white py-16 mt-10 relative overflow-hidden" style="background: #16314a;">
+        <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(220,169,128,.4), transparent);"></div>
+        <i data-lucide="paw-print" class="absolute bottom-6 right-10 h-28 w-28 text-white opacity-[0.025] rotate-12"></i>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div class="flex flex-col items-center md:items-start">
                     <img src="/logo.png" alt="Mascotitas" class="h-20 w-auto mb-4">
-                    <p class="text-gray-300 mb-6">Tu alimento de confianza.</p>
+                    <p class="text-white/60 mb-6 text-sm font-medium tracking-wide">Tu alimento de confianza.</p>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="bg-[#8B5E3C] p-3 rounded-full mb-4"><i data-lucide="clock" class="h-6 w-6 text-white"></i></div>
-                    <h3 class="text-lg font-bold mb-2">Horarios de Atención</h3>
-                    <p class="text-[#dca980] font-bold text-lg">Lun a Vie: 9:00 a 22:00 hs<br>Sáb, Dom y Feriados:<br>9:00 a 14:00 y 17:30 a 22:00 hs</p>
+                    <div class="p-3 rounded-full mb-4 border border-white/15" style="background: rgba(220,169,128,.12);"><i data-lucide="clock" class="h-6 w-6" style="color:#e2b48a"></i></div>
+                    <h3 class="text-base font-bold mb-2 tracking-tight">Horarios de Atención</h3>
+                    <p class="text-white/75 font-medium text-sm leading-relaxed">Lun a Vie: 9:00 a 22:00 hs<br>Sáb, Dom y Feriados:<br>9:00 a 14:00 y 17:30 a 22:00 hs</p>
                 </div>
                 <div class="flex flex-col items-center md:items-end">
                     <a href="https://wa.me/5492615016555" class="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd59] text-white px-4 py-2 rounded-full font-bold transition shadow-lg">
@@ -554,33 +572,33 @@
                     </div>
                 </div>
             </div>
-            <div class="border-t border-white/10 mt-10 pt-6 text-center text-sm text-gray-400">
-                <p>© 2025 - 2026 Mascotitas Alimentos.</p>
+            <div class="border-t border-white/10 mt-12 pt-6 text-center text-xs text-white/50 tracking-wide">
+                <p>© 2025 — 2026 Mascotitas Alimentos</p>
             </div>
         </div>
     </footer>
 
     <div id="cart-overlay" class="fixed inset-0 bg-[#1B3C59] bg-opacity-60 z-50 hidden backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-gray-200">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-[#FDFBF7]">
-            <h2 class="font-bold text-xl text-[#1B3C59] flex items-center gap-2">
-                <i data-lucide="shopping-bag" class="text-[#8B5E3C]"></i> Tu Pedido
+        <div class="p-6 border-b border-[#F0E8D5] flex justify-between items-center" style="background: #FCF8EE;">
+            <h2 class="font-extrabold text-xl text-[#1B3C59] flex items-center gap-2 tracking-tight" style="font-family: 'Fraunces', serif; letter-spacing: -0.02em;">
+                <i data-lucide="shopping-bag" class="text-[#E07A3C]"></i> Tu pedido
             </h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition"><i data-lucide="x" class="h-6 w-6"></i></button>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-[#1B3C59] hover:bg-white p-1.5 rounded-full transition"><i data-lucide="x" class="h-5 w-5"></i></button>
         </div>
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white"></div>
-        <div class="p-6 border-t border-gray-100 bg-[#FDFBF7]">
+        <div class="p-6 border-t border-[#F0E8D5]" style="background: #FCF8EE;">
             <!-- Discount Block -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Código de descuento</label>
+                <label class="block text-xs font-semibold text-[#1B3C59]/70 mb-1.5 tracking-wide uppercase">Código de descuento</label>
                 <div class="flex gap-2">
-                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3C59]">
-                    <button onclick="applyDiscount()" id="btn-apply-discount" class="bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#2c5275] transition">Aplicar</button>
+                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-[#ECE3CE] bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#E07A3C] focus:ring-2 focus:ring-[#E07A3C]/15 transition">
+                    <button onclick="applyDiscount()" id="btn-apply-discount" class="bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#2c5275] transition">Aplicar</button>
                 </div>
                 <div id="discount-message" class="text-xs mt-1 h-4"></div>
             </div>
 
-            <div class="flex flex-col gap-2 mb-6">
+            <div class="flex flex-col gap-2 mb-6" style="font-variant-numeric: tabular-nums;">
                  <div id="subtotal-row" class="flex justify-between items-end hidden">
                     <span class="text-gray-500 font-medium text-sm">Subtotal</span>
                     <span id="cart-subtotal" class="font-bold text-[#1B3C59]">$0</span>
@@ -590,13 +608,13 @@
                     <span id="cart-discount" class="font-bold text-green-600">-$0</span>
                 </div>
                 <div class="flex justify-between items-end">
-                    <span class="text-gray-500 font-medium">Total Estimado</span>
-                    <span id="cart-total" class="text-2xl font-extrabold text-[#1B3C59]">$0</span>
+                    <span class="text-gray-500 font-medium">Total estimado</span>
+                    <span id="cart-total" class="text-2xl font-extrabold text-[#1B3C59] tracking-tight">$0</span>
                 </div>
             </div>
 
-            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] flex justify-center items-center gap-2">
-                <i data-lucide="message-circle" class="h-6 w-6"></i> Confirmar por WhatsApp
+            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#1ebd59] text-white font-semibold py-4 rounded-xl transition flex justify-center items-center gap-2" style="box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(30,189,89,.4), 0 10px 24px -8px rgba(37,211,102,.45);">
+                <i data-lucide="message-circle" class="h-5 w-5"></i> Confirmar por WhatsApp
             </button>
         </div>
     </div>
@@ -611,7 +629,7 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
-                <div class="w-full md:w-1/2 bg-gray-50 relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto">
+                <div class="w-full md:w-1/2 relative flex items-center justify-center p-4 md:p-8 h-64 md:h-auto" style="background: linear-gradient(180deg, #FCF8EE 0%, #FBF6EC 100%);">
                     <img id="modal-img" src="" class="max-w-full max-h-full object-contain drop-shadow-lg transition-all duration-300">
 
                     <button id="modal-prev-btn" onclick="changeModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#1B3C59] p-3 rounded-full shadow-md transition backdrop-blur hover:scale-110">
@@ -623,11 +641,11 @@
                 </div>
 
                 <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto bg-white">
-                    <div class="mb-2">
-                        <span id="modal-category" class="text-xs uppercase font-bold text-[#8B5E3C] tracking-wider bg-[#F5EFE0] px-2 py-1 rounded-md">Category</span>
+                    <div class="mb-3">
+                        <span id="modal-category" class="text-[10px] uppercase font-semibold text-[#8B5E3C] tracking-[0.16em] bg-[#FBF1E1] px-2.5 py-1 rounded-md border border-[#8B5E3C]/15">Category</span>
                     </div>
 
-                    <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59] mb-4 leading-tight">Product Name</h2>
+                    <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59] mb-4 leading-[1.1] tracking-tight">Product Name</h2>
 
                     <p id="modal-desc" class="text-gray-600 mb-6 text-sm leading-relaxed hidden">Description.</p>
 
@@ -896,8 +914,8 @@
                 const isSelected = idx === vIdx;
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-bold transition border border-gray-200';
+                    ? 'bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-semibold border border-[#1B3C59] transition'
+                    : 'bg-white text-[#1B3C59]/75 hover:text-[#1B3C59] hover:bg-[#FBF1E1] px-4 py-2 rounded-lg text-sm font-semibold transition border border-[#ECE3CE]';
                 btn.textContent = v.weight;
                 btn.onclick = () => selectVariant(p.id, idx);
                 variantContainer.appendChild(btn);
@@ -908,15 +926,15 @@
 
             if (qty === 0) {
                 controlsContainer.innerHTML = `
-                    <button onclick="updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="w-full sm:w-auto bg-[#1B3C59] hover:bg-[#2c5275] text-white px-8 py-3 rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2 ${outOfStock ? 'opacity-50 cursor-not-allowed' : ''}">
+                    <button onclick="updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="btn-primary w-full sm:w-auto px-8 py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 ${outOfStock ? 'opacity-50 cursor-not-allowed' : ''}">
                         <i data-lucide="shopping-cart" class="w-5 h-5"></i> Agregar
                     </button>`;
             } else {
                 controlsContainer.innerHTML = `
-                    <div class="flex items-center bg-gray-100 rounded-xl overflow-hidden shadow-inner border border-gray-200">
-                         <button onclick="updateQuantity('${p.id}', -1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl">-</button>
-                         <span class="w-12 text-center font-bold text-[#1B3C59] text-lg">${qty}</span>
-                         <button onclick="updateQuantity('${p.id}', 1)" class="w-12 h-12 flex items-center justify-center text-[#1B3C59] hover:bg-gray-200 transition font-bold text-xl">+</button>
+                    <div class="flex items-center bg-[#FBF1E1] rounded-xl overflow-hidden border border-[#ECE3CE]">
+                         <button onclick="updateQuantity('${p.id}', -1)" class="w-11 h-11 flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold text-xl">-</button>
+                         <span class="w-10 text-center font-bold text-[#1B3C59] text-base" style="font-variant-numeric: tabular-nums;">${qty}</span>
+                         <button onclick="updateQuantity('${p.id}', 1)" class="w-11 h-11 flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold text-xl">+</button>
                     </div>`;
             }
             lucide.createIcons();
@@ -1196,17 +1214,19 @@
                 const outOfStock = p.stock <= 0;
                 let stockText = '', stockClass = 'bg-white/90 text-[#1B3C59] border-gray-100';
 
-                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-gray-100 text-gray-500 border-gray-200'; }
-                else if (p.stock === 1) { stockText = 'Última 1 Unidad'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100'; }
-                else if (p.stock === 2) { stockText = 'Últimas 2 Unidades'; stockClass = 'bg-orange-50 text-orange-700 border-orange-100'; }
-                else { stockText = 'Stock disponible'; stockClass = 'bg-green-50 text-green-700 border-green-100'; }
+                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-gray-100/90 text-gray-500'; }
+                else if (p.stock === 1) { stockText = 'Última unidad'; stockClass = 'bg-orange-50/95 text-orange-700'; }
+                else if (p.stock === 2) { stockText = 'Últimas 2'; stockClass = 'bg-orange-50/95 text-orange-700'; }
+                else { stockText = 'En stock'; stockClass = 'bg-green-50/95 text-green-700'; }
 
                 const card = document.createElement('div');
-                let variantsHtml = '<div class="flex flex-wrap gap-2 mb-4">';
+                let variantsHtml = '<div class="flex flex-wrap gap-1.5 mb-3">';
                 p.variants.forEach((v, idx) => {
                     const isSelected = (selectedVariants[p.id] === idx);
-                    const activeClass = isSelected ? 'bg-[#1B3C59] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
-                    variantsHtml += `<button onclick="event.stopPropagation(); selectVariant('${p.id}', ${idx})" class="variant-btn-${p.id} ${activeClass} px-3 py-1 rounded-full text-xs font-bold transition">${v.weight}</button>`;
+                    const activeClass = isSelected
+                        ? 'bg-[#1B3C59] text-white border-[#1B3C59]'
+                        : 'bg-white text-[#1B3C59]/70 hover:bg-[#FBF1E1] hover:text-[#1B3C59] border-[#ECE3CE]';
+                    variantsHtml += `<button onclick="event.stopPropagation(); selectVariant('${p.id}', ${idx})" class="variant-btn-${p.id} ${activeClass} px-2.5 py-1 rounded-lg text-[11px] font-semibold transition border tracking-tight">${v.weight}</button>`;
                 });
                 variantsHtml += '</div>';
 
@@ -1244,29 +1264,29 @@
                     `;
                 }
 
-                card.className = `bg-white rounded-2xl shadow-sm product-card-hover overflow-hidden border border-[#F5EFE0] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''}`;
+                card.className = `bg-white rounded-2xl product-card-hover overflow-hidden border border-[#EFE5CE] flex flex-col group ${outOfStock ? 'opacity-75 grayscale' : ''}`;
                 card.onclick = () => openProductModal(p.id);
                 card.style.cursor = 'pointer';
 
                 card.innerHTML = `
-                    <div class="relative h-36 md:h-56 bg-white overflow-hidden p-2 md:p-4 group/image">
-                        <img id="img-${p.id}" src="${currentImage}" onerror="this.src='https://placehold.co/300x300?text=Sin+Foto'" class="w-full h-full object-contain transition-opacity duration-300">
+                    <div class="relative h-36 md:h-56 overflow-hidden p-3 md:p-5 group/image" style="background: linear-gradient(180deg, #FCF8EE 0%, #FBF6EC 100%);">
+                        <img id="img-${p.id}" src="${currentImage}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/300x300?text=Sin+Foto'" class="w-full h-full object-contain transition-opacity duration-300">
                         ${arrowsHtml}
-                        <div class="absolute top-2 right-2 backdrop-blur px-2 py-0.5 text-[10px] md:text-xs md:px-3 md:py-1 rounded-full font-bold shadow-sm border ${stockClass}">${stockText}</div>
-                        ${currentOriginalPrice ? '<div class="absolute top-2 left-2 badge badge-hot">Oferta</div>' : ''}
+                        <div class="absolute top-2.5 right-2.5 backdrop-blur-md px-2 py-0.5 text-[10px] md:text-[11px] md:px-2.5 md:py-1 rounded-full font-semibold tracking-tight ${stockClass}" style="box-shadow: 0 1px 2px rgba(27,60,89,.06);">${stockText}</div>
+                        ${currentOriginalPrice ? '<div class="absolute top-2.5 left-2.5 badge badge-hot">Oferta</div>' : ''}
                     </div>
                     <div class="p-3 md:p-5 flex-1 flex flex-col">
-                        <div class="mb-1 md:mb-2"><span class="text-[9px] md:text-[10px] uppercase font-bold text-[#8B5E3C] tracking-wider">${p.category}</span></div>
-                        <h3 class="font-bold text-[#1B3C59] text-sm md:text-lg leading-tight mb-2 md:mb-3 line-clamp-2">${p.name}</h3>
+                        <div class="mb-1 md:mb-1.5"><span class="text-[9px] md:text-[10px] uppercase font-semibold text-[#8B5E3C]/80 tracking-[0.14em]">${p.category}</span></div>
+                        <h3 class="font-semibold text-[#1B3C59] text-sm md:text-[17px] leading-snug mb-2.5 md:mb-3 line-clamp-2 tracking-tight">${p.name}</h3>
 
                         <!-- Variant Selector -->
                         ${variantsHtml}
 
-                        <div class="mt-auto flex justify-between items-center pt-3 md:pt-4 border-t border-dashed border-gray-100">
+                        <div class="mt-auto flex justify-between items-end pt-3 md:pt-4 border-t border-[#F0E8D5]">
                             <div class="flex flex-col items-start">
-                                <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl">${formatPrice(currentPrice)}</span>
-                                ${currentOriginalPrice ? `<span class="text-xs text-gray-400 line-through">${formatPrice(currentOriginalPrice)}</span>` : ''}
-                                ${currentOriginalPrice ? `<span class="text-[10px] text-green-600 font-bold leading-tight">Efectivo / Transf.</span>` : ''}
+                                <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl tracking-tight" style="font-variant-numeric: tabular-nums;">${formatPrice(currentPrice)}</span>
+                                ${currentOriginalPrice ? `<span class="text-xs text-gray-400 line-through" style="font-variant-numeric: tabular-nums;">${formatPrice(currentOriginalPrice)}</span>` : ''}
+                                ${currentOriginalPrice ? `<span class="text-[10px] text-green-700 font-semibold leading-tight tracking-tight">Efectivo / Transf.</span>` : ''}
                             </div>
                             ${controlsHtml}
                         </div>
@@ -1357,15 +1377,15 @@
                 total += item.price * item.quantity;
                 count += item.quantity;
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3 border border-gray-100 shadow-sm cart-item-enter';
+                div.className = 'flex items-center gap-3 p-3 bg-white rounded-xl mb-2.5 border border-[#F0E8D5] cart-item-enter';
                 div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg bg-white p-1 border border-gray-200 flex-shrink-0">
-                        <img src="${item.image}" class="w-full h-full object-cover rounded">
+                    <div class="h-12 w-12 rounded-lg p-1 flex-shrink-0" style="background: #FCF8EE; border: 1px solid #F0E8D5;">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain rounded">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-bold text-[#1B3C59] text-sm truncate">${item.name}</div>
-                        <div class="text-xs text-gray-500 font-medium">${item.variantName ? item.variantName : ''}</div>
-                        <div class="text-[#8B5E3C] text-xs font-semibold">${item.quantity} x ${formatPrice(item.price)}</div>
+                        <div class="font-semibold text-[#1B3C59] text-sm truncate tracking-tight">${item.name}</div>
+                        <div class="text-[11px] text-[#4B3A2F]/55 font-medium">${item.variantName ? item.variantName : ''}</div>
+                        <div class="text-[#E07A3C] text-xs font-semibold" style="font-variant-numeric: tabular-nums;">${item.quantity} × ${formatPrice(item.price)}</div>
                     </div>
                     <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 container.appendChild(div);
