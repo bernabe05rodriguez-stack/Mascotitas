@@ -993,6 +993,18 @@
                         if (item['Image 3'] && item['Image 3'].trim()) images.push(item['Image 3'].trim());
                         if (images.length === 0) images.push('https://placehold.co/300x300?text=Sin+Foto');
 
+                        // Detect manual "Destacado" column (flexible: destacado/destacada/featured/etc.)
+                        const featuredKey = Object.keys(item).find(k => {
+                            const norm = k.toLowerCase();
+                            return norm.includes('destac') || norm.includes('featur');
+                        });
+                        let featured = false;
+                        if (featuredKey && item[featuredKey] != null) {
+                            const v = item[featuredKey].toString().trim().toLowerCase();
+                            // Cualquier valor no vacío cuenta como destacado, salvo marcadores negativos
+                            featured = v !== '' && !['0', 'no', 'false', '-'].includes(v);
+                        }
+
                         return {
                             id: item.id || Math.random().toString(36).substr(2, 9),
                             name: item.name,
@@ -1002,6 +1014,7 @@
                             originalPrice: defaultOriginalPrice,
                             stock: parseInt(item.stock) || 0,
                             category: item.category ? item.category.toLowerCase().trim() : 'varios',
+                            featured: featured,
                             images: images,
                             image: images[0]
                         };
@@ -1033,10 +1046,17 @@
 
         function renderHeroFeatured() {
             if (!products || products.length === 0) return;
-            // Priorizar productos con descuento y stock, completar con otros con stock
-            const conDesc = products.filter(p => p.originalPrice && p.originalPrice > p.price && p.stock > 0);
-            const conStock = products.filter(p => p.stock > 0 && !conDesc.includes(p));
-            heroFeaturedList = [...conDesc, ...conStock].slice(0, 6);
+            // 1) Productos marcados manualmente como "Destacado" en el Sheet (con stock)
+            const marcados = products.filter(p => p.featured && p.stock > 0);
+            if (marcados.length > 0) {
+                // Si marcaste productos a mano, el carrusel muestra SOLO esos
+                heroFeaturedList = marcados.slice(0, 6);
+            } else {
+                // Si no marcaste ninguno: comportamiento automático (ofertas con stock + otros con stock)
+                const conDesc = products.filter(p => p.originalPrice && p.originalPrice > p.price && p.stock > 0);
+                const conStock = products.filter(p => p.stock > 0 && !conDesc.includes(p));
+                heroFeaturedList = [...conDesc, ...conStock].slice(0, 6);
+            }
             if (heroFeaturedList.length === 0) heroFeaturedList = products.slice(0, 6);
             // Precargar imágenes para evitar parpadeo al cambiar de slide
             heroFeaturedList.forEach(p => { const i = new Image(); i.src = p.image; });
