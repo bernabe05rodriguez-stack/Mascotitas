@@ -264,9 +264,9 @@
         /* Doggo flying to cart */
         .doggo-fly {
             position: fixed; z-index: 9999; pointer-events: none;
-            font-size: 48px; line-height: 1;
-            filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
-            transition: transform 1.7s cubic-bezier(.32,.72,.32,1), opacity .5s ease;
+            font-size: 64px; line-height: 1;
+            filter: drop-shadow(0 8px 14px rgba(0,0,0,.3));
+            transition: transform 2.6s cubic-bezier(.32,.72,.32,1), opacity .6s ease;
             transform-origin: center;
         }
         .doggo-bounce { animation: doggoBounce .55s ease-in-out infinite; }
@@ -281,7 +281,7 @@
             border-radius: 50%;
             background: radial-gradient(circle, rgba(224,122,60,.45) 0%, rgba(224,122,60,0) 70%);
             opacity: 0;
-            animation: burstPop .9s ease-out forwards;
+            animation: burstPop 1.2s ease-out forwards;
         }
         @keyframes burstPop {
             0%   { transform: translate(-50%,-50%) scale(.2); opacity: .9; }
@@ -292,7 +292,7 @@
             position: fixed; z-index: 9997; pointer-events: none;
             border: 2px solid #E07A3C; border-radius: 50%;
             opacity: 0;
-            animation: ringPop 1.1s ease-out forwards;
+            animation: ringPop 1.4s ease-out forwards;
         }
         @keyframes ringPop {
             0%   { transform: translate(-50%,-50%) scale(.3); opacity: 1; }
@@ -308,8 +308,8 @@
         }
         .sniff-line {
             position: fixed; z-index: 9998; pointer-events: none;
-            color: #E07A3C; font-size: 18px; opacity: 0;
-            animation: sniffPop 1s ease forwards;
+            color: #E07A3C; font-size: 26px; opacity: 0;
+            animation: sniffPop 1.5s ease forwards;
         }
         @keyframes sniffPop {
             0% { opacity: 0; transform: translateY(0) scale(.6); }
@@ -1155,33 +1155,33 @@
             const dog = document.createElement('div');
             dog.className = 'doggo-fly doggo-bounce';
             dog.textContent = '🐶';
-            dog.style.left = (startX - 22) + 'px';
-            dog.style.top = (startY - 22) + 'px';
+            dog.style.left = (startX - 32) + 'px';
+            dog.style.top = (startY - 32) + 'px';
             document.body.appendChild(dog);
             // Sniff lines at start
             for (let i = 0; i < 3; i++) {
                 const s = document.createElement('div');
                 s.className = 'sniff-line';
                 s.textContent = '~';
-                s.style.left = (startX - 6 + (i-1)*8) + 'px';
-                s.style.top = (startY - 30) + 'px';
-                s.style.animationDelay = (i * 0.08) + 's';
+                s.style.left = (startX - 8 + (i-1)*11) + 'px';
+                s.style.top = (startY - 40) + 'px';
+                s.style.animationDelay = (i * 0.12) + 's';
                 document.body.appendChild(s);
-                setTimeout(() => s.remove(), 1100);
+                setTimeout(() => s.remove(), 1700);
             }
             const targetX = cartRect.left + cartRect.width / 2;
             const targetY = cartRect.top + cartRect.height / 2;
-            // Suave: arco amplio hasta llegar
+            // Suave: arco amplio y lento hasta llegar
             requestAnimationFrame(() => {
-                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY - 90}px) scale(.7)`;
+                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY - 140}px) scale(.85)`;
             });
             setTimeout(() => {
-                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(.35)`;
+                dog.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(.5)`;
                 dog.style.opacity = '0';
                 // Burbuja en el carrito
                 spawnCartBurst(targetX, targetY);
-            }, 1500);
-            setTimeout(() => dog.remove(), 2100);
+            }, 2300);
+            setTimeout(() => dog.remove(), 3300);
         }
 
         function spawnCartBurst(x, y) {
@@ -1189,17 +1189,17 @@
             burst.className = 'cart-burst';
             burst.style.left = x + 'px';
             burst.style.top = y + 'px';
-            burst.style.width = '90px';
-            burst.style.height = '90px';
+            burst.style.width = '130px';
+            burst.style.height = '130px';
             document.body.appendChild(burst);
             const ring = document.createElement('div');
             ring.className = 'cart-ring';
             ring.style.left = x + 'px';
             ring.style.top = y + 'px';
-            ring.style.width = '40px';
-            ring.style.height = '40px';
+            ring.style.width = '60px';
+            ring.style.height = '60px';
             document.body.appendChild(ring);
-            setTimeout(() => { burst.remove(); ring.remove(); }, 1200);
+            setTimeout(() => { burst.remove(); ring.remove(); }, 1500);
             const cart = document.getElementById('nav-cart');
             if (cart) {
                 cart.classList.remove('cart-shake');
