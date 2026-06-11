@@ -871,7 +871,7 @@
 
                 if (delta > 0) {
                     const originBtn = (event && event.currentTarget) ? event.currentTarget : null;
-                    flyDogToCart(originBtn);
+                    flyDogToCart(originBtn, product);
                 }
                 updateCartUI();
                 const searchVal = document.getElementById('search-input').value;
@@ -1139,9 +1139,14 @@
         function restartHeroAutoplay() { stopHeroAutoplay(); startHeroAutoplay(); }
 
         let _firstRender = true;
-        function flyDogToCart(originEl) {
+        function flyDogToCart(originEl, product) {
             const cart = document.getElementById('nav-cart');
             if (!cart) return;
+            // Gatito para productos felinos (por categoría o por nombre), perrito para el resto
+            const esGato = !!product && (
+                (product.category || '').includes('gat') ||
+                /catchow|catpro|whiskas|felin|gatito|gato/i.test(product.name || '')
+            );
             const cartRect = cart.getBoundingClientRect();
             let startX, startY;
             if (originEl) {
@@ -1154,7 +1159,7 @@
             }
             const dog = document.createElement('div');
             dog.className = 'doggo-fly doggo-bounce';
-            dog.textContent = '🐶';
+            dog.textContent = esGato ? '🐱' : '🐶';
             dog.style.left = (startX - 32) + 'px';
             dog.style.top = (startY - 32) + 'px';
             document.body.appendChild(dog);
