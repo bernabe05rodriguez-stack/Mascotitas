@@ -110,13 +110,11 @@
             --bg: #F6F4EF;
             --bg-2: #EDE9DF;
             --ink: #1F2937;
-            --ink-soft: #4B3A2F;
-            --navy: #1B3C59;
-            --brown: #8B5E3C;
+            --navy: #1B3C59;        /* texto y estructura; secundarios = navy con opacidad */
             --accent: #E07A3C;       /* coral cálido — acento único para CTAs */
             --accent-dark: #C5631F;
-            --gold: #F2C13F;        /* amarillo cálido — ecos del logo */
-            --line: #ECE3CE;
+            --gold: #F2C13F;        /* amarillo cálido — ecos del logo (solo estrellas) */
+            --line: #E8E3D6;        /* único tono de borde */
         }
         html { scroll-behavior: smooth; }
         body { font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--ink); font-feature-settings: "ss01", "cv11"; }
@@ -127,7 +125,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .text-navy { color: #1B3C59; }
         .bg-navy { background-color: #1B3C59; }
-        .text-brown { color: #5D4037; }
         .hidden-section { display: none !important; }
 
         /* Tarjetas con sombra refinada (single light source, tinted) */
@@ -167,7 +164,7 @@
             position: absolute; border-radius: 50%; filter: blur(90px); opacity: .28;
             pointer-events: none; will-change: transform;
         }
-        .blob-1 { width: 440px; height: 440px; background: #e2b48a; top: -140px; left: -140px; animation: blobFloat 16s ease-in-out infinite; }
+        .blob-1 { width: 440px; height: 440px; background: #E8A87C; top: -140px; left: -140px; animation: blobFloat 16s ease-in-out infinite; }
         .blob-2 { width: 400px; height: 400px; background: #1B3C59; bottom: -160px; right: -120px; opacity: .12; animation: blobFloat 20s ease-in-out infinite reverse; }
         @keyframes blobFloat {
             0%, 100% { transform: translate(0,0) scale(1); }
@@ -396,8 +393,8 @@
                 </a>
                 <div id="nav-actions" class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
                     <div class="relative hidden sm:block w-48 md:w-64 lg:w-80">
-                        <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white/80 text-sm">
-                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
+                        <input type="text" id="search-input" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-[#E8E3D6] focus:outline-none focus:border-[#E07A3C] bg-white/80 text-sm">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-[#1B3C59]/40"></i>
                     </div>
                     <button id="mobile-search-btn" class="sm:hidden cursor-pointer p-2.5 hover:bg-white/60 rounded-full transition" onclick="toggleMobileSearch()" aria-label="Buscar">
                         <i data-lucide="search" class="h-5 w-5 text-[#1B3C59]"></i>
@@ -409,8 +406,8 @@
                 </div>
                 <div id="mobile-search-inline" class="hidden items-center gap-2 flex-1 w-full">
                     <div class="relative flex-1">
-                        <input type="text" id="search-input-mobile" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-[#E07A3C] bg-white text-sm">
-                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none"></i>
+                        <input type="text" id="search-input-mobile" placeholder="Buscar alimento..." class="w-full pl-9 pr-3 py-2 rounded-full border border-[#E8E3D6] focus:outline-none focus:border-[#E07A3C] bg-white text-sm">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-[#1B3C59]/40 pointer-events-none"></i>
                     </div>
                     <button type="button" onclick="toggleMobileSearch()" aria-label="Cerrar búsqueda" class="shrink-0 p-2.5 hover:bg-white/60 rounded-full transition text-[#1B3C59]">
                         <i data-lucide="x" class="h-5 w-5"></i>
@@ -425,8 +422,8 @@
             <div class="blob blob-1"></div>
             <div class="blob blob-2"></div>
             <i data-lucide="paw-print" class="absolute top-6 left-6 h-20 w-20 text-[#1B3C59] opacity-[0.04] -rotate-12"></i>
-            <i data-lucide="paw-print" class="absolute top-1/2 left-1/3 h-14 w-14 text-[#8B5E3C] opacity-[0.03] rotate-45"></i>
-            <i data-lucide="paw-print" class="absolute bottom-8 right-16 h-28 w-28 text-[#8B5E3C] opacity-[0.04] rotate-12"></i>
+            <i data-lucide="paw-print" class="absolute top-1/2 left-1/3 h-14 w-14 text-[#1B3C59] opacity-[0.03] rotate-45"></i>
+            <i data-lucide="paw-print" class="absolute bottom-8 right-16 h-28 w-28 text-[#1B3C59] opacity-[0.04] rotate-12"></i>
             <i data-lucide="paw-print" class="absolute bottom-20 left-1/4 h-10 w-10 text-[#1B3C59] opacity-[0.03] -rotate-45"></i>
             <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div class="mb-10 md:mb-0 text-center md:text-left max-w-xl">
@@ -436,7 +433,7 @@
                     <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-[#1B3C59] leading-[0.95]" style="text-wrap: balance;">
                         Tu mascota<br><span class="italic" style="color: var(--accent);">merece lo mejor.</span>
                     </h1>
-                    <p class="reveal reveal-delay-2 text-[#4B3A2F]/85 text-lg md:text-xl mb-8 font-normal leading-relaxed max-w-md mx-auto md:mx-0" style="text-wrap: pretty;">
+                    <p class="reveal reveal-delay-2 text-[#1B3C59]/85 text-lg md:text-xl mb-8 font-normal leading-relaxed max-w-md mx-auto md:mx-0" style="text-wrap: pretty;">
                         Alimento premium, atención personal y entrega rápida. Comprá tranqui — te ayudamos a elegir lo perfecto.
                     </p>
                     <div class="reveal reveal-delay-3 flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-8">
@@ -447,7 +444,7 @@
                             <i data-lucide="message-circle" class="h-5 w-5"></i> Asesoría gratis
                         </a>
                     </div>
-                    <div class="reveal flex items-center justify-center md:justify-start gap-6 text-sm text-[#4B3A2F]/80">
+                    <div class="reveal flex items-center justify-center md:justify-start gap-6 text-sm text-[#1B3C59]/80">
                         <div class="flex flex-col items-center md:items-start">
                             <div class="flex items-center gap-1 text-[#F2C13F]">
                                 <i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i><i data-lucide="star" class="h-4 w-4 fill-current"></i>
@@ -457,7 +454,7 @@
                     </div>
                 </div>
                 <div class="relative hero-img-wrap">
-                    <div class="absolute inset-0 bg-[#8B5E3C] rounded-full opacity-10 blur-3xl transform translate-x-4 translate-y-4 scale-110"></div>
+                    <div class="absolute inset-0 bg-[#1B3C59] rounded-full opacity-10 blur-3xl transform translate-x-4 translate-y-4 scale-110"></div>
                     <div class="relative w-full max-w-md mx-auto md:max-w-lg">
                         <div id="hero-carousel" class="relative bg-white rounded-3xl p-6 md:p-7 pt-8 cursor-pointer transition-all duration-300" style="box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 2px 6px rgba(27,60,89,.05), 0 30px 60px -30px rgba(27,60,89,.25);">
                             <div class="absolute -top-3 left-6 text-[#1B3C59] text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1.5 rounded-full flex items-center gap-1.5 z-10" style="background: #FBF1E1; border: 1px solid rgba(224,122,60,.2); box-shadow: 0 2px 8px -2px rgba(27,60,89,.12);">
@@ -472,7 +469,7 @@
                                     <h3 id="hero-featured-name" class="font-extrabold text-[#1B3C59] text-lg md:text-xl leading-tight mb-2 line-clamp-2">Producto destacado</h3>
                                     <div class="flex items-baseline gap-2 mb-3">
                                         <span id="hero-featured-price" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59]">—</span>
-                                        <span id="hero-featured-original" class="text-sm text-gray-400 line-through hidden"></span>
+                                        <span id="hero-featured-original" class="text-sm text-[#1B3C59]/40 line-through hidden"></span>
                                     </div>
                                     <div class="inline-flex items-center gap-1.5 text-xs font-bold text-[#E07A3C]">
                                         Ver producto <i data-lucide="arrow-right" class="h-3 w-3"></i>
@@ -480,8 +477,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button id="hero-prev" type="button" aria-label="Anterior" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#ECE3CE] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
-                        <button id="hero-next" type="button" aria-label="Siguiente" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#ECE3CE] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
+                        <button id="hero-prev" type="button" aria-label="Anterior" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#E8E3D6] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
+                        <button id="hero-next" type="button" aria-label="Siguiente" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-5 w-10 h-10 rounded-full bg-white shadow-lg border border-[#E8E3D6] flex items-center justify-center text-[#1B3C59] hover:bg-[#FBF1E1] transition z-20"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
                         <div id="hero-dots" class="flex justify-center gap-2 mt-4"></div>
                     </div>
                 </div>
@@ -489,23 +486,23 @@
         </div>
 
         <!-- Trust strip -->
-        <div class="bg-white border-y border-[#ECE3CE]">
+        <div class="bg-white border-y border-[#E8E3D6]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="truck" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
-                    <div class="min-w-0"><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Envío en el día</div><div class="text-[11px] sm:text-xs text-[#4B3A2F]/65 leading-snug"><span id="trust-horario">Lun-Vie 9-22 · Sáb/Dom 9-14 y 17:30-22</span></div></div>
+                    <div class="min-w-0"><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Envío en el día</div><div class="text-[11px] sm:text-xs text-[#1B3C59]/65 leading-snug"><span id="trust-horario">Lun-Vie 9-22 · Sáb/Dom 9-14 y 17:30-22</span></div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="shield-check" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
-                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Calidad premium</div><div class="text-xs text-[#4B3A2F]/65">Marcas seleccionadas</div></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Calidad premium</div><div class="text-xs text-[#1B3C59]/65">Marcas seleccionadas</div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="message-circle-heart" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
-                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Atención personal</div><div class="text-xs text-[#4B3A2F]/65">Te ayudamos a elegir</div></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Atención personal</div><div class="text-xs text-[#1B3C59]/65">Te ayudamos a elegir</div></div>
                 </div>
                 <div class="trust-pill flex items-center gap-3">
                     <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(224,122,60,.08); border: 1px solid rgba(224,122,60,.15);"><i data-lucide="wallet" class="h-[18px] w-[18px] text-[#E07A3C]"></i></div>
-                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Efectivo / Transf.</div><div class="text-xs text-[#4B3A2F]/65">Con descuento</div></div>
+                    <div><div class="font-semibold text-sm text-[#1B3C59] tracking-tight">Efectivo / Transf.</div><div class="text-xs text-[#1B3C59]/65">Con descuento</div></div>
                 </div>
             </div>
         </div>
@@ -514,10 +511,10 @@
             <div class="text-center mb-12">
                 <span class="reveal inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#E07A3C] mb-4"><span class="h-px w-6" style="background:#E07A3C"></span> Catálogo <span class="h-px w-6" style="background:#E07A3C"></span></span>
                 <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1B3C59] leading-[1.05]">Lo que tu mascota<br class="sm:hidden"> <span class="italic" style="color: var(--accent);">va a amar</span></h2>
-                <p class="reveal reveal-delay-2 text-[#4B3A2F]/65 mt-4 text-base md:text-lg max-w-xl mx-auto leading-relaxed" style="text-wrap: balance;">Filtrá por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
+                <p class="reveal reveal-delay-2 text-[#1B3C59]/65 mt-4 text-base md:text-lg max-w-xl mx-auto leading-relaxed" style="text-wrap: balance;">Filtrá por categoría o buscá por nombre. Si no encontrás algo, escribinos por WhatsApp.</p>
             </div>
 
-            <div class="flex justify-center mb-10 items-center bg-white/80 backdrop-blur-xl p-2.5 rounded-full border border-[#ECE3CE] sticky top-24 sm:top-28 md:top-32 z-40" style="box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 24px -16px rgba(27,60,89,.18);">
+            <div class="flex justify-center mb-10 items-center bg-white/80 backdrop-blur-xl p-2.5 rounded-full border border-[#E8E3D6] sticky top-24 sm:top-28 md:top-32 z-40" style="box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 24px -16px rgba(27,60,89,.18);">
                 <div id="category-filters" class="flex gap-2 overflow-x-auto w-full pb-1 scrollbar-hide justify-start md:justify-center"></div>
             </div>
 
@@ -535,7 +532,7 @@
                                     <div class="skeleton h-6 w-12 rounded-lg"></div>
                                     <div class="skeleton h-6 w-12 rounded-lg"></div>
                                 </div>
-                                <div class="mt-auto flex justify-between items-end pt-3 md:pt-4 border-t border-[#F0E8D5]">
+                                <div class="mt-auto flex justify-between items-end pt-3 md:pt-4 border-t border-[#E8E3D6]">
                                     <div class="skeleton h-6 w-20"></div>
                                     <div class="skeleton h-9 w-9 md:h-11 md:w-11 rounded-full"></div>
                                 </div>
@@ -548,7 +545,7 @@
     </div>
 
     <footer id="main-footer" class="text-white py-16 mt-10 relative overflow-hidden" style="background: #16314a;">
-        <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(220,169,128,.4), transparent);"></div>
+        <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(232,168,124,.4), transparent);"></div>
         <i data-lucide="paw-print" class="absolute bottom-6 right-10 h-28 w-28 text-white opacity-[0.025] rotate-12"></i>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
@@ -557,7 +554,7 @@
                     <p class="text-white/60 mb-6 text-sm font-medium tracking-wide">Tu alimento de confianza.</p>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="p-3 rounded-full mb-4 border border-white/15" style="background: rgba(220,169,128,.12);"><i data-lucide="clock" class="h-6 w-6" style="color:#e2b48a"></i></div>
+                    <div class="p-3 rounded-full mb-4 border border-white/15" style="background: rgba(224,122,60,.12);"><i data-lucide="clock" class="h-6 w-6" style="color:#E8A87C"></i></div>
                     <h3 class="text-base font-bold mb-2 tracking-tight">Horarios de Atención</h3>
                     <p class="text-white/75 font-medium text-sm leading-relaxed">Lun a Vie: 9:00 a 22:00 hs<br>Sáb, Dom y Feriados:<br>9:00 a 14:00 y 17:30 a 22:00 hs</p>
                 </div>
@@ -582,20 +579,20 @@
     </footer>
 
     <div id="cart-overlay" class="fixed inset-0 bg-[#1B3C59] bg-opacity-60 z-50 hidden backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-gray-200">
-        <div class="p-6 border-b border-[#F0E8D5] flex justify-between items-center" style="background: #FCF8EE;">
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-[#E8E3D6]">
+        <div class="p-6 border-b border-[#E8E3D6] flex justify-between items-center" style="background: #F6F4EF;">
             <h2 class="font-extrabold text-xl text-[#1B3C59] flex items-center gap-2 tracking-tight" style="font-family: 'Fraunces', serif; letter-spacing: -0.02em;">
                 <i data-lucide="shopping-bag" class="text-[#E07A3C]"></i> Tu pedido
             </h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-[#1B3C59] hover:bg-white p-1.5 rounded-full transition"><i data-lucide="x" class="h-5 w-5"></i></button>
+            <button onclick="toggleCart()" class="text-[#1B3C59]/40 hover:text-[#1B3C59] hover:bg-white p-1.5 rounded-full transition"><i data-lucide="x" class="h-5 w-5"></i></button>
         </div>
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white"></div>
-        <div class="p-6 border-t border-[#F0E8D5]" style="background: #FCF8EE;">
+        <div class="p-6 border-t border-[#E8E3D6]" style="background: #F6F4EF;">
             <!-- Discount Block -->
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-[#1B3C59]/70 mb-1.5 tracking-wide uppercase">Código de descuento</label>
                 <div class="flex gap-2">
-                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-[#ECE3CE] bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#E07A3C] focus:ring-2 focus:ring-[#E07A3C]/15 transition">
+                    <input type="text" id="discount-code" placeholder="Código" class="flex-1 border border-[#E8E3D6] bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#E07A3C] focus:ring-2 focus:ring-[#E07A3C]/15 transition">
                     <button onclick="applyDiscount()" id="btn-apply-discount" class="bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#2c5275] transition">Aplicar</button>
                 </div>
                 <div id="discount-message" class="text-xs mt-1 h-4"></div>
@@ -603,7 +600,7 @@
 
             <div class="flex flex-col gap-2 mb-6" style="font-variant-numeric: tabular-nums;">
                  <div id="subtotal-row" class="flex justify-between items-end hidden">
-                    <span class="text-gray-500 font-medium text-sm">Subtotal</span>
+                    <span class="text-[#1B3C59]/55 font-medium text-sm">Subtotal</span>
                     <span id="cart-subtotal" class="font-bold text-[#1B3C59]">$0</span>
                 </div>
                 <div id="discount-row" class="flex justify-between items-end hidden">
@@ -611,7 +608,7 @@
                     <span id="cart-discount" class="font-bold text-green-600">-$0</span>
                 </div>
                 <div class="flex justify-between items-end">
-                    <span class="text-gray-500 font-medium">Total estimado</span>
+                    <span class="text-[#1B3C59]/55 font-medium">Total estimado</span>
                     <span id="cart-total" class="text-2xl font-extrabold text-[#1B3C59] tracking-tight">$0</span>
                 </div>
             </div>
@@ -628,7 +625,7 @@
         <div class="relative z-10 flex items-center justify-center min-h-screen px-4 py-4 sm:p-6 pointer-events-none">
             <div id="modal-panel" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden pointer-events-auto flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh] relative">
 
-                <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-white/80 hover:bg-white text-gray-500 hover:text-red-500 p-2 rounded-full transition shadow-sm backdrop-blur">
+                <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-white/80 hover:bg-white text-[#1B3C59]/55 hover:text-red-500 p-2 rounded-full transition shadow-sm backdrop-blur">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
@@ -645,22 +642,22 @@
 
                 <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col overflow-y-auto bg-white">
                     <div class="mb-3">
-                        <span id="modal-category" class="text-[10px] uppercase font-semibold text-[#8B5E3C] tracking-[0.16em] bg-[#FBF1E1] px-2.5 py-1 rounded-md border border-[#8B5E3C]/15">Category</span>
+                        <span id="modal-category" class="text-[10px] uppercase font-semibold text-[#1B3C59]/80 tracking-[0.16em] bg-[#FBF1E1] px-2.5 py-1 rounded-md border border-[#1B3C59]/15">Category</span>
                     </div>
 
                     <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#1B3C59] mb-4 leading-[1.1] tracking-tight">Product Name</h2>
 
-                    <p id="modal-desc" class="text-gray-600 mb-6 text-sm leading-relaxed hidden">Description.</p>
+                    <p id="modal-desc" class="text-[#1B3C59]/70 mb-6 text-sm leading-relaxed hidden">Description.</p>
 
                     <div class="mb-6">
                         <label class="block text-xs font-semibold text-[#1B3C59]/70 mb-2 tracking-wide uppercase">Seleccionar peso</label>
                         <div id="modal-variants" class="flex flex-wrap gap-2"></div>
                     </div>
 
-                    <div class="mt-auto border-t border-gray-100 pt-6">
+                    <div class="mt-auto border-t border-[#E8E3D6] pt-6">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="flex flex-col text-center sm:text-left">
-                                <span id="modal-original-price" class="text-sm text-gray-400 line-through hidden">$0</span>
+                                <span id="modal-original-price" class="text-sm text-[#1B3C59]/40 line-through hidden">$0</span>
                                 <span id="modal-price" class="text-3xl font-extrabold text-[#1B3C59]">$0</span>
                                 <span id="modal-payment-label" class="text-sm font-bold text-green-600 hidden">Efectivo / Transf.</span>
                             </div>
@@ -926,7 +923,7 @@
                 const btn = document.createElement('button');
                 btn.className = isSelected
                     ? 'bg-[#1B3C59] text-white px-4 py-2 rounded-lg text-sm font-semibold border border-[#1B3C59] transition'
-                    : 'bg-white text-[#1B3C59]/75 hover:text-[#1B3C59] hover:bg-[#FBF1E1] px-4 py-2 rounded-lg text-sm font-semibold transition border border-[#ECE3CE]';
+                    : 'bg-white text-[#1B3C59]/75 hover:text-[#1B3C59] hover:bg-[#FBF1E1] px-4 py-2 rounded-lg text-sm font-semibold transition border border-[#E8E3D6]';
                 btn.textContent = v.weight;
                 btn.onclick = () => selectVariant(p.id, idx);
                 variantContainer.appendChild(btn);
@@ -942,7 +939,7 @@
                     </button>`;
             } else {
                 controlsContainer.innerHTML = `
-                    <div class="flex items-center bg-[#FBF1E1] rounded-xl overflow-hidden border border-[#ECE3CE]">
+                    <div class="flex items-center bg-[#FBF1E1] rounded-xl overflow-hidden border border-[#E8E3D6]">
                          <button onclick="updateQuantity('${p.id}', -1)" class="w-11 h-11 flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold text-xl">-</button>
                          <span class="w-10 text-center font-bold text-[#1B3C59] text-base" style="font-variant-numeric: tabular-nums;">${qty}</span>
                          <button onclick="updateQuantity('${p.id}', 1)" class="w-11 h-11 flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold text-xl">+</button>
@@ -1236,18 +1233,18 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 opacity-50"><i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-[#8B5E3C]"></i><p class="text-xl font-medium text-[#5D4037]">No hay productos que coincidan.</p></div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20 opacity-50"><i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-[#1B3C59]"></i><p class="text-xl font-medium text-[#1B3C59]">No hay productos que coincidan.</p></div>`;
                 lucide.createIcons();
                 return;
             }
 
             filtered.forEach(p => {
                 const outOfStock = p.stock <= 0;
-                let stockText = '', stockClass = 'bg-white/90 text-[#1B3C59] border-gray-100';
+                let stockText = '', stockClass = 'bg-white/90 text-[#1B3C59] border-[#E8E3D6]';
 
-                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-gray-100/90 text-gray-500'; }
-                else if (p.stock === 1) { stockText = 'Última unidad'; stockClass = 'bg-orange-50/95 text-orange-700'; }
-                else if (p.stock === 2) { stockText = 'Últimas 2'; stockClass = 'bg-orange-50/95 text-orange-700'; }
+                if (p.stock <= 0) { stockText = 'Agotado'; stockClass = 'bg-[#EDE9DF]/90 text-[#1B3C59]/55'; }
+                else if (p.stock === 1) { stockText = 'Última unidad'; stockClass = 'bg-[#FBF1E1]/95 text-[#C5631F]'; }
+                else if (p.stock === 2) { stockText = 'Últimas 2'; stockClass = 'bg-[#FBF1E1]/95 text-[#C5631F]'; }
                 else { stockText = 'En stock'; stockClass = 'bg-green-50/95 text-green-700'; }
 
                 const card = document.createElement('div');
@@ -1256,7 +1253,7 @@
                     const isSelected = (selectedVariants[p.id] === idx);
                     const activeClass = isSelected
                         ? 'bg-[#1B3C59] text-white border-[#1B3C59]'
-                        : 'bg-white text-[#1B3C59]/70 hover:bg-[#FBF1E1] hover:text-[#1B3C59] border-[#ECE3CE]';
+                        : 'bg-white text-[#1B3C59]/70 hover:bg-[#FBF1E1] hover:text-[#1B3C59] border-[#E8E3D6]';
                     variantsHtml += `<button onclick="event.stopPropagation(); selectVariant('${p.id}', ${idx})" class="variant-btn-${p.id} ${activeClass} px-2.5 py-1 rounded-lg text-[11px] font-semibold transition border tracking-tight">${v.weight}</button>`;
                 });
                 variantsHtml += '</div>';
@@ -1284,10 +1281,10 @@
                 const qty = getCartQuantity(p.id, currentVariantIdx);
                 let controlsHtml = '';
                 if (qty === 0) {
-                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-9 w-9 md:h-11 md:w-11 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-gray-200 cursor-not-allowed text-gray-400' : 'text-white hover:scale-110'}" ${outOfStock ? '' : 'style="background:var(--accent);box-shadow:0 6px 14px -4px rgba(224,122,60,.55)"'}><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
+                    controlsHtml = `<button onclick="event.stopPropagation(); updateQuantity('${p.id}', 1)" ${outOfStock ? 'disabled' : ''} class="h-9 w-9 md:h-11 md:w-11 rounded-full flex items-center justify-center transition shadow-md ${outOfStock ? 'bg-[#EDE9DF] cursor-not-allowed text-[#1B3C59]/35' : 'text-white hover:scale-110'}" ${outOfStock ? '' : 'style="background:var(--accent);box-shadow:0 6px 14px -4px rgba(224,122,60,.55)"'}><i data-lucide="plus" class="w-4 h-4 md:w-5 md:h-5"></i></button>`;
                 } else {
                     controlsHtml = `
-                        <div class="flex items-center bg-[#FBF1E1] rounded-full overflow-hidden shadow-sm border border-[#ECE3CE] h-8 md:h-10" onclick="event.stopPropagation()">
+                        <div class="flex items-center bg-[#FBF1E1] rounded-full overflow-hidden shadow-sm border border-[#E8E3D6] h-8 md:h-10" onclick="event.stopPropagation()">
                              <button onclick="updateQuantity('${p.id}', -1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold">-</button>
                              <span class="text-xs md:text-sm font-bold text-[#1B3C59] min-w-[1rem] text-center" style="font-variant-numeric: tabular-nums;">${qty}</span>
                              <button onclick="updateQuantity('${p.id}', 1)" class="w-8 md:w-10 h-full flex items-center justify-center text-[#1B3C59] hover:bg-white transition font-bold">+</button>
@@ -1307,16 +1304,16 @@
                         ${currentOriginalPrice ? '<div class="absolute top-2.5 left-2.5 badge badge-hot">Oferta</div>' : ''}
                     </div>
                     <div class="p-3 md:p-5 flex-1 flex flex-col">
-                        <div class="mb-1 md:mb-1.5"><span class="text-[9px] md:text-[10px] uppercase font-semibold text-[#8B5E3C]/80 tracking-[0.14em]">${p.category}</span></div>
+                        <div class="mb-1 md:mb-1.5"><span class="text-[9px] md:text-[10px] uppercase font-semibold text-[#1B3C59]/60 tracking-[0.14em]">${p.category}</span></div>
                         <h3 class="font-semibold text-[#1B3C59] text-sm md:text-[17px] leading-snug mb-2.5 md:mb-3 line-clamp-2 tracking-tight">${p.name}</h3>
 
                         <!-- Variant Selector -->
                         ${variantsHtml}
 
-                        <div class="mt-auto flex justify-between items-end pt-3 md:pt-4 border-t border-[#F0E8D5]">
+                        <div class="mt-auto flex justify-between items-end pt-3 md:pt-4 border-t border-[#E8E3D6]">
                             <div class="flex flex-col items-start">
                                 <span id="price-${p.id}" class="text-[#1B3C59] font-extrabold text-lg md:text-xl tracking-tight" style="font-variant-numeric: tabular-nums;">${formatPrice(currentPrice)}</span>
-                                ${currentOriginalPrice ? `<span class="text-xs text-gray-400 line-through" style="font-variant-numeric: tabular-nums;">${formatPrice(currentOriginalPrice)}</span>` : ''}
+                                ${currentOriginalPrice ? `<span class="text-xs text-[#1B3C59]/40 line-through" style="font-variant-numeric: tabular-nums;">${formatPrice(currentOriginalPrice)}</span>` : ''}
                                 ${currentOriginalPrice ? `<span class="text-[10px] text-green-700 font-semibold leading-tight tracking-tight">Efectivo / Transf.</span>` : ''}
                             </div>
                             ${controlsHtml}
@@ -1408,7 +1405,7 @@
                         <i data-lucide="paw-print" class="h-8 w-8 text-[#E07A3C]"></i>
                     </div>
                     <p class="font-semibold text-[#1B3C59] mb-1">Tu pedido está vacío</p>
-                    <p class="text-xs text-[#4B3A2F]/60 mb-5">Agregá productos del catálogo para empezar.</p>
+                    <p class="text-xs text-[#1B3C59]/60 mb-5">Agregá productos del catálogo para empezar.</p>
                     <button onclick="toggleCart(); document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});" class="btn-primary px-6 py-2.5 rounded-full text-sm font-semibold inline-flex items-center gap-2">
                         Ver catálogo <i data-lucide="arrow-right" class="h-4 w-4"></i>
                     </button>
@@ -1418,17 +1415,17 @@
                 total += item.price * item.quantity;
                 count += item.quantity;
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-white rounded-xl mb-2.5 border border-[#F0E8D5] cart-item-enter';
+                div.className = 'flex items-center gap-3 p-3 bg-white rounded-xl mb-2.5 border border-[#E8E3D6] cart-item-enter';
                 div.innerHTML = `
-                    <div class="h-12 w-12 rounded-lg p-1 flex-shrink-0 bg-white border border-[#F0E8D5]">
+                    <div class="h-12 w-12 rounded-lg p-1 flex-shrink-0 bg-white border border-[#E8E3D6]">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain rounded">
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-[#1B3C59] text-sm truncate tracking-tight">${item.name}</div>
-                        <div class="text-[11px] text-[#4B3A2F]/55 font-medium">${item.variantName ? item.variantName : ''}</div>
+                        <div class="text-[11px] text-[#1B3C59]/55 font-medium">${item.variantName ? item.variantName : ''}</div>
                         <div class="text-[#E07A3C] text-xs font-semibold" style="font-variant-numeric: tabular-nums;">${item.quantity} × ${formatPrice(item.price)}</div>
                     </div>
-                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                    <button onclick="removeFromCart(${index})" class="text-[#1B3C59]/40 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 container.appendChild(div);
             });
 
