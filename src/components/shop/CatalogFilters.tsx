@@ -181,13 +181,15 @@ export function CatalogFilters({ categories, brands, total, children }: Props) {
 
   return (
     <>
-      {/* Barra superior: resultados + orden + botón de filtros en mobile */}
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <p className="text-sm text-navy/60">
+      {/* Barra superior: resultados + orden + botón de filtros en mobile.
+          Envuelve en pantallas chicas — sin esto el botón "Filtros" se salía
+          del viewport y el body scrolleaba en horizontal. */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="shrink-0 text-sm text-navy/60">
           <span className="font-bold text-navy tabular">{total}</span> {total === 1 ? 'producto' : 'productos'}
         </p>
 
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
           <label className="sr-only" htmlFor="sort">
             Ordenar por
           </label>
@@ -195,7 +197,7 @@ export function CatalogFilters({ categories, brands, total, children }: Props) {
             id="sort"
             value={current.sort}
             onChange={(e) => setParam('sort', e.target.value)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy focus:border-accent focus:outline-none"
+            className="min-w-0 max-w-[52vw] truncate rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy focus:border-accent focus:outline-none sm:max-w-none"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>
