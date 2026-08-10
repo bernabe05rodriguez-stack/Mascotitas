@@ -1,0 +1,354 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif;
+    letter-spacing: -0.025em;
+  }
+  h1 {
+    letter-spacing: -0.038em;
+    text-wrap: balance;
+  }
+  h2 {
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-accent text-white;
+  }
+
+  /* Precios y totales siempre alineados */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* --------------------------------------------------------------- botones */
+
+  .btn-primary {
+    @apply bg-accent text-white shadow-accent;
+    transition:
+      transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.25s ease,
+      background 0.2s ease;
+  }
+  .btn-primary:hover {
+    @apply bg-accent-hover shadow-accent-hover;
+    transform: translateY(-2px);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.08),
+      0 4px 10px -4px rgba(224, 122, 60, 0.5);
+  }
+  .btn-primary:disabled {
+    @apply cursor-not-allowed bg-navy/25 shadow-none;
+    transform: none;
+  }
+
+  .btn-outline {
+    @apply border border-line bg-white text-navy;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px -4px rgba(27, 60, 89, 0.15);
+  }
+  .btn-outline:hover {
+    border-color: rgba(224, 122, 60, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* Gaze de luz al hover, sobre cualquier botón */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    transition: left 0.9s ease;
+  }
+  .btn-shine:hover::after {
+    left: 150%;
+  }
+
+  /* ---------------------------------------------------------------- cards */
+
+  .product-card {
+    @apply border-line bg-white;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 0.25s ease;
+    box-shadow:
+      0 1px 2px rgba(27, 60, 89, 0.04),
+      0 6px 16px -8px rgba(27, 60, 89, 0.08);
+    will-change: transform;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(27, 60, 89, 0.12);
+    box-shadow:
+      0 2px 4px rgba(27, 60, 89, 0.05),
+      0 18px 40px -16px rgba(27, 60, 89, 0.22);
+  }
+  .product-card img {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .product-card:hover img {
+    transform: scale(1.06);
+  }
+
+  /* ------------------------------------------------------------- navbar */
+
+  .nav-cart-btn {
+    background: theme('colors.accent.DEFAULT');
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 2px rgba(197, 99, 31, 0.35),
+      0 6px 16px -6px rgba(224, 122, 60, 0.55);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background 0.2s ease;
+  }
+  .nav-cart-btn:hover {
+    background: theme('colors.accent.hover');
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 4px rgba(197, 99, 31, 0.35),
+      0 10px 22px -6px rgba(224, 122, 60, 0.6);
+  }
+
+  .nav-icon-btn {
+    @apply border border-line bg-white;
+    box-shadow: 0 2px 8px -4px rgba(27, 60, 89, 0.15);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .nav-icon-btn:hover {
+    border-color: rgba(224, 122, 60, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .search-pill {
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 2px 10px -6px rgba(27, 60, 89, 0.18);
+  }
+  .search-pill:focus {
+    @apply border-accent bg-white outline-none;
+    box-shadow: 0 0 0 4px rgba(224, 122, 60, 0.12);
+  }
+
+  /* --------------------------------------------------------- chips/filtros */
+
+  .chip {
+    @apply rounded-full px-4 py-2 text-sm font-semibold;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .chip-idle {
+    @apply bg-bg-2 text-navy/75;
+  }
+  .chip-idle:hover {
+    background-color: #e4dfd3;
+    @apply text-navy;
+    transform: translateY(-1px);
+  }
+  .chip-active {
+    @apply bg-accent text-white;
+    box-shadow:
+      0 6px 18px -6px rgba(224, 122, 60, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  /* ---------------------------------------------------------------- blobs */
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ------------------------------------------------------------- reveal */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* --------------------------------------------------- vuelo al carrito */
+
+  .doggo-fly {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.3));
+    transition:
+      transform 2.6s cubic-bezier(0.32, 0.72, 0.32, 1),
+      opacity 0.6s ease;
+    transform-origin: center;
+  }
+  .doggo-fly svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .doggo-bounce {
+    animation: doggoBounce 0.55s ease-in-out infinite;
+  }
+  @keyframes doggoBounce {
+    0%,
+    100% {
+      translate: 0 0;
+      rotate: -6deg;
+    }
+    50% {
+      translate: 0 -8px;
+      rotate: 6deg;
+    }
+  }
+
+  .cart-burst {
+    position: fixed;
+    z-index: 9997;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(224, 122, 60, 0.45) 0%, rgba(224, 122, 60, 0) 70%);
+    opacity: 0;
+    animation: burstPop 1.2s ease-out forwards;
+  }
+  @keyframes burstPop {
+    0% {
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 0.9;
+    }
+    60% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  .cart-ring {
+    position: fixed;
+    z-index: 9997;
+    pointer-events: none;
+    border: 2px solid theme('colors.accent.DEFAULT');
+    border-radius: 50%;
+    opacity: 0;
+    animation: ringPop 1.4s ease-out forwards;
+  }
+  @keyframes ringPop {
+    0% {
+      transform: translate(-50%, -50%) scale(0.3);
+      opacity: 0.9;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.8);
+      opacity: 0;
+    }
+  }
+
+  .cart-shake {
+    animation: cartShake 0.5s ease;
+  }
+  @keyframes cartShake {
+    0%,
+    100% {
+      transform: rotate(0);
+    }
+    25% {
+      transform: rotate(-12deg) scale(1.1);
+    }
+    75% {
+      transform: rotate(12deg) scale(1.1);
+    }
+  }
+
+  /* ------------------------------------------------------------- panel */
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-navy;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .input:focus {
+    @apply border-accent outline-none;
+    box-shadow: 0 0 0 4px rgba(224, 122, 60, 0.1);
+  }
+  .input::placeholder {
+    @apply text-navy/35;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Respetar a quien pidió menos movimiento en el sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
