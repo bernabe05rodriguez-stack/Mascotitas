@@ -9,7 +9,7 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma
 # --ignore-scripts: sin esto, los postinstall de playwright y del postgres
 # embebido (herramientas de desarrollo) se bajan cientos de MB dentro del build.
-# prisma generate se corre explícitamente en la etapa siguiente.
+# `prisma generate` se corre explícitamente en la etapa siguiente.
 RUN npm ci --ignore-scripts
 
 # --------------------------------------------------------------------- build
@@ -22,6 +22,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Ninguna página consulta la base al construir — todas son `force-dynamic`.
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 RUN npx prisma generate && npx next build
+
+# El script de arranque se empaqueta en un solo JS, para no tener que instalar
+# tsx ni papaparse en la imagen final. Sólo @prisma/client queda afuera: necesita
+# el cliente generado y su engine binario. bcryptjs va adentro del bundle porque
+# Next lo mete en sus chunks y no queda suelto en el node_modules del standalone.
+RUN npx esbuild scripts/bootstrap.ts \
+      --bundle --platform=node --target=node20 --format=cjs \
+      --external:@prisma/client \
+      --outfile=bootstrap.js
 
 # ------------------------------------------------------------------ runtime
 FROM node:20-slim AS runner
@@ -36,21 +45,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-cert
   && rm -rf /var/lib/apt/lists/* \
   && groupadd -g 1001 nodejs && useradd -u 1001 -g nodejs -m nextjs
 
+# El CLI de Prisma va en su propio árbol de dependencias. Instalarlo sobre /app
+# reescribiría el node_modules podado que trae el output standalone de Next.
+RUN mkdir -p /opt/prisma && cd /opt/prisma \
+  && npm init -y > /dev/null \
+  && npm install --no-audit --no-fund prisma@6 \
+  && npm cache clean --force
+
 # La app en modo standalone: sólo lo que Next necesita para correr.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Schema + migraciones para poder aplicar `migrate deploy` al arrancar.
+# Schema + migraciones, para aplicar `migrate deploy` al arrancar.
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 # Copia de respaldo del catálogo y de las 305 fotos rescatadas de postimg.cc:
 # de acá se resiembra el volumen si alguna vez queda vacío.
 COPY --from=builder --chown=nextjs:nodejs /app/data ./data
-COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
-
-# prisma CLI (migraciones) y tsx (scripts de arranque). No vienen en standalone.
-RUN npm install --no-save --no-audit --no-fund prisma@6 tsx@4 papaparse@5 \
-  && npm cache clean --force
+COPY --from=builder --chown=nextjs:nodejs /app/bootstrap.js ./scripts/bootstrap.js
 
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
@@ -58,7 +70,7 @@ RUN chmod +x docker-entrypoint.sh
 USER nextjs
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

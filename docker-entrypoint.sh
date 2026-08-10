@@ -1,31 +1,60 @@
 #!/bin/sh
-set -e
+# Arranque del contenedor.
+#
+# Deliberadamente NO usa `set -e`. EasyPanel no expone los logs del contenedor
+# por API, así que un arranque que aborta se ve desde afuera como un 502 mudo,
+# imposible de diagnosticar. En vez de eso: se registra todo en BOOT_LOG, el
+# servidor levanta igual, `/api/health` reporta el problema y `/api/boot`
+# devuelve este log completo. Fallar sigue siendo visible — pero legible.
 
-echo "→ Mascotitas: arrancando"
+BOOT_LOG=/tmp/boot.log
+: > "$BOOT_LOG"
 
-# 1. Migraciones. Se usa `migrate deploy` y NO `db push --accept-data-loss`:
-#    en esta base viven los pedidos, y un push puede borrar columnas en silencio.
-#    Si una migración falla, el contenedor no arranca — es lo que queremos.
-echo "→ Aplicando migraciones"
-npx prisma migrate deploy
+log() {
+  echo "$(date -u +%H:%M:%S) $*" | tee -a "$BOOT_LOG"
+}
 
-# 2. Restaurar las fotos al volumen.
-#    public/uploads está montado como volumen persistente, así que arranca vacío
-#    la primera vez. data/images tiene las 305 fotos rescatadas de postimg.cc,
-#    versionadas en el repo: se copian sólo las que falten (-n, nunca pisa las
-#    que se subieron desde el panel).
-if [ -d "./data/images" ]; then
-  mkdir -p ./public/uploads
-  before=$(find ./public/uploads -name '*.webp' | wc -l)
-  cp -n ./data/images/*.webp ./public/uploads/ 2>/dev/null || true
-  after=$(find ./public/uploads -name '*.webp' | wc -l)
-  echo "→ Imágenes: $after en el volumen (se restauraron $((after - before)))"
+run() {
+  log "\$ $*"
+  "$@" >> "$BOOT_LOG" 2>&1
+  status=$?
+  log "  -> exit $status"
+  return $status
+}
+
+log "=== Mascotitas: arrancando ==="
+log "node $(node --version) | usuario $(id -un) uid=$(id -u)"
+
+# 1. Migraciones.
+#    `migrate deploy` y NO `db push --accept-data-loss`: en esta base viven los
+#    pedidos y un push puede borrar columnas en silencio.
+log "--- migraciones ---"
+if run /opt/prisma/node_modules/.bin/prisma migrate deploy --schema ./prisma/schema.prisma; then
+  log "migraciones OK"
+else
+  log "!! FALLARON LAS MIGRACIONES — la app va a levantar pero sin datos"
 fi
 
-# 3. Sembrar el catálogo la primera vez.
-#    Sólo corre si la tabla de productos está vacía: nunca pisa datos existentes.
-echo "→ Verificando catálogo"
-npx tsx ./scripts/bootstrap.ts
+# 2. Restaurar las fotos al volumen.
+#    public/uploads es un volumen persistente, así que arranca vacío la primera
+#    vez. data/images tiene las 305 fotos rescatadas de postimg.cc, versionadas
+#    en el repo. Se copian sólo las que falten: nunca pisa lo subido del panel.
+log "--- imágenes ---"
+if [ -d ./data/images ]; then
+  mkdir -p ./public/uploads 2>>"$BOOT_LOG"
+  if [ -w ./public/uploads ]; then
+    cp -n ./data/images/*.webp ./public/uploads/ 2>>"$BOOT_LOG"
+    log "imágenes en el volumen: $(ls ./public/uploads/*.webp 2>/dev/null | wc -l)"
+  else
+    log "!! ./public/uploads NO es escribible por $(id -un) — las fotos no se restauran"
+  fi
+else
+  log "!! no existe ./data/images"
+fi
 
-echo "→ Listo, sirviendo en :${PORT:-3000}"
+# 3. Sembrar el catálogo, sólo si la base está vacía.
+log "--- catálogo ---"
+run node ./scripts/bootstrap.js
+
+log "--- sirviendo en :${PORT:-3000} ---"
 exec node server.js
