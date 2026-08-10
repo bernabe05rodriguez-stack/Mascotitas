@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mascotitas.online';
 
 /**

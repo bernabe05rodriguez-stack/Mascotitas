@@ -7,9 +7,10 @@ import { getFeaturedProducts, getCatalog, getFilterOptions } from '@/lib/catalog
 import { getSettings } from '@/lib/settings';
 import { scheduleLines } from '@/lib/horarios';
 
-// El catálogo cambia poco: se revalida cada 5 minutos en vez de pegarle a la
-// base en cada visita. Al guardar desde el panel se revalida al instante.
-export const revalidate = 300;
+// Se renderiza por request: el build no tiene acceso a la base. Con 268
+// productos contra un Postgres en el mismo servidor, la consulta no es el
+// cuello de botella.
+export const dynamic = 'force-dynamic';
 
 const TRUST = [
   { icon: Truck, title: 'Envío en el día', text: 'En Mendoza capital y alrededores' },

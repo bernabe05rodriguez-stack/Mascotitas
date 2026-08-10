@@ -2,25 +2,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronRight, Truck, ShieldCheck, MessagesSquare } from 'lucide-react';
-import { prisma } from '@/lib/db';
 import { getProductBySlug, getRelatedProducts } from '@/lib/catalog';
 import { getSettings } from '@/lib/settings';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ProductBuyBox } from '@/components/shop/ProductBuyBox';
 import { formatPrice, priceRange, displayName } from '@/lib/format';
 
-export const revalidate = 300;
-
-/** Pre-genera las fichas más pesadas; el resto se genera a demanda. */
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    where: { active: true, available: true },
-    select: { slug: true },
-    orderBy: { featured: 'desc' },
-    take: 60,
-  });
-  return products.map((p) => ({ slug: p.slug }));
-}
+// Se renderiza por request. La alternativa (prerenderizar en el build con
+// generateStaticParams) obliga a que la base esté disponible al construir la
+// imagen, y en el build de EasyPanel no lo está: era lo que rompía el deploy.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const product = await getProductBySlug(params.slug);

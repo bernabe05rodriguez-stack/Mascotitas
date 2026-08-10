@@ -7,7 +7,7 @@ import { CatalogFilters } from '@/components/shop/CatalogFilters';
 import { getCatalog, getFilterOptions } from '@/lib/catalog';
 import { cn } from '@/lib/format';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 interface SearchParams {
   q?: string;
