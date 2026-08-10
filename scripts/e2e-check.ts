@@ -46,11 +46,25 @@ async function main() {
     assert(cards > 0, 'no se renderizó ninguna card');
   });
 
-  await check('el catálogo lista los 268 productos', async () => {
+  await check('no se perdió catálogo (268 productos en la base)', async () => {
+    const health = await (await page.request.get(`${BASE}/api/health`)).json();
+    assert(health.total === 268, `la base tiene ${health.total} productos, deberían ser 268`);
+  });
+
+  await check('el catálogo muestra todos los productos visibles', async () => {
+    const health = await (await page.request.get(`${BASE}/api/health`)).json();
     await page.goto(`${BASE}/catalogo`, { waitUntil: 'domcontentloaded' });
     await page.locator('article').first().waitFor({ timeout: 20_000 });
     const text = await page.locator('body').innerText();
-    assert(/268\s*productos/.test(text), `no aparece el conteo 268 (vi: ${text.slice(0, 120)})`);
+    // Se compara contra los activos: si hay productos ocultos a propósito, el
+    // catálogo muestra menos, y eso no es un error.
+    assert(
+      new RegExp(`\\b${health.products}\\s*productos`).test(text),
+      `el catálogo dice otra cosa que los ${health.products} activos (vi: ${text.slice(0, 120)})`,
+    );
+    if (health.products < health.total) {
+      console.log(`      nota: ${health.total - health.products} producto(s) oculto(s) a propósito`);
+    }
   });
 
   await check('el filtro por marca acota los resultados', async () => {

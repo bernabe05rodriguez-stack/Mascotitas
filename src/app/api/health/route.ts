@@ -11,8 +11,13 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    const products = await prisma.product.count({ where: { active: true } });
-    return NextResponse.json({ ok: true, products });
+    // `products` son los que ve el cliente; `total` incluye los ocultos. El
+    // total es el que nunca puede bajar: si baja, se perdió catálogo.
+    const [products, total] = await Promise.all([
+      prisma.product.count({ where: { active: true } }),
+      prisma.product.count(),
+    ]);
+    return NextResponse.json({ ok: true, products, total });
   } catch (err) {
     return NextResponse.json({ ok: false, error: (err as Error).message }, { status: 503 });
   }
