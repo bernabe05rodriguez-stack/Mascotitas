@@ -1,0 +1,216 @@
+// Mascotitas — esquema de la base de datos
+// Reemplaza al Google Sheet publicado como CSV.
+// Regla dura: la migración no puede perder nada del catálogo. Por eso Product
+// conserva `legacyId` y `legacyRaw` (la fila original del Sheet, tal cual).
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Qué mascota consume el producto. Se deriva de la categoría y del nombre.
+enum PetType {
+  PERRO
+  GATO
+  OTRO
+}
+
+enum OrderStatus {
+  PENDIENTE
+  CONFIRMADO
+  ENTREGADO
+  CANCELADO
+}
+
+model Category {
+  id       String   @id @default(cuid())
+  slug     String   @unique
+  name     String
+  petType  PetType?
+  /// Nombre de ícono de Lucide, para el filtro del catálogo.
+  icon     String?
+  order    Int      @default(0)
+  active   Boolean  @default(true)
+
+  /// Autorelación para subcategorías (ej: accesorios > juguetes, sanitarios, higiene).
+  parentId String?
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+
+  products Product[]
+
+  @@index([parentId])
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  order    Int       @default(0)
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  /// Identidad estable y legible. Es la URL: /producto/{slug}
+  slug        String   @unique
+  name        String
+  description String?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  petType PetType?
+
+  /// Stock a nivel producto. Si una variante define su propio stock, manda la variante.
+  stock    Int     @default(0)
+  featured Boolean @default(false)
+  active   Boolean @default(true)
+  order    Int     @default(0)
+
+  /// Campos derivados de las variantes, mantenidos por recomputeAggregates().
+  /// Existen para poder ordenar y paginar por precio en SQL: ordenar en memoria
+  /// sólo ordenaría la página actual.
+  minPrice  Int     @default(0)
+  maxPrice  Int     @default(0)
+  onSale    Boolean @default(false)
+  /// Espejo de `stock > 0`, para mandar lo agotado al final del listado.
+  available Boolean @default(true)
+
+  /// Trazabilidad con el Sheet original — no borrar.
+  legacyId  String?
+  legacyRaw Json?
+
+  variants   Variant[]
+  images     ProductImage[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([featured])
+  @@index([active])
+  @@index([legacyId])
+  @@index([available, order])
+  @@index([minPrice])
+}
+
+model Variant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// Presentación: "3KG", "15KG", "T2", "90CM", "1 unidad".
+  /// En el Sheet esto era la columna "KM N", que no siempre era un peso.
+  label String
+
+  /// Precios en pesos enteros. El catálogo nunca usó centavos.
+  price         Int
+  /// Si hay oferta, acá va el precio tachado (el de lista).
+  originalPrice Int?
+
+  /// Stock propio de la variante. null = hereda el del producto.
+  stock Int?
+  order Int  @default(0)
+
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// Ruta servida por la app (/uploads/...) o URL absoluta.
+  url       String
+  /// URL original en postimg.cc, por si hay que rehacer la descarga.
+  legacyUrl String?
+  alt       String?
+  order     Int     @default(0)
+
+  @@index([productId])
+}
+
+model Coupon {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  percent    Int
+  active     Boolean   @default(true)
+  /// Total mínimo del pedido para que aplique.
+  minTotal   Int?
+  expiresAt  DateTime?
+  usageLimit Int?
+  usageCount Int       @default(0)
+  createdAt  DateTime  @default(now())
+}
+
+model Order {
+  id     Int         @id @default(autoincrement())
+  status OrderStatus @default(PENDIENTE)
+
+  customerName String?
+  phone        String?
+  email        String?
+  address      String?
+  /// Link de Google Maps que hoy se manda en el texto de WhatsApp.
+  mapsUrl      String?
+  note         String?
+
+  subtotal   Int
+  discount   Int     @default(0)
+  couponCode String?
+  shipping   Int     @default(0)
+  total      Int
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId Int
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  /// Puede quedar en null si el producto se borra: el pedido no se pierde.
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  /// Snapshot del momento de la compra — el precio de hoy no reescribe el pasado.
+  productName  String
+  variantLabel String
+  quantity     Int
+  unitPrice    Int
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+/// Config editable desde el panel: horarios, WhatsApp, umbral de envío bonificado, textos.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
