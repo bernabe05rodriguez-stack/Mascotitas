@@ -155,6 +155,66 @@ async function main() {
     assert(rows > 10, `esperaba varias filas, encontré ${rows}`);
   });
 
+
+  await check('los filtros del panel se aplican solos, sin botón', async () => {
+    await page.goto(`${BASE}/admin/productos`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
+
+    // No tiene que existir ningún botón "Filtrar": los cambios se aplican solos.
+    assert(
+      (await page.getByRole('button', { name: /^filtrar$/i }).count()) === 0,
+      'todavía hay un botón Filtrar',
+    );
+
+    // Elegir una categoría cambia la URL y la tabla sin tocar nada más.
+    await page.selectOption('select[aria-label="Filtrar por categoría"]', 'gato');
+    await page.waitForURL(/category=gato/, { timeout: 15_000 });
+    await page.waitForTimeout(1200);
+    const cats = await page.locator('tbody tr td:nth-child(2)').allInnerTexts();
+    assert(cats.length > 0, 'la categoría gato no trajo filas');
+    assert(
+      cats.every((c) => /gato/i.test(c)),
+      `se coló una categoría que no es de gatos: ${[...new Set(cats)].join(', ')}`,
+    );
+  });
+
+  await check('filtrar por una categoría madre trae las subcategorías', async () => {
+    await page.goto(`${BASE}/admin/productos?category=accesorios`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
+    const rows = await page.locator('tbody tr').count();
+    // Accesorios no tiene productos propios: todos viven en sus subcategorías.
+    assert(rows > 20, `Accesorios debería traer sus subcategorías, trajo ${rows} filas`);
+  });
+
+  await check('la búsqueda del panel no depende del orden de las palabras', async () => {
+    await page.goto(`${BASE}/admin/productos?q=cordero+agility`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
+    const names = await page.locator('tbody tr td:first-child').allInnerTexts();
+    assert(names.length > 0, '"cordero agility" no encontró nada');
+    assert(
+      names.every((n) => /agility/i.test(n) && /cordero/i.test(n)),
+      `resultados que no tienen ambas palabras: ${names.join(' | ')}`,
+    );
+  });
+
+  await check('el filtro Ocultos muestra sólo los ocultos', async () => {
+    await page.goto(`${BASE}/admin/productos?estado=ocultos`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+    const filas = await page.locator('tbody tr').count();
+    if (filas > 0) {
+      const atenuadas = await page.locator('tbody tr.opacity-60').count();
+      assert(atenuadas === filas, `${filas - atenuadas} de ${filas} filas no están ocultas`);
+    }
+  });
+
+  await check('cambiar un filtro vuelve a la primera página', async () => {
+    await page.goto(`${BASE}/admin/productos?page=3`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
+    await page.selectOption('select[aria-label="Filtrar por categoría"]', 'conejo');
+    await page.waitForURL(/category=conejo/, { timeout: 15_000 });
+    assert(!page.url().includes('page=3'), 'quedó pegado en la página 3 y la tabla se ve vacía');
+  });
+
   await check('editar un precio en la tabla lo guarda de verdad', async () => {
     await page.goto(`${BASE}/admin/productos?q=catchow+adulto+carne`, { waitUntil: 'domcontentloaded' });
     await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
