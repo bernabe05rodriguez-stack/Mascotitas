@@ -40,27 +40,31 @@ async function main() {
   console.log('TIENDA');
 
   await check('la home carga y muestra productos', async () => {
-    await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
+    await page.locator('article').first().waitFor({ timeout: 20_000 });
     const cards = await page.locator('article').count();
     assert(cards > 0, 'no se renderizó ninguna card');
   });
 
   await check('el catálogo lista los 268 productos', async () => {
-    await page.goto(`${BASE}/catalogo`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/catalogo`, { waitUntil: 'domcontentloaded' });
+    await page.locator('article').first().waitFor({ timeout: 20_000 });
     const text = await page.locator('body').innerText();
     assert(/268\s*productos/.test(text), `no aparece el conteo 268 (vi: ${text.slice(0, 120)})`);
   });
 
   await check('el filtro por marca acota los resultados', async () => {
-    await page.goto(`${BASE}/catalogo?brand=old-prince`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/catalogo?brand=old-prince`, { waitUntil: 'domcontentloaded' });
+    await page.locator('article').first().waitFor({ timeout: 20_000 });
     const text = await page.locator('body').innerText();
     assert(/\b16\s*productos/.test(text), 'Old Prince debería traer 16 productos');
   });
 
   await check('la búsqueda con dos palabras exige ambas', async () => {
-    await page.goto(`${BASE}/catalogo?q=old+prince+gato`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/catalogo?q=old+prince+gato`, { waitUntil: 'domcontentloaded' });
     // Cada card tiene dos links al producto (la foto y el nombre); el de la
     // foto no tiene texto, así que se descarta.
+    await page.locator('article').first().waitFor({ timeout: 20_000 });
     const names = (await page.locator('article a[href^="/producto/"]').allInnerTexts())
       .map((t) => t.trim())
       .filter(Boolean);
@@ -72,7 +76,7 @@ async function main() {
   });
 
   await check('la ficha de producto abre y tiene JSON-LD de Product', async () => {
-    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'domcontentloaded' });
     const ld = await page.locator('script[type="application/ld+json"]').first().innerText();
     const parsed = JSON.parse(ld);
     assert(parsed['@type'] === 'Product', 'el JSON-LD no es de tipo Product');
@@ -80,11 +84,11 @@ async function main() {
   });
 
   await check('agregar al carrito y que sobreviva al refresh', async () => {
-    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: /agregar al carrito/i }).click();
     await page.waitForTimeout(600);
 
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     const badge = await page.locator('#nav-cart span').first().innerText();
     assert(badge.trim() === '1', `el carrito perdió el producto al refrescar (badge: "${badge}")`);
   });
@@ -135,7 +139,7 @@ async function main() {
   });
 
   await check('se puede entrar al panel', async () => {
-    await page.goto(`${BASE}/admin/login`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/admin/login`, { waitUntil: 'domcontentloaded' });
     await page.fill('#email', EMAIL);
     await page.fill('#password', PASSWORD);
     await page.getByRole('button', { name: /entrar/i }).click();
@@ -145,13 +149,15 @@ async function main() {
   });
 
   await check('la tabla de productos carga', async () => {
-    await page.goto(`${BASE}/admin/productos`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/admin/productos`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
     const rows = await page.locator('tbody tr').count();
     assert(rows > 10, `esperaba varias filas, encontré ${rows}`);
   });
 
   await check('editar un precio en la tabla lo guarda de verdad', async () => {
-    await page.goto(`${BASE}/admin/productos?q=catchow+adulto+carne`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/admin/productos?q=catchow+adulto+carne`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
 
     const priceInput = page.locator('tbody tr').first().locator('input[type="number"]').first();
     const original = await priceInput.inputValue();
@@ -161,7 +167,7 @@ async function main() {
     await page.getByRole('button', { name: /guardar/i }).first().click();
     await page.waitForTimeout(2500);
 
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     const after = await page.locator('tbody tr').first().locator('input[type="number"]').first().inputValue();
     assert(after === nuevo, `el precio no persistió: esperaba ${nuevo}, quedó ${after}`);
 
@@ -172,7 +178,7 @@ async function main() {
   });
 
   await check('el cambio del panel se ve en la tienda', async () => {
-    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/producto/catchow-adulto-carne`, { waitUntil: 'domcontentloaded' });
     const text = await page.locator('body').innerText();
     assert(/\$\s?53\.000/.test(text), `el precio restaurado no se refleja en la tienda: ${text.slice(0, 200)}`);
   });
