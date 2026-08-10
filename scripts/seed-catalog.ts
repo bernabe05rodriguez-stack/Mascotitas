@@ -9,8 +9,9 @@
  * planilla y por `slug` cuando no, así que se puede correr las veces que haga falta.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 import Papa from 'papaparse';
 import type { PrismaClient } from '@prisma/client';
 import {
@@ -25,6 +26,28 @@ import {
 export const CATALOG_SNAPSHOT = 'data/catalogo-snapshot-2026-08-10.csv';
 export const COUPONS_SNAPSHOT = 'data/cupones-snapshot-2026-08-10.csv';
 
+/**
+ * Traduce la URL externa de una foto a su copia propia, si la tenemos.
+ *
+ * Las 305 fotos del catálogo vivían en postimg.cc, un hosting gratuito de
+ * terceros. `fetch-images.ts` las bajó a `data/images/` con un nombre
+ * determinístico: sha1 de la URL original. Acá se recalcula ese nombre y, si el
+ * archivo está, se apunta a la copia local.
+ *
+ * Va en la siembra y no sólo en el script de descarga porque la siembra
+ * REEMPLAZA las filas de imágenes: si la traducción viviera únicamente en
+ * `fetch-images.ts`, cada re-siembra devolvería el catálogo a postimg.cc.
+ * (Que es exactamente lo que pasó la primera vez que se deployó.)
+ */
+function localImageUrl(sourceUrl: string): string | null {
+  if (!/^https?:\/\//.test(sourceUrl)) return sourceUrl; // ya es local
+  const hash = createHash('sha1').update(sourceUrl).digest('hex').slice(0, 16);
+  const file = `${hash}-lg.webp`;
+  const enRepo = existsSync(resolve(process.cwd(), 'data/images', file));
+  const enVolumen = existsSync(resolve(process.cwd(), 'public/uploads', file));
+  return enRepo || enVolumen ? `/uploads/${file}` : null;
+}
+
 export function parseCsv(text: string): SheetRow[] {
   const out = Papa.parse<SheetRow>(text, { header: true, skipEmptyLines: true });
   for (const e of out.errors.slice(0, 5)) console.warn(`  ! CSV: ${e.message} (fila ${e.row})`);
@@ -37,6 +60,8 @@ export interface WriteResult {
   products: number;
   variants: number;
   images: number;
+  /** Cuántas de esas imágenes se sirven desde nuestro propio storage. */
+  imagenesPropias: number;
   coupons: number;
   deactivated: number;
 }
@@ -80,6 +105,7 @@ export async function writeCatalog(
   const touched: string[] = [];
   let variantCount = 0;
   let imageCount = 0;
+  let localImages = 0;
 
   for (const [i, p] of products.entries()) {
     const categoryId = categories.get(p.categorySlug);
@@ -125,7 +151,11 @@ export async function writeCatalog(
     await prisma.productImage.deleteMany({ where: { productId: product.id } });
     if (p.images.length) {
       await prisma.productImage.createMany({
-        data: p.images.map((url, order) => ({ productId: product.id, url, legacyUrl: url, alt: p.name, order })),
+        data: p.images.map((source, order) => {
+          const local = localImageUrl(source);
+          if (local) localImages++;
+          return { productId: product.id, url: local ?? source, legacyUrl: source, alt: p.name, order };
+        }),
       });
       imageCount += p.images.length;
     }
@@ -162,6 +192,7 @@ export async function writeCatalog(
     products: touched.length,
     variants: variantCount,
     images: imageCount,
+    imagenesPropias: localImages,
     coupons,
     deactivated,
   };
@@ -181,7 +212,8 @@ export async function seedFromSnapshot(prisma: PrismaClient): Promise<WriteResul
   const result = await writeCatalog(prisma, products, couponsCsv);
 
   console.log(
-    `  sembrado: ${result.products} productos, ${result.variants} variantes, ${result.images} imágenes, ${result.coupons} cupones`,
+    `  sembrado: ${result.products} productos, ${result.variants} variantes, ` +
+      `${result.images} imágenes (${result.imagenesPropias} propias), ${result.coupons} cupones`,
   );
 
   // La verificación es el punto: si se perdió algo, que el arranque falle fuerte.

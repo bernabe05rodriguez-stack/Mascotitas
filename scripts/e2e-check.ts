@@ -67,6 +67,22 @@ async function main() {
     }
   });
 
+
+  await check('ninguna foto del catálogo depende de un tercero', async () => {
+    // El chequeo que faltaba. Se prometió que las 305 fotos se habían rescatado
+    // de postimg.cc, pero la siembra volvía a escribir las URLs externas y en
+    // producción se sirvieron desde ahí igual. Nunca más sin verificar.
+    await page.goto(`${BASE}/catalogo`, { waitUntil: 'domcontentloaded' });
+    await page.locator('article').first().waitFor({ timeout: 20_000 });
+    const externas = await page.evaluate(() =>
+      [...document.querySelectorAll('img')]
+        .map((i) => decodeURIComponent(i.getAttribute('src') ?? ''))
+        .filter((src) => /https?:\/\/(?!localhost)/.test(src))
+        .slice(0, 5),
+    );
+    assert(externas.length === 0, `hay fotos servidas por terceros: ${externas.join(' | ')}`);
+  });
+
   await check('el filtro por marca acota los resultados', async () => {
     await page.goto(`${BASE}/catalogo?brand=old-prince`, { waitUntil: 'domcontentloaded' });
     await page.locator('article').first().waitFor({ timeout: 20_000 });

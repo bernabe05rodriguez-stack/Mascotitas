@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Truck, ShieldCheck, MessagesSquare, Banknote, ArrowRight } from 'lucide-react';
-import { Hero } from '@/components/shop/Hero';
+import { FeaturedHero } from '@/components/shop/FeaturedHero';
+import { IntroStrip } from '@/components/shop/IntroStrip';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { CategoryTiles } from '@/components/shop/CategoryTiles';
 import { getFeaturedProducts, getCatalog, getFilterOptions } from '@/lib/catalog';
@@ -31,7 +32,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero featured={featured} settings={settings} />
+      {/* El carrusel va primero y a todo el ancho: es lo primero que se ve. */}
+      <FeaturedHero products={featured} />
+      <IntroStrip settings={settings} />
 
       {/* Trust strip */}
       <section className="border-y border-line bg-white/50">
