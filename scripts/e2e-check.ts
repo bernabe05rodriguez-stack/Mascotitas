@@ -345,6 +345,97 @@ async function main() {
     assert(/\$\s?53\.000/.test(text), `el precio restaurado no se refleja en la tienda: ${text.slice(0, 200)}`);
   });
 
+  console.log('\nPUNTO DE VENTA');
+
+  // Ojo: ninguno de estos chequeos confirma un pedido. El punto de venta
+  // escribe en `Order` y descuenta stock — dejar pedidos de prueba en
+  // producción ensuciaría la caja del día.
+
+  await check('el punto de venta muestra todo el catálogo activo', async () => {
+    const health = await (await page.request.get(`${BASE}/api/health`)).json();
+    await page.goto(`${BASE}/admin/venta`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-pos-card]').first().waitFor({ timeout: 20_000 });
+    const cards = await page.locator('[data-pos-card]').count();
+    assert(
+      cards === health.products,
+      `la grilla muestra ${cards} de los ${health.products} productos activos`,
+    );
+  });
+
+  await check('el punto de venta ordena por más vendidos', async () => {
+    await page.goto(`${BASE}/admin/venta`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-pos-card]').first().waitFor({ timeout: 20_000 });
+    const vendidas = (await page.locator('[data-pos-card]').allInnerTexts()).map(
+      (t) => Number(t.match(/(\d+)\s+vendidas?/)?.[1] ?? 0),
+    );
+    const desordenado = vendidas.findIndex((n, i) => i > 0 && n > vendidas[i - 1]);
+    assert(
+      desordenado === -1,
+      `el producto ${desordenado + 1} tiene más ventas que el anterior (${vendidas.slice(0, 6).join(', ')}…)`,
+    );
+  });
+
+  await check('los filtros del punto de venta acotan la grilla', async () => {
+    await page.goto(`${BASE}/admin/venta`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-pos-card]').first().waitFor({ timeout: 20_000 });
+    const todos = await page.locator('[data-pos-card]').count();
+
+    await page.fill('input[aria-label="Buscar productos"]', 'catchow');
+    await page.waitForTimeout(400);
+    const textos = await page.locator('[data-pos-card]').allInnerTexts();
+    assert(textos.length > 0, 'buscar "catchow" no trajo nada');
+    assert(textos.length < todos, 'la búsqueda no acotó nada');
+    assert(
+      textos.every((t) => /catchow/i.test(t)),
+      `se coló algo que no es Catchow: ${textos.find((t) => !/catchow/i.test(t))?.slice(0, 60)}`,
+    );
+
+    // El buscador también mira la categoría, que no está escrita en la tarjeta:
+    // "gato" tiene que traer más que los productos con "gato" en el nombre.
+    await page.fill('input[aria-label="Buscar productos"]', 'gato');
+    await page.waitForTimeout(400);
+    const porCategoria = await page.locator('[data-pos-card]').allInnerTexts();
+    assert(porCategoria.length > 0, 'buscar "gato" no trajo nada');
+    assert(porCategoria.length < todos, 'buscar "gato" no acotó nada');
+    assert(
+      porCategoria.some((t) => !/gat/i.test(t)),
+      'la búsqueda no está mirando la categoría, sólo el nombre visible',
+    );
+
+    // El buscador ignora tildes y eñes: "RAZA PEQUEÑA" se escribe "pequena".
+    await page.fill('input[aria-label="Buscar productos"]', 'pequena');
+    await page.waitForTimeout(400);
+    const conEnie = await page.locator('[data-pos-card]').allInnerTexts();
+    assert(conEnie.length > 0, 'buscar sin la ñ no encontró "RAZA PEQUEÑA"');
+  });
+
+  await check('agregar al ticket suma el total, sin confirmar nada', async () => {
+    await page.goto(`${BASE}/admin/venta`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-pos-card]').first().waitFor({ timeout: 20_000 });
+
+    const chip = page.locator('[data-pos-card]').first().locator('button').first();
+    const precio = (await chip.innerText()).match(/\$\s?([\d.]+)/)?.[1];
+    assert(precio, 'la tarjeta no muestra el precio de la presentación');
+
+    await chip.click();
+    await chip.click();
+    await page.waitForTimeout(300);
+
+    const ticket = await page.locator('h2:has-text("Pedido")').innerText();
+    assert(/\(2\)/.test(ticket), `el ticket no cuenta las dos unidades: "${ticket}"`);
+
+    const esperado = Number(precio!.replace(/\./g, '')) * 2;
+    const total = await page.locator('span:has-text("Total") + span').innerText();
+    assert(
+      Number(total.replace(/[^\d]/g, '')) === esperado,
+      `el total dice ${total} y debería ser ${esperado}`,
+    );
+
+    // Se vacía el carrito: el estado vive en el componente, así que alcanza con
+    // recargar. Nada quedó escrito en la base.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+  });
+
   await browser.close();
 
   console.log(`\n=== ${passed} OK, ${failures.length} fallando ===`);
