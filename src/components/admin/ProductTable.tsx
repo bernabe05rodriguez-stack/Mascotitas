@@ -190,7 +190,7 @@ function ProductRow({ product }: { product: Row }) {
           <Link
             href={`/admin/productos/${product.id}`}
             aria-label="Editar producto"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-navy/50 transition hover:bg-bg-2 hover:text-navy"
+            className="flex h-10 w-10 items-center justify-center rounded-lg sm:h-9 sm:w-9 text-navy/50 transition hover:bg-bg-2 hover:text-navy"
           >
             <Pencil className="h-4 w-4" />
           </Link>
@@ -218,7 +218,7 @@ function IconButton({
       title={label}
       aria-label={label}
       className={cn(
-        'flex h-8 w-8 items-center justify-center rounded-lg transition',
+        'flex h-10 w-10 items-center justify-center rounded-lg sm:h-9 sm:w-9 transition',
         active ? 'text-gold hover:bg-gold/10' : 'text-navy/40 hover:bg-bg-2 hover:text-navy',
       )}
     >

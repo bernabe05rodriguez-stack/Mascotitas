@@ -184,8 +184,8 @@ export function CatalogFilters({ categories, brands, total, children }: Props) {
       {/* Barra superior: resultados + orden + botón de filtros en mobile.
           Envuelve en pantallas chicas — sin esto el botón "Filtros" se salía
           del viewport y el body scrolleaba en horizontal. */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="shrink-0 text-sm text-navy/60">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <p className="w-full shrink-0 text-sm text-navy/60 sm:w-auto">
           <span className="font-bold text-navy tabular">{total}</span> {total === 1 ? 'producto' : 'productos'}
         </p>
 
@@ -197,7 +197,7 @@ export function CatalogFilters({ categories, brands, total, children }: Props) {
             id="sort"
             value={current.sort}
             onChange={(e) => setParam('sort', e.target.value)}
-            className="min-w-0 max-w-[52vw] truncate rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy focus:border-accent focus:outline-none sm:max-w-none"
+            className="min-h-[42px] min-w-0 flex-1 truncate rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy focus:border-accent focus:outline-none sm:flex-none"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -209,7 +209,7 @@ export function CatalogFilters({ categories, brands, total, children }: Props) {
           <button
             type="button"
             onClick={() => setOpenMobile(true)}
-            className="btn-outline flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold lg:hidden"
+            className="btn-outline flex min-h-[42px] shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold lg:hidden"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filtros

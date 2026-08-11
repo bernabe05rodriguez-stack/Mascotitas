@@ -88,7 +88,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setMobileSearch(false)}
-              className="nav-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-navy"
+              className="nav-icon-btn flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-navy"
               aria-label="Cerrar buscador"
             >
               <X className="h-4 w-4" />
@@ -107,7 +107,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileSearch(true)}
-            className="nav-icon-btn flex h-10 w-10 items-center justify-center rounded-full text-navy md:hidden"
+            className="nav-icon-btn flex h-11 w-11 items-center justify-center rounded-full text-navy md:hidden"
             aria-label="Buscar"
           >
             <Search className="h-4 w-4" />

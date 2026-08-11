@@ -32,7 +32,7 @@ export function AdminNav() {
               <Link
                 href={href}
                 className={cn(
-                  'flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition',
+                  'flex min-h-[42px] items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition lg:min-h-0',
                   active ? 'bg-accent text-white' : 'text-white/65 hover:bg-white/10 hover:text-white',
                 )}
               >

@@ -15,7 +15,8 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
         <Navbar />
       </Suspense>
 
-      <main>{children}</main>
+      {/* pb en mobile: el botón flotante de WhatsApp tapaba lo último de la página */}
+      <main className="pb-20 sm:pb-0">{children}</main>
 
       <Footer settings={settings} />
 

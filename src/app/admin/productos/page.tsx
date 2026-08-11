@@ -128,7 +128,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       )}
 
       {totalPages > 1 && !outOfRange && (
-        <nav className="flex items-center justify-center gap-2" aria-label="Paginación">
+        <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="Paginación">
           {page > 1 && (
             <Link href={buildHref({ page: page - 1 === 1 ? undefined : String(page - 1) })} className="btn-outline rounded-full px-4 py-2 text-sm font-semibold">
               Anterior

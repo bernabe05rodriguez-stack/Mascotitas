@@ -243,11 +243,15 @@ export function FeaturedHero({ products }: { products: ProductCard[] }) {
                 onClick={() => setIdx(i)}
                 aria-label={`Ir al destacado ${i + 1} de ${slides.length}`}
                 aria-current={i === idx}
-                className={cn(
-                  'h-2.5 rounded-full transition-all',
-                  i === idx ? 'w-8 bg-accent' : 'w-2.5 bg-navy/20 hover:bg-navy/40',
-                )}
-              />
+                className="flex h-10 items-center px-2"
+              >
+                <span
+                  className={cn(
+                    'block h-2.5 rounded-full transition-all',
+                    i === idx ? 'w-8 bg-accent' : 'w-2.5 bg-navy/20 hover:bg-navy/40',
+                  )}
+                />
+              </button>
             ))}
           </div>
         )}

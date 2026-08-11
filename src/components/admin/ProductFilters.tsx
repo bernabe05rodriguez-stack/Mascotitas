@@ -191,7 +191,7 @@ function Toggle({ label, active, onClick }: { label: string; active: boolean; on
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'rounded-full border px-4 py-2 text-sm font-medium transition',
+        'flex min-h-[42px] items-center rounded-full border px-4 py-2 text-sm font-medium transition',
         active
           ? 'border-accent bg-accent/10 text-accent-dark'
           : 'border-line text-navy/70 hover:border-accent/40 hover:text-navy',

@@ -48,7 +48,7 @@ export function Footer({ settings }: { settings: ShopSettings }) {
               href={`https://wa.me/${settings.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-whatsapp px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:brightness-110"
+              className="flex min-h-[42px] items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110"
             >
               <Phone className="h-4 w-4" /> Escribinos
             </a>

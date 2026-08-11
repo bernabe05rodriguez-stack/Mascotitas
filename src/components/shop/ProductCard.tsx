@@ -67,19 +67,19 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
 
         <div className="absolute left-2 top-2 flex flex-col gap-1">
           {off > 0 && (
-            <span className="rounded-full bg-accent px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-white shadow-[0_4px_12px_-4px_rgba(224,122,60,.6)]">
+            <span className="rounded-full bg-accent px-2 py-1 text-xs font-extrabold uppercase tracking-wide text-white shadow-[0_4px_12px_-4px_rgba(224,122,60,.6)]">
               -{off}%
             </span>
           )}
           {product.featured && off === 0 && (
-            <span className="rounded-full bg-bg-cream px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-accent-dark">
+            <span className="rounded-full bg-bg-cream px-2 py-1 text-xs font-bold uppercase tracking-wide text-accent-dark">
               Destacado
             </span>
           )}
         </div>
 
         {outOfStock && (
-          <div className="absolute inset-x-0 bottom-0 bg-navy/80 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-white">
+          <div className="absolute inset-x-0 bottom-0 bg-navy/80 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-white">
             Sin stock
           </div>
         )}
@@ -87,12 +87,12 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
 
       <div className="flex flex-1 flex-col gap-2 p-3 md:p-4">
         {product.brand && (
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-accent">{product.brand.name}</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">{product.brand.name}</span>
         )}
 
         <Link
           href={`/producto/${product.slug}`}
-          className="line-clamp-2 text-sm font-bold leading-snug text-navy transition-colors hover:text-accent md:text-base"
+          className="line-clamp-3 text-sm font-bold leading-snug text-navy transition-colors hover:text-accent sm:line-clamp-2 md:text-base"
         >
           {displayName(product.name)}
         </Link>
@@ -106,7 +106,7 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
                 onClick={() => setVariantIdx(i)}
                 aria-pressed={i === variantIdx}
                 className={cn(
-                  'rounded-lg border px-2 py-1 text-[11px] font-semibold transition',
+                  'flex min-h-[38px] items-center rounded-lg border px-3 py-1.5 text-xs font-semibold transition',
                   i === variantIdx
                     ? 'border-accent bg-accent/10 text-accent-dark'
                     : 'border-line bg-white text-navy/70 hover:border-accent/40',

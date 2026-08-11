@@ -232,7 +232,7 @@ export function ProductForm({ categories, brands, product }: Props) {
                 <div key={url} className="group relative h-24 w-24 overflow-hidden rounded-xl border border-line bg-white">
                   <Image src={url} alt="" fill sizes="96px" className="object-contain p-1" />
                   {i === 0 && (
-                    <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-0.5 text-center text-[10px] font-semibold text-white">
+                    <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-0.5 text-center text-[11px] font-semibold text-white">
                       Principal
                     </span>
                   )}
@@ -270,7 +270,7 @@ export function ProductForm({ categories, brands, product }: Props) {
                 className="flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-line text-navy/40 transition hover:border-accent hover:text-accent"
               >
                 {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
-                <span className="text-[10px] font-semibold">{uploading ? 'Subiendo…' : 'Subir'}</span>
+                <span className="text-[11px] font-semibold">{uploading ? 'Subiendo…' : 'Subir'}</span>
               </button>
             </div>
 

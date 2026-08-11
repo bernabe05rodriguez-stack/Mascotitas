@@ -89,7 +89,7 @@ function CategoryRow({ category, nested, onEdit }: { category: Category; nested?
           type="button"
           onClick={onEdit}
           aria-label={`Editar ${category.name}`}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-navy/40 transition hover:bg-bg-2 hover:text-navy"
+          className="flex h-10 w-10 items-center justify-center rounded-lg sm:h-9 sm:w-9 text-navy/40 transition hover:bg-bg-2 hover:text-navy"
         >
           <Pencil className="h-4 w-4" />
         </button>
@@ -111,8 +111,8 @@ function CategoryRow({ category, nested, onEdit }: { category: Category; nested?
           }}
           aria-label={`Eliminar ${category.name}`}
           className={cn(
-            'flex h-8 items-center justify-center gap-1 rounded-lg px-2 text-xs font-semibold transition',
-            confirming ? 'bg-red-500 text-white' : 'w-8 text-navy/40 hover:bg-red-50 hover:text-red-500',
+            'flex h-10 items-center justify-center gap-1 rounded-lg px-2 text-xs font-semibold transition sm:h-9',
+            confirming ? 'bg-red-500 text-white' : 'w-10 text-navy/40 sm:w-9 hover:bg-red-50 hover:text-red-500',
           )}
         >
           <Trash2 className="h-4 w-4" />

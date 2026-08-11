@@ -39,12 +39,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link
                 href="/"
                 target="_blank"
-                className="btn-outline rounded-full px-4 py-2 text-sm font-semibold"
+                className="btn-outline flex min-h-[42px] items-center rounded-full px-4 py-2 text-sm font-semibold"
               >
                 Ver tienda
               </Link>
               <form action={logoutAction}>
-                <button type="submit" className="rounded-full px-4 py-2 text-sm font-semibold text-navy/60 transition hover:text-red-500">
+                <button type="submit" className="min-h-[42px] rounded-full px-4 py-2 text-sm font-semibold text-navy/60 transition hover:bg-bg-2 hover:text-red-500">
                   Salir
                 </button>
               </form>

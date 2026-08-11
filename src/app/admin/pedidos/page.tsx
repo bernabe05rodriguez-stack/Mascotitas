@@ -120,7 +120,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
 function FilterChip({ label, href, active }: { label: string; href: string; active: boolean }) {
   return (
-    <a href={href} className={`chip ${active ? 'chip-active' : 'chip-idle'}`}>
+    <a href={href} className={`chip flex min-h-[42px] items-center ${active ? 'chip-active' : 'chip-idle'}`}>
       {label}
     </a>
   );

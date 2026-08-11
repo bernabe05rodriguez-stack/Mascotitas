@@ -124,7 +124,7 @@ function Pagination({ page, totalPages, params }: { page: number; totalPages: nu
   const pages = Array.from({ length: Math.min(5, totalPages) }, (_, i) => start + i);
 
   return (
-    <nav className="mt-10 flex items-center justify-center gap-2" aria-label="Paginación">
+    <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Paginación">
       {page > 1 && (
         <Link href={href(page - 1)} className="btn-outline rounded-full px-4 py-2 text-sm font-semibold" scroll>
           Anterior
@@ -136,7 +136,7 @@ function Pagination({ page, totalPages, params }: { page: number; totalPages: nu
           href={href(p)}
           aria-current={p === page ? 'page' : undefined}
           className={cn(
-            'flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition tabular',
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition tabular',
             p === page ? 'bg-accent text-white' : 'border border-line bg-white text-navy hover:border-accent/40',
           )}
         >

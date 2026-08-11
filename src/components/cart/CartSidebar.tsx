@@ -149,7 +149,7 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
           <button
             type="button"
             onClick={close}
-            className="nav-icon-btn flex h-9 w-9 items-center justify-center rounded-full text-navy"
+            className="nav-icon-btn flex h-10 w-10 items-center justify-center rounded-full text-navy"
             aria-label="Cerrar carrito"
           >
             <X className="h-4 w-4" />
@@ -193,19 +193,19 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
                         <button
                           type="button"
                           onClick={() => setQuantity(l.variantId, l.quantity - 1)}
-                          className="flex h-7 w-7 items-center justify-center rounded-full text-navy transition hover:bg-white"
+                          className="flex h-10 w-10 items-center justify-center rounded-full text-navy transition hover:bg-white"
                           aria-label="Quitar uno"
                         >
-                          <Minus className="h-3 w-3" />
+                          <Minus className="h-3.5 w-3.5" />
                         </button>
-                        <span className="w-7 text-center text-sm font-bold text-navy tabular">{l.quantity}</span>
+                        <span className="w-8 text-center text-sm font-bold text-navy tabular">{l.quantity}</span>
                         <button
                           type="button"
                           onClick={() => setQuantity(l.variantId, l.quantity + 1)}
-                          className="flex h-7 w-7 items-center justify-center rounded-full text-navy transition hover:bg-white"
+                          className="flex h-10 w-10 items-center justify-center rounded-full text-navy transition hover:bg-white"
                           aria-label="Agregar uno"
                         >
-                          <Plus className="h-3 w-3" />
+                          <Plus className="h-3.5 w-3.5" />
                         </button>
                       </div>
 
@@ -218,7 +218,7 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
                   <button
                     type="button"
                     onClick={() => remove(l.variantId)}
-                    className="h-fit text-navy/30 transition hover:text-red-500"
+                    className="-mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-navy/30 transition hover:bg-red-50 hover:text-red-500"
                     aria-label={`Eliminar ${displayName(l.name)}`}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -248,7 +248,7 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
               <button
                 type="submit"
                 disabled={checking}
-                className="btn-outline shrink-0 rounded-full px-4 py-2 text-sm font-semibold"
+                className="btn-outline flex min-h-[42px] shrink-0 items-center rounded-full px-4 py-2 text-sm font-semibold"
               >
                 {checking ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Aplicar'}
               </button>
@@ -308,7 +308,7 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
             <button
               type="button"
               onClick={clear}
-              className="w-full text-center text-xs font-medium text-navy/40 transition hover:text-red-500"
+              className="min-h-[42px] w-full rounded-full py-2.5 text-center text-xs font-medium text-navy/40 transition hover:bg-bg-2 hover:text-red-500"
             >
               Vaciar carrito
             </button>
