@@ -44,7 +44,7 @@ ENV HOSTNAME=0.0.0.0
 # arrancar y no serviría una foto subida después. Las sirve /uploads/[...file].
 ENV UPLOADS_DIR=/app/uploads
 
-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates postgresql-client \
   && rm -rf /var/lib/apt/lists/* \
   && groupadd -g 1001 nodejs && useradd -u 1001 -g nodejs -m nextjs
 

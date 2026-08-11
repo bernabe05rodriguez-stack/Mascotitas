@@ -6,6 +6,7 @@ import { getProductBySlug, getRelatedProducts } from '@/lib/catalog';
 import { getSettings } from '@/lib/settings';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ProductBuyBox } from '@/components/shop/ProductBuyBox';
+import { ViewItemTracker } from '@/components/shop/ViewItemTracker';
 import { formatPrice, priceRange, displayName } from '@/lib/format';
 
 // Se renderiza por request. La alternativa (prerenderizar en el build con
@@ -98,6 +99,12 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
           <ProductBuyBox product={product} settings={settings} />
+          <ViewItemTracker
+            itemId={product.id}
+            itemName={product.name}
+            price={product.minPrice ?? product.variants[0]?.price ?? 0}
+            brand={product.brand?.name ?? undefined}
+          />
         </div>
 
         {/* Garantías */}

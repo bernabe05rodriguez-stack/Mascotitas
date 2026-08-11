@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Fraunces, Poppins } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/components/cart/CartProvider';
+import { Analytics } from '@/components/Analytics';
 
 // Las fuentes se auto-hospedan en el build: se van dos requests a
 // fonts.googleapis.com y desaparece el salto de tipografía al cargar.
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es-AR" className={`${fraunces.variable} ${poppins.variable}`}>
       <body>
+        <Analytics />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

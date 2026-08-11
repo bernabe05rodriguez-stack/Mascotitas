@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getSettings } from '@/lib/settings';
+import { RateLimiter, getClientIp } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 const MAX_ITEMS = 50;
 const MAX_QTY = 99;
+
+// Máximo 10 pedidos por minuto por IP — más que suficiente para uso real.
+const limiter = new RateLimiter(10, 60_000);
 
 interface IncomingItem {
   variantId: string;
@@ -20,6 +24,10 @@ interface IncomingItem {
  * pedido de 15 kg de Royal Canin a $1.
  */
 export async function POST(req: Request) {
+  if (!limiter.check(getClientIp(req))) {
+    return NextResponse.json({ error: 'Demasiados pedidos. Esperá un momento.' }, { status: 429 });
+  }
+
   let body: { customerName?: unknown; phone?: unknown; couponCode?: unknown; items?: unknown };
   try {
     body = await req.json();

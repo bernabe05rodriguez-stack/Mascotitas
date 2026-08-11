@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { RateLimiter, getClientIp } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
+
+// Máximo 20 intentos de cupón por minuto por IP — frena brute force.
+const limiter = new RateLimiter(20, 60_000);
 
 /**
  * Valida un cupón contra la base.
@@ -11,6 +15,10 @@ export const dynamic = 'force-dynamic';
  * cliente manda un código y sólo recibe el porcentaje si es válido.
  */
 export async function POST(req: Request) {
+  if (!limiter.check(getClientIp(req))) {
+    return NextResponse.json({ valid: false, error: 'Demasiados intentos. Esperá un momento.' }, { status: 429 });
+  }
+
   let body: { code?: unknown; subtotal?: unknown };
   try {
     body = await req.json();

@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { trackEvent } from '@/components/Analytics';
 
 /**
  * Carrito persistente.
@@ -104,6 +105,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const add = useCallback((line: Omit<CartLine, 'quantity'>, quantity = 1) => {
+    trackEvent('add_to_cart', {
+      item_id: line.variantId,
+      item_name: line.productName,
+      value: line.unitPrice * quantity,
+      quantity,
+    });
     setLines((prev) => {
       const idx = prev.findIndex((l) => l.variantId === line.variantId);
       if (idx === -1) return [...prev, { ...line, quantity: Math.min(quantity, MAX_QTY) }];

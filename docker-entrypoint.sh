@@ -58,4 +58,25 @@ log "--- catálogo ---"
 run node ./scripts/bootstrap.js
 
 log "--- sirviendo en :${PORT:-3000} ---"
+
+# 4. Backup diario automático en background.
+#    Cada 24h hace un pg_dump comprimido. Mantiene los últimos 7.
+BACKUP_DIR="${UPLOADS_DIR:-/app/uploads}/../backups"
+mkdir -p "$BACKUP_DIR" 2>/dev/null
+(
+  while true; do
+    sleep 86400  # 24 horas
+    TS=$(date -u +%Y-%m-%dT%H-%M-%S)
+    FILE="$BACKUP_DIR/mascotitas-$TS.sql.gz"
+    if pg_dump "$DATABASE_URL" 2>/dev/null | gzip > "$FILE"; then
+      log "backup OK: $FILE ($(du -h "$FILE" | cut -f1))"
+      # Rotar: mantener últimos 7
+      ls -1t "$BACKUP_DIR"/mascotitas-*.sql.gz 2>/dev/null | tail -n +8 | xargs rm -f 2>/dev/null
+    else
+      log "!! backup falló"
+      rm -f "$FILE" 2>/dev/null
+    fi
+  done
+) &
+
 exec node server.js

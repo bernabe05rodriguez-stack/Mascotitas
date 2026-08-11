@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { X, ShoppingCart, Trash2, Minus, Plus, PawPrint, Loader2 } from 'lucide-react';
 import { useCart } from './CartProvider';
+import { trackEvent } from '@/components/Analytics';
 import { formatPrice, displayName, cn } from '@/lib/format';
 
 interface Props {
@@ -117,6 +118,11 @@ export function CartSidebar({ whatsapp, freeShippingThreshold, shippingCost }: P
     if (name.trim()) msg += `\n\nMi nombre: ${name.trim()}`;
 
     window.open(`https://api.whatsapp.com/send?phone=${whatsapp}&text=${encodeURIComponent(msg)}`, '_blank');
+    trackEvent('begin_checkout', {
+      value: subtotal,
+      items: lines.length,
+      currency: 'ARS',
+    });
     setSending(false);
   }
 
