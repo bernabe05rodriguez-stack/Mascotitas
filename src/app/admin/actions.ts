@@ -215,6 +215,73 @@ export async function updateOrderStatusAction(orderId: number, status: string): 
   return { ok: true };
 }
 
+/** Crea un pedido desde el punto de venta del local. */
+export async function createLocalOrderAction(data: {
+  customerName?: string;
+  note?: string;
+  items: { variantId: string; quantity: number }[];
+}): Promise<ActionResult & { orderId?: number }> {
+  await requireAdmin();
+
+  if (!data.items?.length) return { ok: false, error: 'Agregá al menos un producto' };
+
+  const variants = await prisma.variant.findMany({
+    where: { id: { in: data.items.map((i) => i.variantId) } },
+    include: { product: { select: { id: true, name: true, stock: true } } },
+  });
+
+  if (variants.length === 0) return { ok: false, error: 'Ningún producto existe' };
+
+  const byId = new Map(variants.map((v) => [v.id, v]));
+  const orderItems = data.items
+    .filter((i) => byId.has(i.variantId))
+    .map((i) => {
+      const v = byId.get(i.variantId)!;
+      const qty = Math.min(Math.max(1, Math.trunc(i.quantity)), 99);
+      return {
+        productId: v.product.id,
+        productName: v.product.name,
+        variantLabel: v.label,
+        quantity: qty,
+        unitPrice: v.price,
+      };
+    });
+
+  const subtotal = orderItems.reduce((n, i) => n + i.unitPrice * i.quantity, 0);
+
+  const order = await prisma.$transaction(async (tx) => {
+    const created = await tx.order.create({
+      data: {
+        channel: 'LOCAL',
+        status: 'CONFIRMADO',
+        customerName: data.customerName?.trim() || null,
+        note: data.note?.trim() || null,
+        subtotal,
+        discount: 0,
+        shipping: 0,
+        total: subtotal,
+        items: { create: orderItems },
+      },
+      select: { id: true, total: true },
+    });
+
+    // Descontar stock
+    for (const item of orderItems) {
+      await tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity } },
+      });
+    }
+
+    return created;
+  });
+
+  revalidatePath('/admin/pedidos');
+  revalidatePath('/admin/venta');
+  revalidateShop();
+  return { ok: true, message: `Pedido #${order.id} registrado — $${order.total.toLocaleString('es-AR')}`, orderId: order.id };
+}
+
 /* ---------------------------------------------------------------- cupones */
 
 export async function saveCouponAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {

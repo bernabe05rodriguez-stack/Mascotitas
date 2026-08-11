@@ -27,6 +27,11 @@ enum OrderStatus {
   CANCELADO
 }
 
+enum OrderChannel {
+  WEB
+  LOCAL
+}
+
 model Category {
   id       String   @id @default(cuid())
   slug     String   @unique
@@ -155,8 +160,9 @@ model Coupon {
 }
 
 model Order {
-  id     Int         @id @default(autoincrement())
-  status OrderStatus @default(PENDIENTE)
+  id      Int          @id @default(autoincrement())
+  status  OrderStatus  @default(PENDIENTE)
+  channel OrderChannel @default(WEB)
 
   customerName String?
   phone        String?

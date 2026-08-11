@@ -71,6 +71,9 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                     <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[o.status]}`}>
                       {o.status.charAt(0) + o.status.slice(1).toLowerCase()}
                     </span>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${(o as unknown as {channel:string}).channel === 'LOCAL' ? 'bg-purple-50 text-purple-700' : 'bg-sky-50 text-sky-700'}`}>
+                      {(o as unknown as {channel:string}).channel === 'LOCAL' ? '🏪 Local' : '🌐 Web'}
+                    </span>
                   </div>
                   <p className="mt-1 text-sm text-navy/60">
                     {o.customerName ?? 'Sin nombre'}
