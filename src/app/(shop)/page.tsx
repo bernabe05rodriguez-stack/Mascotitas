@@ -32,9 +32,10 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* El carrusel va primero y a todo el ancho: es lo primero que se ve. */}
-      <FeaturedHero products={featured} />
+      {/* Primero quién somos, después los destacados: caer directo en un
+          producto suelto no le dice a nadie en qué sitio está. */}
       <IntroStrip settings={settings} />
+      <FeaturedHero products={featured} />
 
       {/* Trust strip */}
       <section className="border-y border-line bg-white/50">

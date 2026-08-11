@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Sparkles, ShoppingCart, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Check } from 'lucide-react';
 import type { ProductCard } from '@/lib/catalog';
 import { formatPrice, priceRange, discountPercent, displayName, cn } from '@/lib/format';
 import { useCart } from '@/components/cart/CartProvider';
@@ -14,7 +14,10 @@ const AUTOPLAY_MS = 5500;
 const SWIPE_MIN = 50;
 
 /**
- * Carrusel de destacados a todo el ancho, como primer bloque de la portada.
+ * Carrusel de destacados, grande y a lo ancho.
+ *
+ * Va debajo de la presentación: si es lo primero que aparece, el visitante cae
+ * en un producto suelto sin saber en qué sitio está.
  *
  * Cada slide es una composición, no una foto estirada: las fotos del catálogo
  * vienen sobre fondo blanco y a esta altura se verían vacías. La imagen ocupa
@@ -98,7 +101,15 @@ export function FeaturedHero({ products }: { products: ProductCard[] }) {
       <div className="blob animate-blob-slow" style={{ width: 420, height: 420, background: '#1B3C59', bottom: -200, right: -140, opacity: 0.1 }} />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-10 lg:px-16">
-        <div className="relative grid min-h-[420px] lg:min-h-[540px]">
+        <header className="pt-12 text-center md:pt-14 md:text-left">
+          <div className="mb-2 flex items-center justify-center gap-3 md:justify-start">
+            <span className="h-px w-6 bg-accent/40" aria-hidden />
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Destacados</span>
+          </div>
+          <h2 className="text-3xl font-extrabold text-navy md:text-4xl">Lo que elegimos para vos</h2>
+        </header>
+
+        <div className="relative grid min-h-[380px] lg:min-h-[480px]">
           {slides.map((p, i) => {
             const range = priceRange(p.variants);
             const off = range.originalPrice ? discountPercent(range.min, range.originalPrice) : 0;
@@ -146,10 +157,6 @@ export function FeaturedHero({ products }: { products: ProductCard[] }) {
 
                 {/* Texto */}
                 <div className="order-2 min-w-0 text-center md:text-left">
-                  <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-bg-cream px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
-                    <Sparkles className="h-3.5 w-3.5 text-accent" /> Destacado
-                  </span>
-
                   <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-accent">
                     {p.brand?.name ?? p.category.name}
                   </p>

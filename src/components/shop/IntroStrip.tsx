@@ -5,19 +5,18 @@ import type { ShopSettings } from '@/lib/settings';
 import { ShopStatusBadge } from './ShopStatusBadge';
 
 /**
- * Banda de presentación, debajo del carrusel.
+ * Presentación: el primer bloque de la portada.
  *
- * Antes esto era un hero de media pantalla. Al pasar los destacados a un
- * carrusel grande arriba de todo, la propuesta de valor pasa a ocupar una
- * franja compacta: sigue estando el h1 (que es el que lee Google) pero sin
- * empujar el catálogo hacia abajo.
+ * Va antes del carrusel a propósito. Se probó al revés y no se entendía: el
+ * visitante aterrizaba sobre un producto suelto sin saber qué negocio era.
+ * Acá está el h1 (lo que lee Google), qué se vende, dónde, y si está abierto.
  */
 export function IntroStrip({ settings }: { settings: ShopSettings }) {
   const status = getShopStatus(settings);
 
   return (
     <section className="border-b border-line bg-white/60">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 text-center sm:px-6 md:flex-row md:justify-between md:gap-10 md:text-left lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-12 text-center sm:px-6 md:flex-row md:justify-between md:gap-10 md:py-14 md:text-left lg:px-8">
         <div className="min-w-0">
           <div className="mb-3 flex flex-wrap items-center justify-center gap-2 md:justify-start">
             <ShopStatusBadge initial={status} settings={settings} />
@@ -26,7 +25,7 @@ export function IntroStrip({ settings }: { settings: ShopSettings }) {
             </span>
           </div>
 
-          <h1 className="text-2xl font-extrabold leading-tight text-navy sm:text-3xl lg:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight text-navy sm:text-4xl lg:text-5xl">
             Tu mascota <em className="not-italic text-accent">merece lo mejor</em>
           </h1>
 
