@@ -107,7 +107,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const add = useCallback((line: Omit<CartLine, 'quantity'>, quantity = 1) => {
     trackEvent('add_to_cart', {
       item_id: line.variantId,
-      item_name: line.productName,
+      item_name: line.name,
       value: line.unitPrice * quantity,
       quantity,
     });
