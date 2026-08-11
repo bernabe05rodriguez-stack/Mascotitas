@@ -5,8 +5,11 @@ out/
 .env.local
 *.tsbuildinfo
 next-env.d.ts
-uploads/
-public/uploads/
+# Anclados con / a propósito: sin la barra inicial, git ignora CUALQUIER
+# carpeta llamada uploads — incluida src/app/uploads, que es la ruta que sirve
+# las imágenes. Ya pasó: la app deployada se quedó sin ella.
+/uploads/
+/public/uploads/
 scratch/
 .devdb/
 data/migration-report.json
