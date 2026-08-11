@@ -178,6 +178,31 @@ async function main() {
     assert(/Resumen/.test(text), 'no cargó el resumen del panel');
   });
 
+
+  await check('una foto subida desde el panel se ve de verdad', async () => {
+    // El chequeo que faltaba. Antes sólo se probaba que el upload rechazara a
+    // los no autenticados; nunca que la imagen resultante se sirviera. Y no se
+    // servía: Next no expone archivos que aparecen en public/ después de
+    // arrancar, así que toda foto nueva daba 404 hasta reiniciar el contenedor.
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    );
+    const subida = await page.request.post(`${BASE}/api/admin/upload`, {
+      multipart: { file: { name: 'prueba.png', mimeType: 'image/png', buffer: png } },
+    });
+    assert(subida.ok(), `la subida falló: ${subida.status()}`);
+    const { url } = await subida.json();
+    assert(typeof url === 'string' && url.startsWith('/uploads/'), `URL rara: ${url}`);
+
+    const servida = await page.request.get(`${BASE}${url}`);
+    assert(servida.ok(), `la foto recién subida da ${servida.status()} — no se sirve`);
+    assert(
+      (servida.headers()['content-type'] ?? '').startsWith('image/'),
+      `no devuelve una imagen: ${servida.headers()['content-type']}`,
+    );
+  });
+
   await check('la tabla de productos carga', async () => {
     await page.goto(`${BASE}/admin/productos`, { waitUntil: 'domcontentloaded' });
     await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
@@ -243,6 +268,53 @@ async function main() {
     await page.selectOption('select[aria-label="Filtrar por categoría"]', 'conejo');
     await page.waitForURL(/category=conejo/, { timeout: 15_000 });
     assert(!page.url().includes('page=3'), 'quedó pegado en la página 3 y la tabla se ve vacía');
+  });
+
+
+  await check('ocultar un producto deja la fila con un "Deshacer"', async () => {
+    // La queja original: se apretaba el ojito, la fila desaparecía de la lista
+    // y parecía que el botón no hacía nada.
+    await page.goto(`${BASE}/admin/productos?q=catchow+adulto+carne`, { waitUntil: 'domcontentloaded' });
+    await page.locator('tbody tr').first().waitFor({ timeout: 20_000 });
+
+    await page.getByRole('button', { name: /ocultar de la tienda/i }).first().click();
+    await page.waitForTimeout(2500);
+
+    try {
+      assert((await page.locator('tbody tr').count()) > 0, 'la fila desapareció de la tabla');
+      const texto = await page.locator('tbody tr').first().innerText();
+      assert(/Ocultado/.test(texto), `no avisa que quedó ocultado: "${texto.replace(/\s+/g, ' ').slice(0, 90)}"`);
+      assert(/Deshacer/.test(texto), 'no ofrece deshacer');
+
+      // Y deshacer tiene que dejarlo como estaba.
+      await page.getByRole('button', { name: /deshacer/i }).first().click();
+      await page.waitForTimeout(2500);
+    } finally {
+      // Pase lo que pase, el producto vuelve a estar visible: si no, este
+      // chequeo rompe todos los siguientes.
+      await page.goto(`${BASE}/admin/productos?estado=ocultos`, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(1500);
+      const filas = await page.locator('tbody tr').count();
+      for (let i = 0; i < filas; i++) {
+        await page.getByRole('button', { name: /mostrar en la tienda/i }).first().click();
+        await page.waitForTimeout(1500);
+      }
+    }
+
+    await page.goto(`${BASE}/admin/productos?estado=ocultos`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+    const ocultos = await page.locator('tbody tr').count();
+    assert(ocultos === 0, `quedaron ${ocultos} productos ocultos después de deshacer`);
+  });
+
+  await check('el carrusel muestra los banners antes que los productos', async () => {
+    const banners = await page.request.get(`${BASE}/api/health`);
+    assert(banners.ok(), 'la tienda no responde');
+
+    await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
+    await page.locator('#destacados').waitFor({ timeout: 20_000 });
+    const slides = await page.locator('#destacados [class*="col-start-1"]').count();
+    assert(slides > 0, 'el carrusel no tiene slides');
   });
 
   await check('editar un precio en la tabla lo guarda de verdad', async () => {

@@ -205,3 +205,23 @@ export async function getFilterOptions() {
   };
 }
 
+
+/**
+ * Placas promocionales vigentes para el carrusel de la portada.
+ *
+ * La vigencia se evalúa acá y no en el panel: una promo con fecha de fin se
+ * apaga sola, sin que nadie tenga que acordarse de ir a desactivarla.
+ */
+export async function getActiveBanners() {
+  const now = new Date();
+  return prisma.banner.findMany({
+    where: {
+      active: true,
+      AND: [
+        { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+      ],
+    },
+    orderBy: { order: 'asc' },
+  });
+}

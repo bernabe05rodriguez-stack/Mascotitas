@@ -5,8 +5,8 @@ out/
 .env.local
 *.tsbuildinfo
 next-env.d.ts
-public/uploads/*
-!public/uploads/.gitkeep
+uploads/
+public/uploads/
 scratch/
 .devdb/
 data/migration-report.json

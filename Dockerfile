@@ -40,6 +40,9 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+# Las subidas viven FUERA de public/: Next arma la lista de estáticos al
+# arrancar y no serviría una foto subida después. Las sirve /uploads/[...file].
+ENV UPLOADS_DIR=/app/uploads
 
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/* \

@@ -40,13 +40,14 @@ fi
 #    vez. data/images tiene las 305 fotos rescatadas de postimg.cc, versionadas
 #    en el repo. Se copian sólo las que falten: nunca pisa lo subido del panel.
 log "--- imágenes ---"
+DEST="${UPLOADS_DIR:-/app/uploads}"
 if [ -d ./data/images ]; then
-  mkdir -p ./public/uploads 2>>"$BOOT_LOG"
-  if [ -w ./public/uploads ]; then
-    cp -n ./data/images/*.webp ./public/uploads/ 2>>"$BOOT_LOG"
-    log "imágenes en el volumen: $(ls ./public/uploads/*.webp 2>/dev/null | wc -l)"
+  mkdir -p "$DEST" 2>>"$BOOT_LOG"
+  if [ -w "$DEST" ]; then
+    cp -n ./data/images/*.webp "$DEST"/ 2>>"$BOOT_LOG"
+    log "imágenes en el volumen ($DEST): $(ls "$DEST"/*.webp 2>/dev/null | wc -l)"
   else
-    log "!! ./public/uploads NO es escribible por $(id -un) — las fotos no se restauran"
+    log "!! $DEST NO es escribible por $(id -un) — las fotos no se restauran"
   fi
 else
   log "!! no existe ./data/images"

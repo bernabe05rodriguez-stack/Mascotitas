@@ -44,7 +44,7 @@ function localImageUrl(sourceUrl: string): string | null {
   const hash = createHash('sha1').update(sourceUrl).digest('hex').slice(0, 16);
   const file = `${hash}-lg.webp`;
   const enRepo = existsSync(resolve(process.cwd(), 'data/images', file));
-  const enVolumen = existsSync(resolve(process.cwd(), 'public/uploads', file));
+  const enVolumen = existsSync(resolve(process.env.UPLOADS_DIR ?? resolve(process.cwd(), 'uploads'), file));
   return enRepo || enVolumen ? `/uploads/${file}` : null;
 }
 

@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import { requireAdmin } from '@/lib/auth';
+import { UPLOADS_DIR } from '@/lib/uploads';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -30,6 +31,9 @@ export async function POST(req: Request) {
 
   const form = await req.formData();
   const file = form.get('file');
+  // Un banner es una imagen diseñada: recortarla a cuadrado con fondo blanco,
+  // como se hace con las fotos de producto, la arruinaría.
+  const modo = form.get('mode') === 'banner' ? 'banner' : 'producto';
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: 'No llegó ningún archivo' }, { status: 400 });
@@ -41,13 +45,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Formato no soportado. Usá JPG, PNG o WebP.' }, { status: 400 });
   }
 
-  const dir = resolve(process.cwd(), 'public/uploads');
+  const dir = UPLOADS_DIR;
   await mkdir(dir, { recursive: true });
 
   const buf = Buffer.from(await file.arrayBuffer());
   const base = randomUUID().replace(/-/g, '').slice(0, 16);
 
   try {
+    if (modo === 'banner') {
+      // Se respeta la proporción original y no se agranda si ya es chica.
+      const out = await sharp(buf)
+        .rotate()
+        .resize({ width: 1600, withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toBuffer();
+      await writeFile(resolve(dir, `${base}-banner.webp`), out);
+      return NextResponse.json({ url: `/uploads/${base}-banner.webp` });
+    }
+
     for (const { suffix, width } of [
       { suffix: 'sm', width: 400 },
       { suffix: 'lg', width: 900 },

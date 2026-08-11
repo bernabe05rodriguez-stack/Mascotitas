@@ -76,7 +76,7 @@ convirtió a WebP en dos tamaños (400px para las cards, 900px para la ficha):
 27 MB → 15 MB, y cada card pasó de ~150 KB a ~14 KB.
 
 Quedan versionadas en `data/images/`. En producción se sirven desde el volumen
-`public/uploads`, que el arranque resiembra desde `data/images` si está vacío —
+`/app/uploads`, que el arranque resiembra desde `data/images` si está vacío —
 así un volumen perdido no se lleva las fotos.
 
 ## Deploy (EasyPanel)
@@ -96,8 +96,12 @@ ADMIN_EMAIL=<mail>
 ADMIN_PASSWORD=<contraseña, 8+ caracteres>
 ```
 
-**Volumen obligatorio:** montar en `/app/public/uploads`. Sin eso, las fotos que
-se suban desde el panel se pierden en cada deploy.
+**Volumen obligatorio:** montar en `/app/uploads` (no dentro de `public/`).
+Sin eso, las fotos que se suban desde el panel se pierden en cada deploy.
+
+⚠️ Las subidas **no** pueden ir en `public/`: Next arma la lista de archivos
+estáticos al arrancar, así que una foto subida después daría 404 hasta reiniciar
+el contenedor. Las sirve la ruta `/uploads/[...file]`.
 
 El arranque (`docker-entrypoint.sh`) aplica migraciones, restaura las fotos al
 volumen y siembra el catálogo **sólo si la base está vacía** — nunca pisa datos

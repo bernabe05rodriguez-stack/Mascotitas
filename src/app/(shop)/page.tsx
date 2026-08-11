@@ -4,7 +4,7 @@ import { FeaturedHero } from '@/components/shop/FeaturedHero';
 import { IntroStrip } from '@/components/shop/IntroStrip';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { CategoryTiles } from '@/components/shop/CategoryTiles';
-import { getFeaturedProducts, getCatalog, getFilterOptions } from '@/lib/catalog';
+import { getFeaturedProducts, getCatalog, getFilterOptions, getActiveBanners } from '@/lib/catalog';
 import { getSettings } from '@/lib/settings';
 import { scheduleLines } from '@/lib/horarios';
 
@@ -21,8 +21,9 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [featured, newest, filters, settings] = await Promise.all([
+  const [featured, banners, newest, filters, settings] = await Promise.all([
     getFeaturedProducts(6),
+    getActiveBanners(),
     getCatalog({ sort: 'nuevos', perPage: 8 }),
     getFilterOptions(),
     getSettings(),
@@ -35,7 +36,7 @@ export default async function HomePage() {
       {/* Primero quién somos, después los destacados: caer directo en un
           producto suelto no le dice a nadie en qué sitio está. */}
       <IntroStrip settings={settings} />
-      <FeaturedHero products={featured} />
+      <FeaturedHero products={featured} banners={banners} />
 
       {/* Trust strip */}
       <section className="border-y border-line bg-white/50">

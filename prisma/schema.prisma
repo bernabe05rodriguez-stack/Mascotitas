@@ -208,6 +208,38 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+/// Placa promocional del carrusel de la portada: una imagen diseñada, con su
+/// link. Convive con los slides de producto — es el formato que usan las
+/// tiendas para anunciar envíos, cupones o fechas especiales.
+model Banner {
+  id String @id @default(cuid())
+
+  /// Nombre interno, sólo para reconocerlo en el panel.
+  title String
+
+  /// Imagen ancha, para desktop.
+  imageUrl String
+  /// Versión vertical opcional. Sin esto, en celular se recorta la ancha.
+  mobileUrl String?
+
+  /// A dónde lleva al tocarlo. Vacío = no es clickeable.
+  linkUrl String?
+  /// Texto alternativo: sin esto la promo no existe para un lector de pantalla.
+  alt     String?
+
+  active Boolean @default(true)
+  order  Int     @default(0)
+
+  /// Vigencia opcional. Una promo con fecha de fin se apaga sola.
+  startsAt DateTime?
+  endsAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
 /// Config editable desde el panel: horarios, WhatsApp, umbral de envío bonificado, textos.
 model Setting {
   key       String   @id

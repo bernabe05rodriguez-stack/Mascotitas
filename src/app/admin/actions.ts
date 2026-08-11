@@ -72,26 +72,6 @@ export async function quickUpdateAction(formData: FormData): Promise<ActionResul
   return { ok: true, message: 'Guardado' };
 }
 
-export async function toggleFeaturedAction(productId: string): Promise<ActionResult> {
-  await requireAdmin();
-  const p = await prisma.product.findUnique({ where: { id: productId }, select: { featured: true, slug: true } });
-  if (!p) return { ok: false, error: 'El producto no existe' };
-  await prisma.product.update({ where: { id: productId }, data: { featured: !p.featured } });
-  revalidateShop(p.slug);
-  revalidatePath('/admin/productos');
-  return { ok: true };
-}
-
-export async function toggleActiveAction(productId: string): Promise<ActionResult> {
-  await requireAdmin();
-  const p = await prisma.product.findUnique({ where: { id: productId }, select: { active: true, slug: true } });
-  if (!p) return { ok: false, error: 'El producto no existe' };
-  await prisma.product.update({ where: { id: productId }, data: { active: !p.active } });
-  revalidateShop(p.slug);
-  revalidatePath('/admin/productos');
-  return { ok: true };
-}
-
 export async function saveProductAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 
@@ -368,4 +348,77 @@ export async function deleteCategoryAction(id: string): Promise<ActionResult> {
   revalidateShop();
   revalidatePath('/admin/categorias');
   return { ok: true, message: 'Categoría eliminada' };
+}
+
+/* --------------------------------------------------------------- banners */
+
+export async function saveBannerAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = String(formData.get('id') ?? '') || null;
+  const title = String(formData.get('title') ?? '').trim();
+  const imageUrl = String(formData.get('imageUrl') ?? '').trim();
+  const mobileUrl = String(formData.get('mobileUrl') ?? '').trim() || null;
+  const linkUrl = String(formData.get('linkUrl') ?? '').trim() || null;
+  const alt = String(formData.get('alt') ?? '').trim() || null;
+  const active = formData.get('active') === 'on';
+  const order = Math.trunc(Number(formData.get('order')) || 0);
+  const startsRaw = String(formData.get('startsAt') ?? '');
+  const endsRaw = String(formData.get('endsAt') ?? '');
+
+  if (!title) return { ok: false, error: 'Ponele un nombre para reconocerlo' };
+  if (!imageUrl) return { ok: false, error: 'Subí la imagen del banner' };
+
+  const startsAt = startsRaw ? new Date(startsRaw) : null;
+  const endsAt = endsRaw ? new Date(endsRaw) : null;
+  if (startsAt && endsAt && endsAt < startsAt) {
+    return { ok: false, error: 'La fecha de fin es anterior a la de inicio' };
+  }
+
+  const data = { title, imageUrl, mobileUrl, linkUrl, alt, active, order, startsAt, endsAt };
+
+  if (id) await prisma.banner.update({ where: { id }, data });
+  else await prisma.banner.create({ data });
+
+  revalidateShop();
+  revalidatePath('/admin/banners');
+  return { ok: true, message: id ? 'Banner actualizado' : 'Banner creado' };
+}
+
+export async function toggleBannerAction(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  const b = await prisma.banner.findUnique({ where: { id }, select: { active: true } });
+  if (!b) return { ok: false, error: 'El banner no existe' };
+  await prisma.banner.update({ where: { id }, data: { active: !b.active } });
+  revalidateShop();
+  revalidatePath('/admin/banners');
+  return { ok: true };
+}
+
+export async function deleteBannerAction(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  await prisma.banner.delete({ where: { id } });
+  revalidateShop();
+  revalidatePath('/admin/banners');
+  return { ok: true, message: 'Banner eliminado' };
+}
+
+export async function moveBannerAction(id: string, dir: 'up' | 'down'): Promise<ActionResult> {
+  await requireAdmin();
+  const all = await prisma.banner.findMany({ orderBy: { order: 'asc' }, select: { id: true } });
+  const i = all.findIndex((b) => b.id === id);
+  const j = dir === 'up' ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= all.length) return { ok: true };
+
+  // Se reescribe el orden entero: si dos banners quedaron con el mismo número,
+  // intercambiar sólo esos dos no cambiaría nada.
+  const reordered = [...all];
+  [reordered[i], reordered[j]] = [reordered[j], reordered[i]];
+  await prisma.$transaction(
+    reordered.map((b, order) => prisma.banner.update({ where: { id: b.id }, data: { order } })),
+  );
+
+  revalidateShop();
+  revalidatePath('/admin/banners');
+  return { ok: true };
 }

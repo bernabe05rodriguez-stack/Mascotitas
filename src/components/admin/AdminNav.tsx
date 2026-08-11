@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingBag, Tags, Ticket, Settings, PawPrint } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Tags, Ticket, Settings, Image as ImageIcon, PawPrint } from 'lucide-react';
 import { cn } from '@/lib/format';
 
 const LINKS = [
   { href: '/admin', label: 'Resumen', icon: LayoutDashboard, exact: true },
   { href: '/admin/productos', label: 'Productos', icon: Package },
   { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
+  { href: '/admin/banners', label: 'Banners', icon: ImageIcon },
   { href: '/admin/categorias', label: 'Categorías', icon: Tags },
   { href: '/admin/cupones', label: 'Cupones', icon: Ticket },
   { href: '/admin/config', label: 'Configuración', icon: Settings },

@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
-import { Star, Eye, EyeOff, Pencil, Check, Loader2, ImageOff } from 'lucide-react';
-import { quickUpdateAction, toggleFeaturedAction, toggleActiveAction } from '@/app/admin/actions';
+import { Star, Eye, EyeOff, Pencil, Check, Loader2, ImageOff, Undo2 } from 'lucide-react';
+import { quickUpdateAction } from '@/app/admin/actions';
 import { formatPrice, displayName, cn } from '@/lib/format';
 
 interface Variant {
@@ -67,6 +67,12 @@ export function ProductTable({ products }: { products: Row[] }) {
 }
 
 function ProductRow({ product }: { product: Row }) {
+  // El estado de visible/destacado se lleva acá, no se relee del servidor: si
+  // la lista se refrescara, la fila desaparecería (la tabla filtra por estado)
+  // y el cambio parecería no haber pasado. Ver el comentario en actions.ts.
+  const [active, setActive] = useState(product.active);
+  const [featured, setFeatured] = useState(product.featured);
+  const [ultimoCambio, setUltimoCambio] = useState<'visibilidad' | 'destacado' | null>(null);
   const [stock, setStock] = useState(product.stock);
   const [prices, setPrices] = useState<Record<string, number>>(
     Object.fromEntries(product.variants.map((v) => [v.id, v.price])),
@@ -90,8 +96,39 @@ function ProductRow({ product }: { product: Row }) {
     });
   }
 
+  async function alternar(field: 'active' | 'featured') {
+    // fetch y no server action: ver el comentario en la ruta de API.
+    const res = await fetch(`/api/admin/products/${product.id}/toggle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ field }),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as { field: string; value: boolean };
+  }
+
+  function cambiarVisibilidad() {
+    setActive((a) => !a); // optimista: el cambio se ve al instante
+    setUltimoCambio('visibilidad');
+    startTransition(async () => {
+      const r = await alternar('active');
+      if (r) setActive(r.value);
+      else setActive(product.active); // volvió a fallar: se revierte
+    });
+  }
+
+  function cambiarDestacado() {
+    setFeatured((f) => !f);
+    setUltimoCambio('destacado');
+    startTransition(async () => {
+      const r = await alternar('featured');
+      if (r) setFeatured(r.value);
+      else setFeatured(product.featured);
+    });
+  }
+
   return (
-    <tr className={cn(!product.active && 'bg-bg-2/40 opacity-60')}>
+    <tr className={cn(!active && 'bg-bg-2/40 opacity-60')}>
       <td className="px-3 py-3">
         <div className="flex items-center gap-3">
           <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-line bg-white">
@@ -110,9 +147,12 @@ function ProductRow({ product }: { product: Row }) {
             >
               {displayName(product.name)}
             </Link>
-            <p className="text-xs text-navy/45">
+            <p className="flex flex-wrap items-center gap-x-2 text-xs text-navy/45">
+              {!active && (
+                <span className="rounded-full bg-navy/10 px-2 py-0.5 font-semibold text-navy/60">Oculto</span>
+              )}
               {product.brand?.name ?? 'Sin marca'}
-              {product.legacyId && <span className="ml-2 tabular">#{product.legacyId}</span>}
+              {product.legacyId && <span className="tabular">#{product.legacyId}</span>}
             </p>
           </div>
         </div>
@@ -172,19 +212,40 @@ function ProductRow({ product }: { product: Row }) {
           )}
           {saved && !dirty && <span className="mr-1 text-xs font-semibold text-green-600">Guardado</span>}
 
+          {/* El aviso con "Deshacer" es lo que faltaba: sin él, ocultar un
+              producto se sentía como que el botón no hacía nada. */}
+          {ultimoCambio && (
+            <span className="mr-1 flex items-center gap-1.5 whitespace-nowrap rounded-full bg-bg-2 py-1 pl-2.5 pr-1 text-xs font-medium text-navy/70">
+              {ultimoCambio === 'visibilidad'
+                ? active
+                  ? 'Visible'
+                  : 'Ocultado'
+                : featured
+                  ? 'Destacado'
+                  : 'Sin destacar'}
+              <button
+                type="button"
+                onClick={() => (ultimoCambio === 'visibilidad' ? cambiarVisibilidad() : cambiarDestacado())}
+                className="flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold text-accent transition hover:bg-white"
+              >
+                <Undo2 className="h-3 w-3" /> Deshacer
+              </button>
+            </span>
+          )}
+
           <IconButton
-            label={product.featured ? 'Quitar de destacados' : 'Marcar como destacado'}
-            active={product.featured}
-            onClick={() => startTransition(() => void toggleFeaturedAction(product.id))}
+            label={featured ? 'Quitar de destacados' : 'Marcar como destacado'}
+            active={featured}
+            onClick={cambiarDestacado}
           >
-            <Star className={cn('h-4 w-4', product.featured && 'fill-current')} />
+            <Star className={cn('h-4 w-4', featured && 'fill-current')} />
           </IconButton>
 
           <IconButton
-            label={product.active ? 'Ocultar de la tienda' : 'Mostrar en la tienda'}
-            onClick={() => startTransition(() => void toggleActiveAction(product.id))}
+            label={active ? 'Ocultar de la tienda' : 'Mostrar en la tienda'}
+            onClick={cambiarVisibilidad}
           >
-            {product.active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+            {active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
           </IconButton>
 
           <Link

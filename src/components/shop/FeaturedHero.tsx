@@ -23,8 +23,24 @@ const SWIPE_MIN = 50;
  * vienen sobre fondo blanco y a esta altura se verían vacías. La imagen ocupa
  * una mitad y la otra lleva marca, nombre, precio y los botones.
  */
-export function FeaturedHero({ products }: { products: ProductCard[] }) {
-  const slides = products.slice(0, 6);
+export interface BannerSlide {
+  id: string;
+  title: string;
+  imageUrl: string;
+  mobileUrl: string | null;
+  linkUrl: string | null;
+  alt: string | null;
+}
+
+type Slide = { kind: 'banner'; banner: BannerSlide } | { kind: 'product'; product: ProductCard };
+
+export function FeaturedHero({ products, banners = [] }: { products: ProductCard[]; banners?: BannerSlide[] }) {
+  // Las placas van primero: son promociones con fecha y pierden sentido si
+  // aparecen después de seis productos.
+  const slides: Slide[] = [
+    ...banners.map((b) => ({ kind: 'banner' as const, banner: b })),
+    ...products.slice(0, 6).map((p) => ({ kind: 'product' as const, product: p })),
+  ].slice(0, 8);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
@@ -104,16 +120,74 @@ export function FeaturedHero({ products }: { products: ProductCard[] }) {
         <header className="pt-12 text-center md:pt-14 md:text-left">
           <div className="mb-2 flex items-center justify-center gap-3 md:justify-start">
             <span className="h-px w-6 bg-accent/40" aria-hidden />
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Destacados</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+              {banners.length > 0 ? 'Promociones' : 'Destacados'}
+            </span>
           </div>
-          <h2 className="text-3xl font-extrabold text-navy md:text-4xl">Lo que elegimos para vos</h2>
+          <h2 className="text-3xl font-extrabold text-navy md:text-4xl">
+            {banners.length > 0 ? 'Novedades y destacados' : 'Lo que elegimos para vos'}
+          </h2>
         </header>
 
         <div className="relative grid min-h-[380px] lg:min-h-[480px]">
-          {slides.map((p, i) => {
+          {slides.map((slide, i) => {
+            const active = i === idx;
+
+            if (slide.kind === 'banner') {
+              const b = slide.banner;
+              const contenido = (
+                <>
+                  {/* Si hay versión vertical se usa en celular; si no, se recorta la ancha. */}
+                  <Image
+                    src={b.imageUrl}
+                    alt={b.alt ?? b.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 1200px"
+                    priority={i === 0}
+                    className={cn('object-cover', b.mobileUrl && 'hidden sm:block')}
+                  />
+                  {b.mobileUrl && (
+                    <Image
+                      src={b.mobileUrl}
+                      alt={b.alt ?? b.title}
+                      fill
+                      sizes="100vw"
+                      priority={i === 0}
+                      className="object-cover sm:hidden"
+                    />
+                  )}
+                </>
+              );
+
+              return (
+                <div
+                  key={b.id}
+                  aria-hidden={!active}
+                  className={cn(
+                    'col-start-1 row-start-1 flex items-center py-8 transition-opacity duration-700 md:py-10 lg:py-14',
+                    active ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
+                  )}
+                >
+                  {b.linkUrl ? (
+                    <Link
+                      href={b.linkUrl}
+                      tabIndex={active ? 0 : -1}
+                      className="relative block h-[300px] w-full overflow-hidden rounded-[2rem] bg-white shadow-panel sm:h-[340px] lg:h-[400px]"
+                    >
+                      {contenido}
+                    </Link>
+                  ) : (
+                    <div className="relative h-[300px] w-full overflow-hidden rounded-[2rem] bg-white shadow-panel sm:h-[340px] lg:h-[400px]">
+                      {contenido}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            const p = slide.product;
             const range = priceRange(p.variants);
             const off = range.originalPrice ? discountPercent(range.min, range.originalPrice) : 0;
-            const active = i === idx;
 
             return (
               <article
@@ -238,7 +312,7 @@ export function FeaturedHero({ products }: { products: ProductCard[] }) {
           <div className="flex justify-center gap-2 pb-10">
             {slides.map((s, i) => (
               <button
-                key={s.id}
+                key={s.kind === 'banner' ? s.banner.id : s.product.id}
                 type="button"
                 onClick={() => setIdx(i)}
                 aria-label={`Ir al destacado ${i + 1} de ${slides.length}`}

@@ -20,7 +20,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const UPLOAD_DIR = resolve(process.cwd(), 'public/uploads');
+const UPLOAD_DIR = process.env.UPLOADS_DIR
+  ? resolve(process.env.UPLOADS_DIR)
+  : resolve(process.cwd(), 'uploads');
 const args = process.argv.slice(2);
 const FORCE = args.includes('--force');
 const CONCURRENCY = Number(args[args.indexOf('--concurrency') + 1]) || 6;
