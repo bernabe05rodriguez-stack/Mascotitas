@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Search,
@@ -429,12 +430,9 @@ export function PosClient({
                   // nombre del producto quedaba cortado en tres letras.
                   <div key={line.variantId} className="flex gap-3">
                     {line.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={line.image}
-                        alt=""
-                        className="h-10 w-10 shrink-0 rounded bg-white object-contain"
-                      />
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded bg-white">
+                        <Image src={line.image} alt="" fill sizes="40px" className="object-contain" />
+                      </div>
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
@@ -577,13 +575,17 @@ function ProductCard({
     >
       <div className="flex items-start gap-3">
         {product.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.image}
-            alt=""
-            loading="lazy"
-            className={cn('h-14 w-14 shrink-0 rounded-lg bg-white object-contain', agotado && 'opacity-50')}
-          />
+          // next/image y no <img>: las fotos guardadas son de 900px y acá se
+          // ven a 56. Con 268 tarjetas en pantalla, servirlas en crudo son
+          // megas de más en el celular del local.
+          <div
+            className={cn(
+              'relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white',
+              agotado && 'opacity-50',
+            )}
+          >
+            <Image src={product.image} alt="" fill sizes="56px" className="object-contain" />
+          </div>
         ) : (
           <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-bg-2 text-[10px] text-navy/30">
             sin foto
