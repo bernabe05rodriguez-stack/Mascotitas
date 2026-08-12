@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { requireAdmin, createSession, destroySession, verifyCredentials } from '@/lib/auth';
 import { recomputeAggregates } from '@/lib/aggregates';
+import { syncOrderStock, releaseOrderStock } from '@/lib/stock';
 import { saveSettings, type ShopSettings } from '@/lib/settings';
 import { slugify } from '@/lib/slug';
 
@@ -205,19 +206,84 @@ async function uniqueSlug(name: string, excludeId: string | null): Promise<strin
 
 /* ---------------------------------------------------------------- pedidos */
 
+/**
+ * Cambia el estado de un pedido y mueve el stock en consecuencia.
+ *
+ * El descuento ocurre al pasar a ENTREGADO — antes de eso la mercadería sigue
+ * en el local. Si el pedido vuelve atrás o se cancela, las unidades se
+ * devuelven. Las dos cosas van en una transacción: si falla el movimiento de
+ * stock, el estado tampoco cambia, y no queda un pedido "entregado" que nunca
+ * descontó nada.
+ */
 export async function updateOrderStatusAction(orderId: number, status: string): Promise<ActionResult> {
   await requireAdmin();
   if (!['PENDIENTE', 'CONFIRMADO', 'ENTREGADO', 'CANCELADO'].includes(status)) {
     return { ok: false, error: 'Estado inválido' };
   }
-  await prisma.order.update({ where: { id: orderId }, data: { status: status as never } });
+
+  const efecto = await prisma.$transaction(async (tx) => {
+    const current = await tx.order.findUnique({ where: { id: orderId }, select: { status: true } });
+    if (!current) return null;
+
+    await tx.order.update({ where: { id: orderId }, data: { status: status as never } });
+    return syncOrderStock(tx, orderId, status);
+  });
+
+  if (efecto === null) return { ok: false, error: 'El pedido no existe' };
+
+  // El stock que cambió se ve en el panel y en la tienda pública.
   revalidatePath('/admin/pedidos');
-  return { ok: true };
+  revalidatePath('/admin/productos');
+  revalidatePath('/admin/venta');
+  revalidatePath('/admin');
+  if (efecto !== 'sin-cambios') revalidateShop();
+
+  const message =
+    efecto === 'descontado'
+      ? 'Entregado — stock descontado'
+      : efecto === 'devuelto'
+        ? 'Stock devuelto al inventario'
+        : undefined;
+
+  return { ok: true, message };
 }
 
-/** Crea un pedido desde el punto de venta del local. */
+/**
+ * Borra un pedido de verdad. Sirve para limpiar las pruebas.
+ *
+ * Si el pedido había descontado stock, se devuelve antes de borrarlo: si no,
+ * esas unidades quedarían restadas sin ningún pedido que lo justifique.
+ */
+export async function deleteOrderAction(orderId: number): Promise<ActionResult> {
+  await requireAdmin();
+
+  const exists = await prisma.order.findUnique({ where: { id: orderId }, select: { id: true } });
+  if (!exists) return { ok: false, error: 'El pedido no existe' };
+
+  await prisma.$transaction(async (tx) => {
+    await releaseOrderStock(tx, orderId);
+    // Los items se van solos: OrderItem.order tiene onDelete: Cascade.
+    await tx.order.delete({ where: { id: orderId } });
+  });
+
+  revalidatePath('/admin/pedidos');
+  revalidatePath('/admin/productos');
+  revalidatePath('/admin/venta');
+  revalidatePath('/admin');
+  revalidateShop();
+  return { ok: true, message: `Pedido #${orderId} eliminado` };
+}
+
+/**
+ * Crea un pedido desde el punto de venta del local.
+ *
+ * Nace ENTREGADO: en el mostrador el cliente se va con la mercadería en la
+ * mano, así que el stock se descuenta en el acto. La venta presencial también
+ * guarda nombre y teléfono — es lo que arma la agenda de clientes.
+ */
 export async function createLocalOrderAction(data: {
   customerName?: string;
+  phone?: string;
   note?: string;
   items: { variantId: string; quantity: number }[];
 }): Promise<ActionResult & { orderId?: number }> {
@@ -240,6 +306,7 @@ export async function createLocalOrderAction(data: {
       const qty = Math.min(Math.max(1, Math.trunc(i.quantity)), 99);
       return {
         productId: v.product.id,
+        variantId: v.id,
         productName: v.product.name,
         variantLabel: v.label,
         quantity: qty,
@@ -249,12 +316,17 @@ export async function createLocalOrderAction(data: {
 
   const subtotal = orderItems.reduce((n, i) => n + i.unitPrice * i.quantity, 0);
 
+  // Sólo los dígitos: así el mismo cliente se reconoce escriba "261 555-1234"
+  // o "2615551234", y el link de WhatsApp sale armado.
+  const phone = data.phone?.replace(/[^\d+]/g, '').trim() || null;
+
   const order = await prisma.$transaction(async (tx) => {
     const created = await tx.order.create({
       data: {
         channel: 'LOCAL',
-        status: 'CONFIRMADO',
+        status: 'ENTREGADO',
         customerName: data.customerName?.trim() || null,
+        phone,
         note: data.note?.trim() || null,
         subtotal,
         discount: 0,
@@ -265,19 +337,17 @@ export async function createLocalOrderAction(data: {
       select: { id: true, total: true },
     });
 
-    // Descontar stock
-    for (const item of orderItems) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { decrement: item.quantity } },
-      });
-    }
+    // El descuento pasa por el mismo camino que el selector de Pedidos, así hay
+    // una sola regla de stock en todo el sistema en vez de dos que se pisan.
+    await syncOrderStock(tx, created.id, 'ENTREGADO');
 
     return created;
   });
 
   revalidatePath('/admin/pedidos');
   revalidatePath('/admin/venta');
+  revalidatePath('/admin/productos');
+  revalidatePath('/admin');
   revalidateShop();
   return { ok: true, message: `Pedido #${order.id} registrado — $${order.total.toLocaleString('es-AR')}`, orderId: order.id };
 }

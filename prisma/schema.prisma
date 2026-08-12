@@ -178,6 +178,15 @@ model Order {
   shipping   Int     @default(0)
   total      Int
 
+  /// ¿Ya se descontó el stock de este pedido?
+  ///
+  /// El stock se mueve UNA sola vez, cuando el pedido pasa a ENTREGADO, y se
+  /// devuelve si sale de ese estado o si el pedido se borra. Guardarlo como
+  /// bandera —en vez de deducirlo del status— es lo que hace la operación
+  /// idempotente: tocar el selector cinco veces seguidas no descuenta cinco
+  /// veces, y un CONFIRMADO→ENTREGADO→CONFIRMADO deja el stock como estaba.
+  stockApplied Boolean @default(false)
+
   items OrderItem[]
 
   createdAt DateTime @default(now())
@@ -185,6 +194,7 @@ model Order {
 
   @@index([status])
   @@index([createdAt])
+  @@index([phone])
 }
 
 model OrderItem {
@@ -195,6 +205,11 @@ model OrderItem {
   /// Puede quedar en null si el producto se borra: el pedido no se pierde.
   productId String?
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  /// Qué presentación se vendió. Hace falta para devolver el stock a la
+  /// variante correcta cuando una variante lleva su propio contador —
+  /// `variantLabel` es un texto y se puede renombrar desde el panel.
+  variantId String?
 
   /// Snapshot del momento de la compra — el precio de hoy no reescribe el pasado.
   productName  String

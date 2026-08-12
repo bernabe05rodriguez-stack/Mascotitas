@@ -65,6 +65,7 @@ export async function POST(req: Request) {
       const v = byId.get(i.variantId)!;
       return {
         productId: v.product.id,
+        variantId: v.id,
         productName: v.product.name,
         variantLabel: v.label,
         quantity: i.quantity,

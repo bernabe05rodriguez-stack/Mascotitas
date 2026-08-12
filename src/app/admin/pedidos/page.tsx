@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/db';
 import { formatPrice, formatDate, displayName } from '@/lib/format';
 import { OrderStatusSelect } from '@/components/admin/OrderStatusSelect';
-import { ShoppingBag } from 'lucide-react';
+import { DeleteOrderButton } from '@/components/admin/DeleteOrderButton';
+import { ShoppingBag, PackageCheck } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,6 +75,14 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${(o as unknown as {channel:string}).channel === 'LOCAL' ? 'bg-purple-50 text-purple-700' : 'bg-sky-50 text-sky-700'}`}>
                       {(o as unknown as {channel:string}).channel === 'LOCAL' ? '🏪 Local' : '🌐 Web'}
                     </span>
+                    {/* Que el stock ya se movió no se puede deducir mirando el
+                        estado: se muestra explícito para no descontar dos veces
+                        a mano por las dudas. */}
+                    {(o as unknown as { stockApplied: boolean }).stockApplied && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                        <PackageCheck className="h-3 w-3" /> Stock descontado
+                      </span>
+                    )}
                   </div>
                   <p className="mt-1 text-sm text-navy/60">
                     {o.customerName ?? 'Sin nombre'}
@@ -99,6 +108,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                     )}
                   </div>
                   <OrderStatusSelect orderId={o.id} current={o.status} />
+                  <DeleteOrderButton orderId={o.id} />
                 </div>
               </div>
 
