@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingBag, Tags, Ticket, Settings, Image as ImageIcon, PawPrint, Store } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Tags, Ticket, Settings, Image as ImageIcon, PawPrint, Store, Users } from 'lucide-react';
 import { cn } from '@/lib/format';
 
 const LINKS = [
@@ -10,6 +10,7 @@ const LINKS = [
   { href: '/admin/venta', label: 'Venta', icon: Store },
   { href: '/admin/productos', label: 'Productos', icon: Package },
   { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
+  { href: '/admin/clientes', label: 'Clientes', icon: Users },
   { href: '/admin/banners', label: 'Banners', icon: ImageIcon },
   { href: '/admin/categorias', label: 'Categorías', icon: Tags },
   { href: '/admin/cupones', label: 'Cupones', icon: Ticket },
