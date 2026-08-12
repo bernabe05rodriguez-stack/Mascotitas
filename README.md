@@ -44,6 +44,24 @@ npm run build
 npx tsx scripts/e2e-check.ts http://localhost:3100
 ```
 
+Además, las dos pruebas del ciclo de stock:
+
+```bash
+npx tsx scripts/test-stock.ts    # la regla contra la base, sin navegador
+npx tsx scripts/test-pos-ui.ts   # el panel en un Chromium de verdad
+```
+
+## Limpiar pedidos de prueba
+
+```bash
+npx tsx scripts/limpiar-pedidos.ts --todos            # informe, no borra
+npx tsx scripts/limpiar-pedidos.ts --todos --confirm  # borra
+npx tsx scripts/limpiar-pedidos.ts --ids=1,2,3 --confirm
+```
+
+Devuelve al inventario el stock de los pedidos que lo habían descontado: borrar
+la fila sola dejaría esas unidades restadas para siempre.
+
 Chequea los caminos que importan: que el catálogo liste los 268 productos, que
 el carrito sobreviva al refresh, que los precios de un pedido los ponga el
 servidor y no el navegador, que `/api/admin/*` rechace a los no autenticados y
@@ -120,6 +138,13 @@ curl -sk -X POST "https://84.46.252.202/api/trpc/services.app.deployService" \
 
 ## Cosas que conviene saber
 
+- **El stock se descuenta al ENTREGAR, no al cargar el pedido.** Mientras está
+  Pendiente o Confirmado la mercadería sigue en el local. Al pasar a `ENTREGADO`
+  se descuenta; al salir de ese estado (Cancelado, o volver atrás) se devuelve.
+  Lo maneja `src/lib/stock.ts` y lo controla la bandera `Order.stockApplied`,
+  que hace la operación idempotente: tocar el selector diez veces descuenta una.
+  Las ventas del punto de venta nacen `ENTREGADO` — en el mostrador el cliente
+  se va con la mercadería.
 - **`prisma migrate deploy`, nunca `db push --accept-data-loss`** en producción:
   en esta base viven los pedidos y un push puede borrar columnas en silencio.
 - **`requireAdmin()` va en cada server action y route handler.** El middleware
