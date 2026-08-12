@@ -79,10 +79,6 @@ function minPrice(p: PosProduct) {
   return Math.min(...p.variants.map((v) => v.price));
 }
 
-/** El stock que manda para una variante: el propio si lo define, si no el del producto. */
-function variantStock(product: PosProduct, variant: PosVariant) {
-  return variant.stock ?? product.stock;
-}
 
 export function PosClient({
   products,
@@ -103,20 +99,31 @@ export function PosClient({
   // ------------------------------------------------------------- carrito
   const [cart, setCart] = useState<CartLine[]>([]);
   const [customerName, setCustomerName] = useState('');
+  const [phone, setPhone] = useState('');
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const ticketRef = useRef<HTMLDivElement>(null);
+  const categoryRef = useRef<HTMLSelectElement>(null);
+  const brandRef = useRef<HTMLSelectElement>(null);
+  const ordenRef = useRef<HTMLSelectElement>(null);
 
-  // Lo que se tecleó ANTES de que el navegador terminara de cargar el JS queda
-  // en el input pero no en el estado: la pantalla mostraba el catálogo entero
-  // con el texto escrito en el buscador. En el mostrador se abre Venta y se
-  // escribe al toque, así que pasa siempre. Al montar, se recupera.
+  // Lo que se tocó ANTES de que el navegador terminara de cargar el JS vive en
+  // el DOM, no en el estado de React: la pantalla mostraba el catálogo entero
+  // con el texto ya escrito en el buscador, o el desplegable diciendo "Nombre
+  // A-Z" con la grilla todavía por más vendidos. En el mostrador se abre Venta
+  // y se filtra al toque, así que pasa siempre. Al montar, se recupera.
   useEffect(() => {
     const escrito = inputRef.current?.value ?? '';
     if (escrito) setQuery(escrito);
+    const cat = categoryRef.current?.value ?? '';
+    if (cat) setCategory(cat);
+    const marca = brandRef.current?.value ?? '';
+    if (marca) setBrand(marca);
+    const ord = ordenRef.current?.value as Orden | undefined;
+    if (ord && ord !== 'vendidos') setOrden(ord);
   }, []);
 
   const brands = useMemo(() => {
@@ -237,6 +244,15 @@ export function PosClient({
     return map;
   }, [cart]);
 
+  // Unidades ya puestas en el ticket, por producto. El stock que se muestra en
+  // la grilla las descuenta en vivo: mientras se carga la venta, el número de
+  // la tarjeta es el que va a quedar, no el que había al abrir la pantalla.
+  const reservadoPorProducto = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const l of cart) map.set(l.productId, (map.get(l.productId) ?? 0) + l.quantity);
+    return map;
+  }, [cart]);
+
   async function confirm() {
     if (cart.length === 0) return;
     setSending(true);
@@ -246,6 +262,7 @@ export function PosClient({
     try {
       const result = await createLocalOrderAction({
         customerName: customerName.trim() || undefined,
+        phone: phone.trim() || undefined,
         note: note.trim() || undefined,
         items: cart.map((l) => ({ variantId: l.variantId, quantity: l.quantity })),
       });
@@ -254,6 +271,7 @@ export function PosClient({
         setSuccess(result.message ?? 'Pedido registrado');
         setCart([]);
         setCustomerName('');
+        setPhone('');
         setNote('');
         // Sin esto el stock y el ranking de la grilla quedan como estaban antes
         // de la venta que se acaba de cargar.
@@ -314,6 +332,7 @@ export function PosClient({
               </div>
 
               <select
+                ref={categoryRef}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 aria-label="Filtrar por categoría"
@@ -334,6 +353,7 @@ export function PosClient({
 
               {brands.length > 0 && (
                 <select
+                  ref={brandRef}
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   aria-label="Filtrar por marca"
@@ -349,6 +369,7 @@ export function PosClient({
               )}
 
               <select
+                ref={ordenRef}
                 value={orden}
                 onChange={(e) => setOrden(e.target.value as Orden)}
                 aria-label="Ordenar productos"
@@ -405,6 +426,7 @@ export function PosClient({
                   product={product}
                   rank={rankById.get(product.id)}
                   enCarrito={enCarrito}
+                  reservado={reservadoPorProducto.get(product.id) ?? 0}
                   onAdd={addToCart}
                 />
               ))}
@@ -490,11 +512,25 @@ export function PosClient({
 
           {cart.length > 0 && (
             <div className="space-y-3 border-t border-line px-5 py-4">
+              {/* Nombre y teléfono arman el registro de clientes del local: sin
+                  esto una venta presencial no deja ningún rastro de quién fue. */}
               <input
                 type="text"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Nombre del cliente (opcional)"
+                autoComplete="off"
+                className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+              />
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Teléfono / WhatsApp (opcional)"
+                // inputMode numérico: en el celular del mostrador abre el
+                // teclado de números en vez del alfabético.
+                inputMode="tel"
+                autoComplete="off"
                 className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-accent"
               />
               <input
@@ -565,14 +601,19 @@ function ProductCard({
   product,
   rank,
   enCarrito,
+  reservado,
   onAdd,
 }: {
   product: PosProduct;
   rank?: number;
   enCarrito: Map<string, number>;
+  /** Unidades de este producto ya cargadas en el ticket actual. */
+  reservado: number;
   onAdd: (p: PosProduct, v: PosVariant) => void;
 }) {
-  const agotado = product.stock <= 0;
+  // Stock proyectado: lo que va a quedar cuando se confirme el ticket.
+  const restante = product.stock - reservado;
+  const agotado = restante <= 0;
 
   return (
     <div
@@ -610,8 +651,15 @@ function ProductCard({
           )}
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
             <span className={cn('font-medium tabular-nums', agotado ? 'text-red-500' : 'text-navy/45')}>
-              {agotado ? 'Sin stock' : `Stock ${product.stock}`}
+              {agotado ? 'Sin stock' : `Stock ${restante}`}
             </span>
+            {/* Cuando el ticket ya se llevó unidades, se aclara de dónde sale el
+                número: si no, parece que el stock cargado estuviera mal. */}
+            {reservado > 0 && (
+              <span className="rounded-full bg-accent/10 px-2 py-0.5 font-semibold tabular-nums text-accent-dark">
+                −{reservado} en el ticket
+              </span>
+            )}
             {product.sold > 0 && (
               <span
                 className={cn(
@@ -634,7 +682,11 @@ function ProductCard({
         ) : (
           product.variants.map((v) => {
             const cantidad = enCarrito.get(v.id) ?? 0;
-            const sinStock = variantStock(product, v) <= 0;
+            // Si la variante lleva stock propio se mide contra el suyo y lo que
+            // ya se cargó de ella; si hereda el del producto, contra el
+            // proyectado del producto entero.
+            const sinStock =
+              v.stock !== null ? v.stock - cantidad <= 0 : restante <= 0;
             return (
               <button
                 key={v.id}
