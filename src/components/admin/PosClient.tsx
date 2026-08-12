@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -109,6 +109,15 @@ export function PosClient({
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const ticketRef = useRef<HTMLDivElement>(null);
+
+  // Lo que se tecleó ANTES de que el navegador terminara de cargar el JS queda
+  // en el input pero no en el estado: la pantalla mostraba el catálogo entero
+  // con el texto escrito en el buscador. En el mostrador se abre Venta y se
+  // escribe al toque, así que pasa siempre. Al montar, se recupera.
+  useEffect(() => {
+    const escrito = inputRef.current?.value ?? '';
+    if (escrito) setQuery(escrito);
+  }, []);
 
   const brands = useMemo(() => {
     const set = new Set<string>();
